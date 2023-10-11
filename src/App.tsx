@@ -1,6 +1,7 @@
-import Map from "react-map-gl/maplibre";
+import Map, { NavigationControl, ScaleControl } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useWindowSize } from "@react-hook/window-size";
+import type { ControlPosition, Unit } from "maplibre-gl";
 import CONFIG from "./config";
 
 function App() {
@@ -21,7 +22,19 @@ function App() {
       ]}
       style={{ width: width, height: height }}
       mapStyle={CONFIG.MAPSTYLE}
-    />
+    >
+      <NavigationControl
+        position={CONFIG.NAVIGATION.POSITION as ControlPosition}
+        showCompass={CONFIG.NAVIGATION.COMPASS}
+        showZoom={CONFIG.NAVIGATION.ZOOM}
+        visualizePitch={CONFIG.NAVIGATION.PITCH}
+      />
+      <ScaleControl
+        position={CONFIG.SCALE.POSITION as ControlPosition}
+        maxWidth={CONFIG.SCALE.MAXWIDTH}
+        unit={CONFIG.SCALE.UNIT as Unit}
+      />
+    </Map>
   );
 }
 
