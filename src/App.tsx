@@ -6,6 +6,7 @@ import CONFIG from "./config";
 
 function App() {
   const [width, height] = useWindowSize();
+  const isMobile = width < 768;
 
   return (
     <Map
@@ -23,12 +24,14 @@ function App() {
       style={{ width: width, height: height }}
       mapStyle={CONFIG.MAPSTYLE}
     >
-      <NavigationControl
-        position={CONFIG.NAVIGATION.POSITION as ControlPosition}
-        showCompass={CONFIG.NAVIGATION.COMPASS}
-        showZoom={CONFIG.NAVIGATION.ZOOM}
-        visualizePitch={CONFIG.NAVIGATION.PITCH}
-      />
+      {isMobile ? null : (
+        <NavigationControl
+          position={CONFIG.NAVIGATION.POSITION as ControlPosition}
+          showCompass={CONFIG.NAVIGATION.COMPASS}
+          showZoom={CONFIG.NAVIGATION.ZOOM}
+          visualizePitch={CONFIG.NAVIGATION.PITCH}
+        />
+      )}
       <ScaleControl
         position={CONFIG.SCALE.POSITION as ControlPosition}
         maxWidth={CONFIG.SCALE.MAXWIDTH}
