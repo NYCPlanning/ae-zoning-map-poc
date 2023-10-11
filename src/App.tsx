@@ -1,34 +1,23 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import Map from 'react-map-gl/maplibre';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import baseMapStyles from "./data/basemap.json";
+import CONFIG from "./config"
+
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Map
+      initialViewState={{
+        longitude: CONFIG.INITIALVIEW.LONG,
+        latitude: CONFIG.INITIALVIEW.LAT,
+        zoom: CONFIG.INITIALVIEW.ZOOM
+      }}
+      maxZoom={CONFIG.BOUNDS.ZOOM.MAX}
+      minZoom={CONFIG.BOUNDS.ZOOM.MIN}
+      maxBounds={[[CONFIG.BOUNDS.WEST, CONFIG.BOUNDS.SOUTH], [CONFIG.BOUNDS.EAST, CONFIG.BOUNDS.NORTH]]}
+      style={{width: CONFIG.STYLE.WIDTH, height: CONFIG.STYLE.HEIGHT}}
+      mapStyle={baseMapStyles}
+    />
   );
 }
 
