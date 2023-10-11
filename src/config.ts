@@ -14,10 +14,6 @@ export default {
       MAX: 20,
     },
   },
-  STYLE: {
-    WIDTH: window.innerWidth,
-    HEIGHT: window.innerHeight,
-  },
   MAPSTYLE:
     "https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json",
 };
