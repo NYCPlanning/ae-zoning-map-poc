@@ -16,4 +16,15 @@ export default {
   },
   MAPSTYLE:
     "https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json",
+  NAVIGATION: {
+    POSITION: "top-left", //'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
+    COMPASS: true,
+    ZOOM: true,
+    PITCH: true,
+  },
+  SCALE: {
+    POSITION: "bottom-left", //'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
+    MAXWIDTH: 200, //pixels
+    UNIT: "imperial", //'imperial' | 'metric' | 'nautical'
+  },
 };
