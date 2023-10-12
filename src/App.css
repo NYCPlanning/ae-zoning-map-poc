@@ -6,8 +6,19 @@
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  height: 2.25em;
+  width: 4.6875em;
+  position: fixed;
+  @media print, screen and (min-width: 768px) {
+    right: 0;
+    bottom: 0;
+    padding: 2em 0.5em;
+  }
+  @media print, screen and (max-width: 767px) {
+    left: 0;
+    bottom: 0;
+    padding: 0.5em;
+  }
   will-change: filter;
   transition: filter 300ms;
 }
@@ -17,6 +28,12 @@
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
+
+/* Need to move navigation up above the logo */
+.maplibregl-ctrl-bottom-right .maplibregl-ctrl-group {
+  margin-bottom: 5.1875em !important;
+}
+
 
 @keyframes logo-spin {
   from {
