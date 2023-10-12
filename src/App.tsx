@@ -1,8 +1,6 @@
 import Map, { NavigationControl, ScaleControl } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useWindowSize } from "@react-hook/window-size";
-import type { ControlPosition, Unit } from "maplibre-gl";
-import CONFIG from "./config";
 
 function App() {
   const [width, height] = useWindowSize();
@@ -11,31 +9,29 @@ function App() {
   return (
     <Map
       initialViewState={{
-        longitude: CONFIG.INITIALVIEW.LONG,
-        latitude: CONFIG.INITIALVIEW.LAT,
-        zoom: CONFIG.INITIALVIEW.ZOOM,
+        longitude: -74.0008,
+        latitude: 40.7018,
+        zoom: 11,
       }}
-      maxZoom={CONFIG.BOUNDS.ZOOM.MAX}
-      minZoom={CONFIG.BOUNDS.ZOOM.MIN}
+      maxZoom={20}
+      minZoom={9.5}
       maxBounds={[
-        [CONFIG.BOUNDS.WEST, CONFIG.BOUNDS.SOUTH],
-        [CONFIG.BOUNDS.EAST, CONFIG.BOUNDS.NORTH],
+        [-74.3308, 40.2989],
+        [-73.6311, 41.103],
       ]}
       style={{ width: width, height: height }}
-      mapStyle={CONFIG.MAPSTYLE}
+      mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
     >
-      {isMobile ? null : (
-        <NavigationControl
-          position={CONFIG.NAVIGATION.POSITION as ControlPosition}
-          showCompass={CONFIG.NAVIGATION.COMPASS}
-          showZoom={CONFIG.NAVIGATION.ZOOM}
-          visualizePitch={CONFIG.NAVIGATION.PITCH}
-        />
-      )}
+      <NavigationControl
+        position={isMobile ? "top-right" : "bottom-right"} //'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
+        showCompass={true}
+        showZoom={true}
+      />
+
       <ScaleControl
-        position={CONFIG.SCALE.POSITION as ControlPosition}
-        maxWidth={CONFIG.SCALE.MAXWIDTH}
-        unit={CONFIG.SCALE.UNIT as Unit}
+        position="bottom-left" //'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
+        maxWidth={200} //pixels
+        unit="imperial" //'imperial' | 'metric' | 'nautical'
       />
     </Map>
   );
