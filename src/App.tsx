@@ -1,11 +1,20 @@
 import Map, { NavigationControl, ScaleControl } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
-import { useWindowSize } from "@react-hook/window-size";
-import DeckGL from "@deck.gl/react";
+import { useWindowWidth } from "@react-hook/window-size";
+import DeckGL, { DeckGLProps } from "@deck.gl/react/typed";
+
+function updateViewState({ viewState }: DeckGLProps) {
+  viewState.longitude = Math.min(
+    -73.6311,
+    Math.max(-74.3308, viewState.longitude),
+  );
+  viewState.latitude = Math.min(41.103, Math.max(40.2989, viewState.latitude));
+  return viewState;
+}
 
 function App() {
-  const [width, height] = useWindowSize();
+  const width = useWindowWidth();
   const isMobile = width < 768;
 
   // Viewport settings
@@ -15,32 +24,30 @@ function App() {
     zoom: 11,
     pitch: 0,
     bearing: 0,
+    maxZoom: 20,
+    minZoom: 9.5,
+    minPitch: 0,
+    maxPitch: 0,
   };
 
   return (
-    <DeckGL initialViewState={INITIAL_VIEW_STATE} controller={true}>
+    <DeckGL
+      initialViewState={INITIAL_VIEW_STATE}
+      controller={true}
+      onViewStateChange={updateViewState}
+    >
       <Map
-        maxZoom={20}
-        minZoom={9.5}
-        maxBounds={[
-          [-74.3308, 40.2989],
-          [-73.6311, 41.103],
-        ]}
-        style={{ width: width, height: height }}
+        style={{ width: "100vw", height: "100vh" }}
         mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
       >
         <NavigationControl
-          position={isMobile ? "top-right" : "bottom-right"} //'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
+          position={isMobile ? "top-right" : "bottom-right"}
           showCompass={true}
           showZoom={true}
         />
 
         {isMobile ? null : (
-          <ScaleControl
-            position="bottom-left" //'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
-            maxWidth={200} //pixels
-            unit="imperial" //'imperial' | 'metric' | 'nautical'
-          />
+          <ScaleControl position="bottom-left" maxWidth={200} unit="imperial" />
         )}
       </Map>
 
