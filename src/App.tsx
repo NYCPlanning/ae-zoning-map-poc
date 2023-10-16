@@ -1,4 +1,8 @@
-import Map, { NavigationControl, ScaleControl } from "react-map-gl/maplibre";
+import Map, {
+  NavigationControl,
+  ScaleControl,
+  AttributionControl,
+} from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
 import { useWindowWidth } from "@react-hook/window-size";
@@ -43,7 +47,11 @@ function App() {
           initialViewState={INITIAL_VIEW_STATE}
           style={{ width: "100vw", height: "100vh" }}
           mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
+          // disable the default attribution
+          attributionControl={false}
         >
+          <AttributionControl compact={isMobile ? true : false} />
+
           <NavigationControl
             position={isMobile ? "top-right" : "bottom-right"}
             showCompass={true}
