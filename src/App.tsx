@@ -5,9 +5,9 @@ import Map, {
 } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
-import { useWindowWidth } from "@react-hook/window-size";
 import DeckGL, { DeckGLProps } from "@deck.gl/react/typed";
 import { MapProvider } from "react-map-gl/maplibre";
+import { StreetscapeProvider, useMediaQuery } from "@nycplanning/streetscape";
 
 function updateViewState({ viewState }: DeckGLProps) {
   viewState.longitude = Math.min(
@@ -19,8 +19,7 @@ function updateViewState({ viewState }: DeckGLProps) {
 }
 
 function App() {
-  const width = useWindowWidth();
-  const isMobile = width < 768;
+  const isMobile = useMediaQuery("(max-width: 767px)")[0];
 
   // Viewport settings
   const INITIAL_VIEW_STATE = {
@@ -36,44 +35,46 @@ function App() {
   };
 
   return (
-    <DeckGL
-      initialViewState={INITIAL_VIEW_STATE}
-      controller={true}
-      onViewStateChange={updateViewState}
-    >
-      <MapProvider>
-        {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
-        <Map
-          initialViewState={INITIAL_VIEW_STATE}
-          style={{ width: "100vw", height: "100vh" }}
-          mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
-          // disable the default attribution
-          attributionControl={false}
-        >
-          <AttributionControl compact={isMobile ? true : false} />
+    <StreetscapeProvider>
+      <DeckGL
+        initialViewState={INITIAL_VIEW_STATE}
+        controller={true}
+        onViewStateChange={updateViewState}
+      >
+        <MapProvider>
+          {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
+          <Map
+            initialViewState={INITIAL_VIEW_STATE}
+            style={{ width: "100vw", height: "100vh" }}
+            mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
+            // disable the default attribution
+            attributionControl={false}
+          >
+            <AttributionControl compact={isMobile ? true : false} />
 
-          <NavigationControl
-            position={isMobile ? "top-right" : "bottom-right"}
-            showCompass={true}
-            showZoom={true}
-          />
-
-          {isMobile ? null : (
-            <ScaleControl
-              position="bottom-left"
-              maxWidth={200}
-              unit="imperial"
+            <NavigationControl
+              position={isMobile ? "top-right" : "bottom-right"}
+              showCompass={true}
+              showZoom={true}
             />
-          )}
-        </Map>
 
-        <img
-          className="logo"
-          alt="NYC Planning"
-          src="https://raw.githubusercontent.com/NYCPlanning/dcp-logo/master/dcp_logo_772.png"
-        />
-      </MapProvider>
-    </DeckGL>
+            {isMobile ? null : (
+              <ScaleControl
+                position="bottom-left"
+                maxWidth={200}
+                unit="imperial"
+              />
+            )}
+          </Map>
+
+          <img
+            className="logo"
+            alt="NYC Planning"
+            src="https://raw.githubusercontent.com/NYCPlanning/dcp-logo/master/dcp_logo_772.png"
+          />
+        </MapProvider>
+      </DeckGL>
+    </StreetscapeProvider>
   );
 }
 
