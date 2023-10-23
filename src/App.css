@@ -6,7 +6,6 @@
 }
 
 .logo {
-  height: 2.25em;
   width: 4.6875em;
   position: fixed;
   @media print, screen and (min-width: 768px) {
