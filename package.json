@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@deck.gl/react": "^8.9.31",
-    "@nycplanning/streetscape": "^0.6.0",
+    "@nycplanning/streetscape": "^0.7.0",
     "maplibre-gl": "^3.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
