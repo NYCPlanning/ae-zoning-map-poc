@@ -7,7 +7,13 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
 import DeckGL, { DeckGLProps } from "@deck.gl/react/typed";
 import { MapProvider } from "react-map-gl/maplibre";
-import { StreetscapeProvider, useMediaQuery } from "@nycplanning/streetscape";
+import {
+  StreetscapeProvider,
+  useMediaQuery,
+  Accordion,
+} from "@nycplanning/streetscape";
+import LocationSearch from "./components/LocationSearch";
+import LayersFilters from "./components/LayersFilters";
 
 function updateViewState({ viewState }: DeckGLProps) {
   viewState.longitude = Math.min(
@@ -73,6 +79,11 @@ function App() {
             src="https://raw.githubusercontent.com/NYCPlanning/dcp-logo/master/dcp_logo_772.png"
           />
         </MapProvider>
+
+        <Accordion id="location-search" allowMultiple>
+          <LocationSearch />
+          <LayersFilters />
+        </Accordion>
       </DeckGL>
     </StreetscapeProvider>
   );
