@@ -36,16 +36,20 @@ function LocationSearch() {
             >
               <Text textStyle="lead">Location Search</Text>
               <Spacer />
-              <svg
-                width="32"
-                height="32"
-                viewBox="0 0 32 32"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className={isExpanded ? "" : "rotated"}
-              >
-                <path d="M16 10.6667L24 18.6667H8L16 10.6667Z" fill="#4A5568" />
-              </svg>
+              <Box transform={isExpanded ? "" : "rotate(180deg);"}>
+                <svg
+                  width="32"
+                  height="32"
+                  viewBox="0 0 32 32"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M16 10.6667L24 18.6667H8L16 10.6667Z"
+                    fill="#4A5568"
+                  />
+                </svg>
+              </Box>
             </Flex>
           </AccordionButton>
           <AccordionPanel pt={0} pb={4}>
