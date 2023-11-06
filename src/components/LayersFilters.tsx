@@ -1,5 +1,4 @@
 import {
-  AccordionItem,
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
@@ -7,7 +6,7 @@ import {
 
 function LayersFilters() {
   return (
-    <AccordionItem bg="white">
+    <>
       <h2>
         <AccordionButton>
           Section 2 title
@@ -20,7 +19,7 @@ function LayersFilters() {
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
         commodo consequat.
       </AccordionPanel>
-    </AccordionItem>
+    </>
   );
 }
 
