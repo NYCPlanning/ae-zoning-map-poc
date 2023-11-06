@@ -5,12 +5,6 @@
   text-align: center;
 }
 
-#location-search {
-  position: fixed;
-  top: 1.5rem;
-  left: 1.5rem;
-}
-
 .logo {
   width: 4.6875em;
   position: fixed;
@@ -61,4 +55,8 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.rotated {
+  transform: rotate(180deg);
 }
