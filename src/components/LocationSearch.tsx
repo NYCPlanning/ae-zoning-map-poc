@@ -4,11 +4,13 @@ import {
   AccordionItem,
   Box,
   Button,
+  Flex,
   FormControl,
   FormLabel,
   FormErrorMessage,
   Input,
   Select,
+  Spacer,
   Text,
 } from "@nycplanning/streetscape";
 
@@ -23,11 +25,7 @@ function LocationSearch() {
       {({ isExpanded }: { isExpanded: boolean }) => (
         <>
           <AccordionButton p={0} _hover={{ borderColor: "white" }}>
-            <Box
-              as="span"
-              display="flex"
-              flexDirection="row"
-              justifyContent={"space-between"}
+            <Flex
               width={"30rem"}
               mr="-4rem"
               bg="white"
@@ -37,6 +35,7 @@ function LocationSearch() {
               pr={2}
             >
               <Text textStyle="lead">Location Search</Text>
+              <Spacer />
               <svg
                 width="32"
                 height="32"
@@ -47,7 +46,7 @@ function LocationSearch() {
               >
                 <path d="M16 10.6667L24 18.6667H8L16 10.6667Z" fill="#4A5568" />
               </svg>
-            </Box>
+            </Flex>
           </AccordionButton>
           <AccordionPanel pt={0} pb={4}>
             <form>
