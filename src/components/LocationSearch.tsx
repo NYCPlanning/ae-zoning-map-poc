@@ -49,9 +49,14 @@ function LocationSearch() {
               </svg>
             </Box>
           </AccordionButton>
-          <AccordionPanel pt={6} pb={4}>
+          <AccordionPanel pt={0} pb={4}>
             <form>
-              <FormControl id="borough">
+              <FormControl
+                id="borough"
+                borderTop="1px solid"
+                borderColor="gray.400"
+                pt={4}
+              >
                 <FormLabel>Borough</FormLabel>
                 <Select placeholder="-Select-" variant="base" />
                 <FormErrorMessage>You must select a borough.</FormErrorMessage>
