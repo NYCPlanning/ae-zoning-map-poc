@@ -11,7 +11,6 @@ import {
   StreetscapeProvider,
   useMediaQuery,
   Accordion,
-  AccordionItem,
 } from "@nycplanning/streetscape";
 import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
@@ -88,11 +87,10 @@ function App() {
           left={6}
           allowMultiple
           width={"27.5rem"}
+          defaultIndex={[0, 1]}
         >
           <LocationSearch />
-          <AccordionItem bg="white">
-            <LayersFilters />
-          </AccordionItem>
+          <LayersFilters />
         </Accordion>
       </DeckGL>
     </StreetscapeProvider>
