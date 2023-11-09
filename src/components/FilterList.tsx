@@ -7,6 +7,7 @@ import {
   Spacer,
 } from "@nycplanning/streetscape";
 import ZoningDistrictFilters from "./ZoningDistrictFilters";
+import TaxLotFilters from "./TaxLotFilters";
 
 function FilterList() {
   return (
@@ -27,7 +28,9 @@ function FilterList() {
           <Spacer />
           <AccordionIcon />
         </AccordionButton>
-        <AccordionPanel p={0}>Tax lot filters</AccordionPanel>
+        <AccordionPanel p={0}>
+          <TaxLotFilters />
+        </AccordionPanel>
       </AccordionItem>
     </Accordion>
   );
