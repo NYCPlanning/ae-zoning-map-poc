@@ -22,4 +22,12 @@ module.exports = {
       version: "detect",
     },
   },
+  overrides: [
+    {
+      files: ["src/gen/**/*"],
+      rules: {
+        "@typescript-eslint/no-unused-vars": 0,
+      },
+    },
+  ],
 };

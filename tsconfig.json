@@ -16,7 +16,7 @@
 
     /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false, // Setting to false for now because of unused imports in Kubb generated code
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
