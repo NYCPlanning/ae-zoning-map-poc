@@ -13,8 +13,10 @@ import {
   Spacer,
   Text,
 } from "@nycplanning/streetscape";
+import { useGetBoroughs } from "../gen";
 
 function LocationSearch() {
+  const { data: boroughs } = useGetBoroughs();
   return (
     <AccordionItem
       bg="white"
@@ -61,7 +63,15 @@ function LocationSearch() {
                 pt={4}
               >
                 <FormLabel>Borough</FormLabel>
-                <Select placeholder="-Select-" variant="base" />
+                <Select placeholder="-Select-" variant="base">
+                  {boroughs !== undefined
+                    ? boroughs.map((borough) => (
+                        <option key={borough.id} value={borough.id}>
+                          {borough.title}
+                        </option>
+                      ))
+                    : null}
+                </Select>
                 <FormErrorMessage>You must select a borough.</FormErrorMessage>
               </FormControl>
 
