@@ -3,11 +3,13 @@ import Map, {
   ScaleControl,
   AttributionControl,
 } from "react-map-gl/maplibre";
+import { useState } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
 import DeckGL, { DeckGLProps } from "@deck.gl/react/typed";
 import { MapProvider } from "react-map-gl/maplibre";
 import { useMediaQuery, Accordion } from "@nycplanning/streetscape";
+import { TaxLot } from "./gen";
 import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
 
@@ -22,6 +24,8 @@ function updateViewState({ viewState }: DeckGLProps) {
 
 function App() {
   const isMobile = useMediaQuery("(max-width: 767px)")[0];
+  const [selectedTaxLot, setSelectedTaxLot] = useState<TaxLot | null>(null);
+  console.log(selectedTaxLot);
 
   // Viewport settings
   const INITIAL_VIEW_STATE = {
