@@ -76,25 +76,19 @@ function LocationSearch() {
               </FormControl>
 
               <Box flexDirection={"row"} display={"flex"} gap={5} pt={3} pb={5}>
-                <FormControl id="block">
-                  <Box>
-                    <FormLabel>Block</FormLabel>
-                    <Input placeholder="Placeholder Text" />
-                    <FormErrorMessage>
-                      You must select a block.
-                    </FormErrorMessage>
-                  </Box>
+                <FormControl id="block" flex="1">
+                  <FormLabel>Block</FormLabel>
+                  <Input placeholder="Placeholder Text" />
+                  <FormErrorMessage>You must select a block.</FormErrorMessage>
                 </FormControl>
-                <FormControl id="lot">
-                  <Box>
-                    <FormLabel>Lot</FormLabel>
-                    <Input placeholder="Placeholder Text" />
-                    <FormErrorMessage>You must select a lot.</FormErrorMessage>
-                  </Box>
+                <FormControl id="lot" flex="1">
+                  <FormLabel>Lot</FormLabel>
+                  <Input placeholder="Placeholder Text" />
+                  <FormErrorMessage>You must select a lot.</FormErrorMessage>
                 </FormControl>
               </Box>
 
-              <Button size="md" variant="primary">
+              <Button size="md" variant="primary" width="full">
                 Search
               </Button>
             </form>
