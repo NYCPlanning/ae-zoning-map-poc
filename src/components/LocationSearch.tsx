@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   AccordionButton,
   AccordionPanel,
@@ -13,10 +14,42 @@ import {
   Spacer,
   Text,
 } from "@nycplanning/streetscape";
-import { useGetBoroughs } from "../gen";
+import { useForm, Controller } from "react-hook-form";
+import { useGetBoroughs, useGetTaxLotByBbl } from "../gen";
+
+type FormData = {
+  borough: string;
+  block: string;
+  lot: string;
+};
 
 function LocationSearch() {
   const { data: boroughs } = useGetBoroughs();
+  const [searchedBbl, setSearchedBbl] = useState<string | null>(null);
+  const { handleSubmit, control } = useForm<FormData>({
+    defaultValues: {
+      block: "",
+      lot: "",
+    },
+  });
+  const { data: taxLot, isLoading } = useGetTaxLotByBbl(
+    searchedBbl === null ? "" : searchedBbl,
+    {
+      query: {
+        enabled: searchedBbl !== null,
+      },
+    },
+  );
+
+  const onSubmit = handleSubmit((formData) => {
+    setSearchedBbl(
+      `${formData.borough}${formData.block.padStart(
+        5,
+        "0",
+      )}${formData.lot.padStart(4, "0")}`,
+    );
+  });
+
   return (
     <AccordionItem
       bg="white"
@@ -55,7 +88,7 @@ function LocationSearch() {
             </Flex>
           </AccordionButton>
           <AccordionPanel pt={0} pb={4}>
-            <form>
+            <form onSubmit={onSubmit}>
               <FormControl
                 id="borough"
                 borderTop="1px solid"
@@ -63,32 +96,51 @@ function LocationSearch() {
                 pt={4}
               >
                 <FormLabel>Borough</FormLabel>
-                <Select placeholder="-Select-" variant="base">
-                  {boroughs !== undefined
-                    ? boroughs.map((borough) => (
-                        <option key={borough.id} value={borough.id}>
-                          {borough.title}
-                        </option>
-                      ))
-                    : null}
-                </Select>
+                <Controller
+                  name="borough"
+                  control={control}
+                  render={({ field }) => (
+                    <Select placeholder="-Select-" variant="base" {...field}>
+                      {boroughs !== undefined
+                        ? boroughs.map((borough) => (
+                            <option key={borough.id} value={borough.id}>
+                              {borough.title}
+                            </option>
+                          ))
+                        : null}
+                    </Select>
+                  )}
+                />
+
                 <FormErrorMessage>You must select a borough.</FormErrorMessage>
               </FormControl>
 
               <Box flexDirection={"row"} display={"flex"} gap={5} pt={3} pb={5}>
                 <FormControl id="block" flex="1">
                   <FormLabel>Block</FormLabel>
-                  <Input placeholder="Placeholder Text" />
+                  <Controller
+                    name="block"
+                    control={control}
+                    render={({ field }) => (
+                      <Input placeholder="Placeholder Text" {...field} />
+                    )}
+                  />
                   <FormErrorMessage>You must select a block.</FormErrorMessage>
                 </FormControl>
                 <FormControl id="lot" flex="1">
                   <FormLabel>Lot</FormLabel>
-                  <Input placeholder="Placeholder Text" />
+                  <Controller
+                    name="lot"
+                    control={control}
+                    render={({ field }) => (
+                      <Input placeholder="Placeholder Text" {...field} />
+                    )}
+                  />
                   <FormErrorMessage>You must select a lot.</FormErrorMessage>
                 </FormControl>
               </Box>
 
-              <Button size="md" variant="primary" width="full">
+              <Button size="md" variant="primary" width="full" type="submit">
                 Search
               </Button>
             </form>
