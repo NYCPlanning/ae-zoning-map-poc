@@ -10,8 +10,11 @@ import {
   VStack,
 } from "@nycplanning/streetscape";
 import LegendSquare from "./LegendSquare";
+import { useGetLandUses } from "../gen";
 
 function TaxLotFilters() {
+  const { data: landUseLegend } = useGetLandUses();
+
   return (
     <>
       <Flex alignSelf={"flex-start"}>
@@ -29,14 +32,14 @@ function TaxLotFilters() {
           </AccordionButton>
           <AccordionPanel>
             <VStack px={3} alignItems={"flex-start"}>
-              <Flex gap={2}>
-                <LegendSquare color="#FEFFA4" />
-                One & Two Family Buildings
-              </Flex>
-              <Flex gap={2}>
-                <LegendSquare color="#F0B347" />
-                Multi-Family Walk-Up Buildings
-              </Flex>
+              {landUseLegend !== undefined
+                ? landUseLegend.map((lu) => (
+                    <Flex gap={2} key={lu.id}>
+                      <LegendSquare color={lu.color} />
+                      {lu.description}
+                    </Flex>
+                  ))
+                : null}
             </VStack>
           </AccordionPanel>
         </AccordionItem>
