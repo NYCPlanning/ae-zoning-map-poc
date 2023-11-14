@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   AccordionButton,
   AccordionPanel,
@@ -23,26 +22,22 @@ type FormData = {
   lot: string;
 };
 
-function LocationSearch() {
+interface LocationSearchProps {
+  handleBblSearched: (bbl: string) => void;
+}
+
+function LocationSearch({ handleBblSearched }: LocationSearchProps) {
   const { data: boroughs } = useGetBoroughs();
-  const [searchedBbl, setSearchedBbl] = useState<string | null>(null);
   const { handleSubmit, control } = useForm<FormData>({
     defaultValues: {
       block: "",
       lot: "",
+      borough: "",
     },
   });
-  const { data: taxLot, isLoading } = useGetTaxLotByBbl(
-    searchedBbl === null ? "" : searchedBbl,
-    {
-      query: {
-        enabled: searchedBbl !== null,
-      },
-    },
-  );
 
   const onSubmit = handleSubmit((formData) => {
-    setSearchedBbl(
+    handleBblSearched(
       `${formData.borough}${formData.block.padStart(
         5,
         "0",

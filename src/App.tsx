@@ -9,9 +9,10 @@ import "./App.css";
 import DeckGL, { DeckGLProps } from "@deck.gl/react/typed";
 import { MapProvider } from "react-map-gl/maplibre";
 import { useMediaQuery, Accordion } from "@nycplanning/streetscape";
-import { TaxLot } from "./gen";
 import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
+import { TaxLotDetails } from "./components/TaxLotDetails";
+import { useGetTaxLotByBbl } from "./gen";
 
 function updateViewState({ viewState }: DeckGLProps) {
   viewState.longitude = Math.min(
@@ -24,8 +25,15 @@ function updateViewState({ viewState }: DeckGLProps) {
 
 function App() {
   const isMobile = useMediaQuery("(max-width: 767px)")[0];
-  const [selectedTaxLot, setSelectedTaxLot] = useState<TaxLot | null>(null);
-  console.log(selectedTaxLot);
+  const [selectedBbl, setSelectedBbl] = useState<string | null>(null);
+  const { data: taxLot } = useGetTaxLotByBbl(
+    selectedBbl === null ? "" : selectedBbl,
+    {
+      query: {
+        enabled: selectedBbl !== null,
+      },
+    },
+  );
 
   // Viewport settings
   const INITIAL_VIEW_STATE = {
@@ -88,8 +96,13 @@ function App() {
         width={"27.5rem"}
         defaultIndex={[0, 1]}
       >
-        <LocationSearch />
+        <LocationSearch
+          handleBblSearched={(bbl) => {
+            setSelectedBbl(bbl);
+          }}
+        />
         <LayersFilters />
+        <TaxLotDetails taxLot={taxLot === undefined ? null : taxLot} />
       </Accordion>
     </DeckGL>
   );
