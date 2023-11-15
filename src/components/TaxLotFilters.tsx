@@ -13,7 +13,7 @@ import LegendSquare from "./LegendSquare";
 import { useGetLandUses } from "../gen";
 
 function TaxLotFilters() {
-  const { data: landUseLegend } = useGetLandUses();
+  const { data: landUses } = useGetLandUses();
 
   return (
     <>
@@ -32,8 +32,8 @@ function TaxLotFilters() {
           </AccordionButton>
           <AccordionPanel>
             <VStack px={3} alignItems={"flex-start"}>
-              {landUseLegend !== undefined
-                ? landUseLegend.map((lu) => (
+              {landUses !== undefined
+                ? landUses.map((lu) => (
                     <Flex gap={2} key={lu.id}>
                       <LegendSquare color={lu.color} />
                       {lu.description}
