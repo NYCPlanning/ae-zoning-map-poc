@@ -13,7 +13,7 @@ import LegendSquare from "./LegendSquare";
 
 function ZoningDistrictFilters() {
   return (
-    <Accordion allowMultiple allowToggle>
+    <Accordion allowMultiple>
       <AccordionItem>
         <AccordionButton px={0} _hover={{ border: 0 }}>
           <Switch size="sm" pr={2} />

@@ -11,7 +11,7 @@ import TaxLotFilters from "./TaxLotFilters";
 
 function FilterList() {
   return (
-    <Accordion allowMultiple allowToggle>
+    <Accordion allowMultiple>
       <AccordionItem>
         <AccordionButton px={0} _hover={{ border: 0 }}>
           Zoning Districts
