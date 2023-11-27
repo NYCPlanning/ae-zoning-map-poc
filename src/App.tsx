@@ -12,6 +12,7 @@ import { useMediaQuery, Accordion } from "@nycplanning/streetscape";
 import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
 import { TaxLotDetails } from "./components/TaxLotDetails";
+import { taxLotsLayer, zoningDistrictsLayer } from "./layers";
 import { useGetTaxLotByBbl } from "./gen";
 
 function updateViewState({ viewState }: DeckGLProps) {
@@ -49,12 +50,13 @@ function App() {
   };
 
   return (
-    <DeckGL
-      initialViewState={INITIAL_VIEW_STATE}
-      controller={true}
-      onViewStateChange={updateViewState}
-    >
-      <MapProvider>
+    <MapProvider>
+      <DeckGL
+        initialViewState={INITIAL_VIEW_STATE}
+        controller={true}
+        onViewStateChange={updateViewState}
+        layers={[taxLotsLayer, zoningDistrictsLayer]}
+      >
         {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
         <Map
           initialViewState={INITIAL_VIEW_STATE}
@@ -85,26 +87,26 @@ function App() {
           alt="NYC Planning"
           src="https://raw.githubusercontent.com/NYCPlanning/dcp-logo/master/dcp_logo_772.png"
         />
-      </MapProvider>
 
-      <Accordion
-        id="map-selections"
-        position="fixed"
-        top={6}
-        left={6}
-        allowMultiple
-        width={"27.5rem"}
-        defaultIndex={[0, 1]}
-      >
-        <LocationSearch
-          handleBblSearched={(bbl) => {
-            setSelectedBbl(bbl);
-          }}
-        />
-        <LayersFilters />
-        <TaxLotDetails taxLot={taxLot === undefined ? null : taxLot} />
-      </Accordion>
-    </DeckGL>
+        <Accordion
+          id="map-selections"
+          position="fixed"
+          top={6}
+          left={6}
+          allowMultiple
+          width={"27.5rem"}
+          defaultIndex={[0, 1]}
+        >
+          <LocationSearch
+            handleBblSearched={(bbl) => {
+              setSelectedBbl(bbl);
+            }}
+          />
+          <LayersFilters />
+          <TaxLotDetails taxLot={taxLot === undefined ? null : taxLot} />
+        </Accordion>
+      </DeckGL>
+    </MapProvider>
   );
 }
 
