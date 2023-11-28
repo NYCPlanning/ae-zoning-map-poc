@@ -20,7 +20,7 @@ function ZoningDistrictFilters() {
   const { data: classes } = useGetZoningDistrictClasses();
 
   return (
-    <Accordion allowMultiple allowToggle>
+    <Accordion allowMultiple>
       {classCategories
         ?.sort((a, b) => a.category.localeCompare(b.category))
         .map((category) => (
