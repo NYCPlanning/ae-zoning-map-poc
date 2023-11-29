@@ -12,8 +12,10 @@ import { useMediaQuery, Accordion } from "@nycplanning/streetscape";
 import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
 import { TaxLotDetails } from "./components/TaxLotDetails";
-import { taxLotsLayer, zoningDistrictsLayer } from "./layers";
+import { taxLotsLayer, processColors } from "./layers";
 import { useGetTaxLotByBbl } from "./gen";
+import { useGetZoningDistrictClasses } from "./gen/hooks/useGetZoningDistrictClasses";
+import { MVTLayer } from "@deck.gl/geo-layers/typed";
 
 function updateViewState({ viewState }: DeckGLProps) {
   viewState.longitude = Math.min(
@@ -36,15 +38,35 @@ function App() {
     },
   );
 
+  const colorKey = processColors(useGetZoningDistrictClasses().data);
+
+  const zoningDistrictsLayer = new MVTLayer({
+    id: "zoningDistricts",
+    // data: `${import.meta.env.VITE_ZONING_API_URL}/zoning-districts/{z}/{x}/{y}.pbf`,
+    data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/zoning_district/{z}/{x}/{y}.pbf`,
+    getLineColor: [192, 0, 192],
+    visible: true,
+    getFillColor: (f: any) => {
+      return (
+        colorKey[f.properties.district.match(/\w\d*/)[0]] || [
+          192,
+          192,
+          192,
+          [1],
+        ]
+      );
+    },
+  });
+
   // Viewport settings
   const INITIAL_VIEW_STATE = {
     longitude: -74.0008,
     latitude: 40.7018,
-    zoom: 11,
+    zoom: 10,
     pitch: 0,
     bearing: 0,
-    maxZoom: 20,
-    minZoom: 9.5,
+    maxZoom: 11,
+    minZoom: 10,
     minPitch: 0,
     maxPitch: 0,
   };

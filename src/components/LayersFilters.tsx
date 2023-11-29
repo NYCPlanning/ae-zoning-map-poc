@@ -59,10 +59,11 @@ function LayersFilters() {
                 pt={4}
                 justify="center"
                 gap={6}
+                // onClick={handleZoningDistrictsToggle}
               >
-                <VStack width={20}>
+                <VStack width={20} justify="center">
                   <img src="./zoning_districts.jpg" />
-                  <Text>Zoning Districts</Text>
+                  <Text align="center">Zoning Districts</Text>
                 </VStack>
                 <VStack width={20}>
                   <img src="./tax_lots.jpg" />
