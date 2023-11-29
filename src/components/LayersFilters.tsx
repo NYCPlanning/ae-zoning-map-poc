@@ -12,7 +12,11 @@ import {
 } from "@nycplanning/streetscape";
 import FilterList from "./FilterList";
 
-function LayersFilters() {
+export interface VisibilityProps {
+  toggleZoningDistricts: Function
+}
+
+function LayersFilters({toggleZoningDistricts}: VisibilityProps) {
   return (
     <AccordionItem
       bg="white"
@@ -61,7 +65,7 @@ function LayersFilters() {
                 gap={6}
                 // onClick={handleZoningDistrictsToggle}
               >
-                <VStack width={20} justify="center">
+                <VStack width={20} justify="center"  onClick={toggleZoningDistricts}>
                   <img src="./zoning_districts.jpg" />
                   <Text align="center">Zoning Districts</Text>
                 </VStack>
