@@ -71,16 +71,52 @@ function LayersFilters() {
                 <VStack
                   width={20}
                   justify="center"
+                  alignSelf={"flex-start"}
                   onClick={() =>
                     updateZoningDistrictsVisibility(zoningDistricts)
                   }
                 >
-                  <img src="./zoning_districts.jpg" />
-                  <Text align="center">Zoning Districts</Text>
+                  <Box
+                    background={
+                      "url('./zoning_districts.png') 50% / cover no-repeat;"
+                    }
+                    width={20}
+                    height={20}
+                    borderRadius={"12px"}
+                    border={zoningDistricts ? "2px solid" : "0"}
+                    borderColor={"primary.500"}
+                  />
+                  <Text
+                    align="center"
+                    color={zoningDistricts ? "primary.500" : "gray.600"}
+                    fontWeight={zoningDistricts ? "500" : "400"}
+                  >
+                    Zoning Districts
+                  </Text>
                 </VStack>
-                <VStack width={20}>
-                  <img src="./tax_lots.jpg" />
-                  <Text>Tax Lots</Text>
+                <VStack
+                  width={20}
+                  justify="center"
+                  alignSelf={"flex-start"}
+                  onClick={() =>
+                    updateZoningDistrictsVisibility(zoningDistricts)
+                  }
+                >
+                  <Box
+                    background={"url('./tax_lots.png') 50% / cover no-repeat;"}
+                    width={20}
+                    height={20}
+                    borderRadius={"12px"}
+                    border={zoningDistricts ? "2px solid" : "0"}
+                    borderColor={"primary.500"}
+                  />
+                  <Text
+                    align="center"
+                    color={zoningDistricts ? "primary.500" : "gray.600"}
+                    fontWeight={zoningDistricts ? "500" : "400"}
+                  >
+                    Tax Lots
+                  </Text>
                 </VStack>
               </Flex>
 
