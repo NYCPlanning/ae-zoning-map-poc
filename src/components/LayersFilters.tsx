@@ -66,7 +66,6 @@ function LayersFilters() {
                 pt={4}
                 justify="center"
                 gap={6}
-                // onClick={handleZoningDistrictsToggle}
               >
                 <VStack
                   width={20}
