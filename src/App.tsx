@@ -3,7 +3,7 @@ import Map, {
   ScaleControl,
   AttributionControl,
 } from "react-map-gl/maplibre";
-import { useState } from "react";
+import { useState, useReducer } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
 import DeckGL, { DeckGLProps } from "@deck.gl/react/typed";
@@ -16,6 +16,7 @@ import { taxLotsLayer, processColors } from "./layers";
 import { useGetTaxLotByBbl } from "./gen";
 import { useGetZoningDistrictClasses } from "./gen/hooks/useGetZoningDistrictClasses";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
+import { MapCtxt, mapReducer, initialMapState, mapActions } from "./state";
 
 function updateViewState({ viewState }: DeckGLProps) {
   viewState.longitude = Math.min(
@@ -37,7 +38,10 @@ function App() {
       },
     },
   );
-  const [zoningDistrictVisibility, setZoningDistrictVisibility] = useState<boolean>(false);
+  // const [zoningDistrictVisibility, setZoningDistrictVisibility] = useState<boolean>(false);
+
+  const [mapState, mapDispatch] = useReducer(mapReducer, initialMapState);
+  const mapActionsDispatch = mapActions(mapDispatch);
 
   const colorKey = processColors(useGetZoningDistrictClasses().data);
 
@@ -46,7 +50,7 @@ function App() {
     // data: `${import.meta.env.VITE_ZONING_API_URL}/zoning-districts/{z}/{x}/{y}.pbf`,
     data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/zoning_district/{z}/{x}/{y}.pbf`,
     getLineColor: [192, 0, 192],
-    visible: zoningDistrictVisibility,
+    visible: mapState.zoningDistricts,
     getFillColor: (f: any) => {
       return (
         colorKey[f.properties.district.match(/\w\d*/)[0]] || [
@@ -74,64 +78,63 @@ function App() {
 
   return (
     <MapProvider>
-      <DeckGL
-        initialViewState={INITIAL_VIEW_STATE}
-        controller={true}
-        onViewStateChange={updateViewState}
-        layers={[taxLotsLayer, zoningDistrictsLayer]}
-      >
-        {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
-        <Map
+      <MapCtxt.Provider value={{ mapState, mapActionsDispatch }}>
+        <DeckGL
           initialViewState={INITIAL_VIEW_STATE}
-          style={{ width: "100vw", height: "100vh" }}
-          mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
-          // disable the default attribution
-          attributionControl={false}
+          controller={true}
+          onViewStateChange={updateViewState}
+          layers={[taxLotsLayer, zoningDistrictsLayer]}
         >
-          <AttributionControl compact={isMobile ? true : false} />
+          {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
+          <Map
+            initialViewState={INITIAL_VIEW_STATE}
+            style={{ width: "100vw", height: "100vh" }}
+            mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
+            // disable the default attribution
+            attributionControl={false}
+          >
+            <AttributionControl compact={isMobile ? true : false} />
 
-          <NavigationControl
-            position={isMobile ? "top-right" : "bottom-right"}
-            showCompass={true}
-            showZoom={true}
-          />
-
-          {isMobile ? null : (
-            <ScaleControl
-              position="bottom-left"
-              maxWidth={200}
-              unit="imperial"
+            <NavigationControl
+              position={isMobile ? "top-right" : "bottom-right"}
+              showCompass={true}
+              showZoom={true}
             />
-          )}
-        </Map>
 
-        <img
-          className="logo"
-          alt="NYC Planning"
-          src="https://raw.githubusercontent.com/NYCPlanning/dcp-logo/master/dcp_logo_772.png"
-        />
+            {isMobile ? null : (
+              <ScaleControl
+                position="bottom-left"
+                maxWidth={200}
+                unit="imperial"
+              />
+            )}
+          </Map>
 
-        <Accordion
-          id="map-selections"
-          position="fixed"
-          top={6}
-          left={6}
-          allowMultiple
-          width={"27.5rem"}
-          defaultIndex={[0, 1]}
-        >
-          <LocationSearch
-            handleBblSearched={(bbl) => {
-              setSelectedBbl(bbl);
-            }}
-          />
-          <LayersFilters
-            toggleZoningDistricts={() => setZoningDistrictVisibility(!zoningDistrictVisibility)}
+          <img
+            className="logo"
+            alt="NYC Planning"
+            src="https://raw.githubusercontent.com/NYCPlanning/dcp-logo/master/dcp_logo_772.png"
           />
 
-          <TaxLotDetails taxLot={taxLot === undefined ? null : taxLot} />
-        </Accordion>
-      </DeckGL>
+          <Accordion
+            id="map-selections"
+            position="fixed"
+            top={6}
+            left={6}
+            allowMultiple
+            width={"27.5rem"}
+            defaultIndex={[0, 1]}
+          >
+            <LocationSearch
+              handleBblSearched={(bbl) => {
+                setSelectedBbl(bbl);
+              }}
+            />
+            <LayersFilters />
+            <TaxLotDetails taxLot={taxLot === undefined ? null : taxLot} />
+          </Accordion>
+        </DeckGL>
+      </MapCtxt.Provider>
     </MapProvider>
   );
 }
