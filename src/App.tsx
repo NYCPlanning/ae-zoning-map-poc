@@ -37,6 +37,7 @@ function App() {
       },
     },
   );
+  const [zoningDistrictVisibility, setZoningDistrictVisibility] = useState<boolean>(false);
 
   const colorKey = processColors(useGetZoningDistrictClasses().data);
 
@@ -45,7 +46,7 @@ function App() {
     // data: `${import.meta.env.VITE_ZONING_API_URL}/zoning-districts/{z}/{x}/{y}.pbf`,
     data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/zoning_district/{z}/{x}/{y}.pbf`,
     getLineColor: [192, 0, 192],
-    visible: true,
+    visible: zoningDistrictVisibility,
     getFillColor: (f: any) => {
       return (
         colorKey[f.properties.district.match(/\w\d*/)[0]] || [
@@ -124,7 +125,10 @@ function App() {
               setSelectedBbl(bbl);
             }}
           />
-          <LayersFilters />
+          <LayersFilters
+            toggleZoningDistricts={() => setZoningDistrictVisibility(!zoningDistrictVisibility)}
+          />
+
           <TaxLotDetails taxLot={taxLot === undefined ? null : taxLot} />
         </Accordion>
       </DeckGL>
