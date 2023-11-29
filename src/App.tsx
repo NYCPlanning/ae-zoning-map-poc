@@ -67,11 +67,11 @@ function App() {
   const INITIAL_VIEW_STATE = {
     longitude: -74.0008,
     latitude: 40.7018,
-    zoom: 10,
+    zoom: 11,
     pitch: 0,
     bearing: 0,
-    maxZoom: 11,
-    minZoom: 10,
+    maxZoom: 20,
+    minZoom: 9.5,
     minPitch: 0,
     maxPitch: 0,
   };
