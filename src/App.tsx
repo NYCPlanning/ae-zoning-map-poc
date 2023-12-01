@@ -16,6 +16,7 @@ import { taxLotsLayer, processColors } from "./layers";
 import { useGetTaxLotByBbl } from "./gen";
 import { useGetZoningDistrictClasses } from "./gen/hooks/useGetZoningDistrictClasses";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
+import { useStore } from "./store";
 
 function updateViewState({ viewState }: DeckGLProps) {
   viewState.longitude = Math.min(
@@ -37,7 +38,10 @@ function App() {
       },
     },
   );
-  const [zoningDistrictVisibility, setZoningDistrictVisibility] = useState<boolean>(false);
+  // const [zoningDistrictVisibility, setZoningDistrictVisibility] = useState<boolean>(false);
+  const zoningDistrictVisibility = useStore(
+    (state) => state.zoningDistrictVisibility,
+  );
 
   const colorKey = processColors(useGetZoningDistrictClasses().data);
 
@@ -125,9 +129,7 @@ function App() {
               setSelectedBbl(bbl);
             }}
           />
-          <LayersFilters
-            toggleZoningDistricts={() => setZoningDistrictVisibility(!zoningDistrictVisibility)}
-          />
+          <LayersFilters />
 
           <TaxLotDetails taxLot={taxLot === undefined ? null : taxLot} />
         </Accordion>
