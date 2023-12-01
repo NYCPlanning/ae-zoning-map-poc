@@ -11,14 +11,19 @@ import {
   VStack,
 } from "@nycplanning/streetscape";
 import FilterList from "./FilterList";
-import { MapCtxt } from "../state";
+import { MapCtxt, TOP_LEVEL_LAYERS } from "../state";
 import { useContext } from "react";
 
 function LayersFilters() {
   const {
-    mapState: { zoningDistricts },
-    mapActionsDispatch: { updateZoningDistrictsVisibility },
+    mapState: { activeLayers },
+    mapActionsDispatch: { toggleLayerActive },
   } = useContext(MapCtxt);
+
+  const isZoningActive = activeLayers.has(TOP_LEVEL_LAYERS.ZONING);
+  const isTaxLotActive = activeLayers.has(TOP_LEVEL_LAYERS.TAX_LOT);
+  const toggleZoningActive = () => toggleLayerActive(TOP_LEVEL_LAYERS.ZONING);
+  const toggleTaxLotActive = () => toggleLayerActive(TOP_LEVEL_LAYERS.TAX_LOT);
 
   return (
     <AccordionItem
@@ -71,9 +76,7 @@ function LayersFilters() {
                   width={20}
                   justify="center"
                   alignSelf={"flex-start"}
-                  onClick={() =>
-                    updateZoningDistrictsVisibility(zoningDistricts)
-                  }
+                  onClick={toggleZoningActive}
                 >
                   <Box
                     background={
@@ -82,13 +85,13 @@ function LayersFilters() {
                     width={20}
                     height={20}
                     borderRadius={"12px"}
-                    border={zoningDistricts ? "2px solid" : "0"}
+                    border={isZoningActive ? "2px solid" : "0"}
                     borderColor={"primary.500"}
                   />
                   <Text
                     align="center"
-                    color={zoningDistricts ? "primary.500" : "gray.600"}
-                    fontWeight={zoningDistricts ? "500" : "400"}
+                    color={isZoningActive ? "primary.500" : "gray.600"}
+                    fontWeight={isZoningActive ? "500" : "400"}
                   >
                     Zoning Districts
                   </Text>
@@ -97,22 +100,20 @@ function LayersFilters() {
                   width={20}
                   justify="center"
                   alignSelf={"flex-start"}
-                  onClick={() =>
-                    updateZoningDistrictsVisibility(zoningDistricts)
-                  }
+                  onClick={toggleTaxLotActive}
                 >
                   <Box
                     background={"url('./tax_lots.png') 50% / cover no-repeat;"}
                     width={20}
                     height={20}
                     borderRadius={"12px"}
-                    border={zoningDistricts ? "2px solid" : "0"}
+                    border={isTaxLotActive ? "2px solid" : "0"}
                     borderColor={"primary.500"}
                   />
                   <Text
                     align="center"
-                    color={zoningDistricts ? "primary.500" : "gray.600"}
-                    fontWeight={zoningDistricts ? "500" : "400"}
+                    color={isTaxLotActive ? "primary.500" : "gray.600"}
+                    fontWeight={isTaxLotActive ? "500" : "400"}
                   >
                     Tax Lots
                   </Text>

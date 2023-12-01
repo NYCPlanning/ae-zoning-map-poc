@@ -16,7 +16,8 @@ import { taxLotsLayer, processColors } from "./layers";
 import { useGetTaxLotByBbl } from "./gen";
 import { useGetZoningDistrictClasses } from "./gen/hooks/useGetZoningDistrictClasses";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
-import { MapCtxt, mapReducer, initialMapState, mapActions } from "./state";
+import { MapCtxt, mapReducer, initialMapState, mapActions, TOP_LEVEL_LAYERS } from "./state";
+
 
 function updateViewState({ viewState }: DeckGLProps) {
   viewState.longitude = Math.min(
@@ -38,7 +39,6 @@ function App() {
       },
     },
   );
-  // const [zoningDistrictVisibility, setZoningDistrictVisibility] = useState<boolean>(false);
 
   const [mapState, mapDispatch] = useReducer(mapReducer, initialMapState);
   const mapActionsDispatch = mapActions(mapDispatch);
@@ -46,11 +46,11 @@ function App() {
   const colorKey = processColors(useGetZoningDistrictClasses().data);
 
   const zoningDistrictsLayer = new MVTLayer({
-    id: "zoningDistricts",
+    id: TOP_LEVEL_LAYERS.ZONING,
     // data: `${import.meta.env.VITE_ZONING_API_URL}/zoning-districts/{z}/{x}/{y}.pbf`,
     data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/zoning_district/{z}/{x}/{y}.pbf`,
     getLineColor: [192, 0, 192],
-    visible: mapState.zoningDistricts,
+    visible: mapState.activeLayers.has(TOP_LEVEL_LAYERS.ZONING),
     getFillColor: (f: any) => {
       return (
         colorKey[f.properties.district.match(/\w\d*/)[0]] || [

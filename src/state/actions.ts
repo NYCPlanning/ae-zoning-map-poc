@@ -3,10 +3,10 @@ import { MapAction, MAP_ACTION_TYPE } from "./types";
 
 export const mapActions = (dispatch: Dispatch<MapAction>) => {
   return {
-    updateZoningDistrictsVisibility: (visibility: boolean) =>
+    toggleLayerActive: (layer: string) =>
       dispatch({
-        type: MAP_ACTION_TYPE.UPDATE_ZONING_DISTRICTS_LAYER_VISIBILITY,
-        payload: visibility,
+        type: MAP_ACTION_TYPE.TOGGLE_LAYER_ACTIVE,
+        payload: layer,
       }),
   };
 };

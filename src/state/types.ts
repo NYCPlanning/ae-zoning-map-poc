@@ -1,23 +1,18 @@
 export interface MapState {
-  /**
-   * @description The visibility of the zoning map layer
-   * @type boolean
-   * @example false
-   */
-  zoningDistricts: boolean;
+  activeLayers: Set<string>;
 }
 
 export enum MAP_ACTION_TYPE {
-  UPDATE_ZONING_DISTRICTS_LAYER_VISIBILITY = "update_zoning_districts_layer_visibility",
+  TOGGLE_LAYER_ACTIVE = "toggle_layer_active",
 }
 
 export type MapAction = {
-  type: MAP_ACTION_TYPE.UPDATE_ZONING_DISTRICTS_LAYER_VISIBILITY;
-  payload: MapState["zoningDistricts"];
+  type: MAP_ACTION_TYPE.TOGGLE_LAYER_ACTIVE;
+  payload: string;
 };
 
 export type MapActionsDispatch = {
-  updateZoningDistrictsVisibility: (zoningDistricts: boolean) => void;
+  toggleLayerActive: (layer: string) => void;
 };
 
 export type MapCtxtType = {
