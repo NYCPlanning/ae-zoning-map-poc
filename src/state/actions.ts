@@ -8,5 +8,9 @@ export const mapActions = (dispatch: Dispatch<MapAction>) => {
         type: MAP_ACTION_TYPE.TOGGLE_LAYER_ACTIVE,
         payload: layer,
       }),
+    toggleZoningCategoryActive: (zoningCategory: string) => dispatch({
+      type: MAP_ACTION_TYPE.TOGGLE_ZONING_CATEGORY_ACTIVE,
+      payload: zoningCategory
+    })
   };
 };

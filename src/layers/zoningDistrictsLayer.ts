@@ -1,56 +1,45 @@
-export function hexToRgba(hex: string) {
-  let r, g, b, a;
-  hex = hex.replace("#", "");
-  if (3 === hex.length) {
-    r = hex.charAt(0);
-    g = hex.charAt(1);
-    b = hex.charAt(2);
-  } else if (4 === hex.length) {
-    r = hex.charAt(0);
-    g = hex.charAt(1);
-    b = hex.charAt(2);
-    a = hex.charAt(3);
-  } else if (6 === hex.length) {
-    r = hex.substring(0, 2);
-    g = hex.substring(2, 4);
-    b = hex.substring(4, 6);
-  } else if (8 === hex.length) {
-    r = hex.substring(0, 2);
-    g = hex.substring(2, 4);
-    b = hex.substring(4, 6);
-    a = hex.substring(6, 8);
-  } else {
-    return "";
-  }
-  if ("undefined" === typeof a) {
-    a = "ff";
-  }
-  if (1 === r.length) {
-    r += r;
-  }
-  if (1 === g.length) {
-    g += g;
-  }
-  if (1 === b.length) {
-    b += b;
-  }
-  if (1 === a.length) {
-    a += a;
-  }
-  r = parseInt(r, 16);
-  g = parseInt(g, 16);
-  b = parseInt(b, 16);
-  a = parseInt(a, 16) / 255;
-  return [r, g, b, [a]];
-}
+import { MVTLayer } from "@deck.gl/geo-layers/typed";
+import { MapCtxt, TOP_LEVEL_LAYERS } from "../state";
+import { useGetAllZoningDistrictClasses, useGetZoningDistrictClassCategoryColors, useGetZoningDistrictClasses } from "../gen";
+import { useContext } from "react";
+import { processColors } from "./utils";
 
-export function processColors(colors: any | null) {
-  if (colors == null) {
-    return null;
-  }
-  const colorsObj: any = {};
-  for (let i = 0; i < colors.length; i++) {
-    colorsObj[colors[i].id] = hexToRgba(colors[i].color);
-  }
-  return colorsObj;
-}
+export function zoningDistrictsLayer () { 
+  const { data: categories } = useGetZoningDistrictClassCategoryColors();
+  const { data: classes } = useGetAllZoningDistrictClasses();
+  
+  const { mapState:{  activeLayers, activeZoningCategories }} = useContext(MapCtxt);
+
+  return new MVTLayer({
+    id: TOP_LEVEL_LAYERS.ZONING,
+    data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/zoning_district/{z}/{x}/{y}.pbf`,
+    // colorFormat: 'RGBA',
+    getLineColor: [192, 0, 192, 1],
+    visible: activeLayers.has(TOP_LEVEL_LAYERS.ZONING),
+    getFillColor: (f: { properties: {
+      layerName: | "build_main.ae_tileset_zoningdistrict_fill"
+      commercial?: string | null,
+      manufacturing?: string | null,
+      residential?: string | null,
+    } | {
+      layerName: "build_main.ae_tileset_zoningdistrict_label" 
+    }}) => {
+
+      //  if (activeZoningCategories.size === 0) return null
+      console.info('properties', f);
+      if (f.properties.layerName === 'build_main.ae_tileset_zoningdistrict_label') return [0, 0, 0, 252]
+      
+
+      const { commercial, manufacturing, residential } = f.properties;
+      //  console.log('commercial', commercial);
+      //  console.log('manufacturing', manufacturing);
+      //  console.log('residential', residential);
+      //  return [252, 252, 252, 0];
+      return [200, 200, 200, 252];
+      // console.info(activeZoningCategories.keys().next().value)
+    },
+    updateTriggers: {
+      visible: [activeLayers]
+    }
+  })
+};

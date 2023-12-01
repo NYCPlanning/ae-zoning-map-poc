@@ -12,11 +12,9 @@ import { useMediaQuery, Accordion } from "@nycplanning/streetscape";
 import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
 import { TaxLotDetails } from "./components/TaxLotDetails";
-import { taxLotsLayer, processColors } from "./layers";
+import { taxLotsLayer, zoningDistrictsLayer } from "./layers";
 import { useGetTaxLotByBbl } from "./gen";
-import { useGetZoningDistrictClasses } from "./gen/hooks/useGetZoningDistrictClasses";
-import { MVTLayer } from "@deck.gl/geo-layers/typed";
-import { MapCtxt, mapReducer, initialMapState, mapActions, TOP_LEVEL_LAYERS } from "./state";
+import { MapCtxt, mapReducer, initialMapState, mapActions } from "./state";
 
 
 function updateViewState({ viewState }: DeckGLProps) {
@@ -43,25 +41,6 @@ function App() {
   const [mapState, mapDispatch] = useReducer(mapReducer, initialMapState);
   const mapActionsDispatch = mapActions(mapDispatch);
 
-  const colorKey = processColors(useGetZoningDistrictClasses().data);
-
-  const zoningDistrictsLayer = new MVTLayer({
-    id: TOP_LEVEL_LAYERS.ZONING,
-    // data: `${import.meta.env.VITE_ZONING_API_URL}/zoning-districts/{z}/{x}/{y}.pbf`,
-    data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/zoning_district/{z}/{x}/{y}.pbf`,
-    getLineColor: [192, 0, 192],
-    visible: mapState.activeLayers.has(TOP_LEVEL_LAYERS.ZONING),
-    getFillColor: (f: any) => {
-      return (
-        colorKey[f.properties.district.match(/\w\d*/)[0]] || [
-          192,
-          192,
-          192,
-          [1],
-        ]
-      );
-    },
-  });
 
   // Viewport settings
   const INITIAL_VIEW_STATE = {
@@ -83,7 +62,7 @@ function App() {
           initialViewState={INITIAL_VIEW_STATE}
           controller={true}
           onViewStateChange={updateViewState}
-          layers={[taxLotsLayer, zoningDistrictsLayer]}
+          layers={[taxLotsLayer(), zoningDistrictsLayer()]}
         >
           {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
           <Map
