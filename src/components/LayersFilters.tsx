@@ -11,17 +11,15 @@ import {
   VStack,
 } from "@nycplanning/streetscape";
 import FilterList from "./FilterList";
-import { MouseEvent } from "react";
+import { useStore } from "../store";
 
-export interface VisibilityProps {
-  toggleZoningDistricts: Function
-}
-
-function LayersFilters({toggleZoningDistricts}: VisibilityProps) {
-  const handleMouseEvent = (e: MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    toggleZoningDistricts()
-  }
+function LayersFilters() {
+  const zoningDistrictVisibility = useStore(
+    (state) => state.zoningDistrictVisibility,
+  );
+  const toggleZoningDistrictVisibility = useStore(
+    (state) => state.toggleZoningDistrictVisibility,
+  );
 
   return (
     <AccordionItem
@@ -71,7 +69,11 @@ function LayersFilters({toggleZoningDistricts}: VisibilityProps) {
                 gap={6}
                 // onClick={handleZoningDistrictsToggle}
               >
-                <VStack width={20} justify="center"  onClick={handleMouseEvent}>
+                <VStack
+                  width={20}
+                  justify="center"
+                  onClick={toggleZoningDistrictVisibility}
+                >
                   <img src="./zoning_districts.jpg" />
                   <Text align="center">Zoning Districts</Text>
                 </VStack>
