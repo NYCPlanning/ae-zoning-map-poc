@@ -14,11 +14,15 @@ import FilterList from "./FilterList";
 import { useStore } from "../store";
 
 function LayersFilters() {
-  const zoningDistrictVisibility = useStore(
-    (state) => state.zoningDistrictVisibility,
+  const allZoningDistrictsVisibility = useStore(
+    (state) => state.allZoningDistrictsVisibility,
   );
-  const toggleZoningDistrictVisibility = useStore(
-    (state) => state.toggleZoningDistrictVisibility,
+  const toggleAllZoningDistrictsVisibility = useStore(
+    (state) => state.toggleAllZoningDistrictsVisibility,
+  );
+  const allTaxLotsVisibility = useStore((state) => state.allTaxLotsVisibility);
+  const toggleAllTaxLotsVisibility = useStore(
+    (state) => state.toggleAllTaxLotsVisibility,
   );
 
   return (
@@ -67,19 +71,54 @@ function LayersFilters() {
                 pt={4}
                 justify="center"
                 gap={6}
-                // onClick={handleZoningDistrictsToggle}
               >
                 <VStack
                   width={20}
                   justify="center"
-                  onClick={toggleZoningDistrictVisibility}
+                  alignSelf={"flex-start"}
+                  onClick={toggleAllZoningDistrictsVisibility}
                 >
-                  <img src="./zoning_districts.jpg" />
-                  <Text align="center">Zoning Districts</Text>
+                  <Box
+                    background={
+                      "url('./zoning_districts.png') 50% / cover no-repeat;"
+                    }
+                    width={20}
+                    height={20}
+                    borderRadius={"12px"}
+                    border={allZoningDistrictsVisibility ? "2px solid" : "0"}
+                    borderColor={"primary.500"}
+                  />
+                  <Text
+                    align="center"
+                    color={
+                      allZoningDistrictsVisibility ? "primary.500" : "gray.600"
+                    }
+                    fontWeight={allZoningDistrictsVisibility ? "500" : "400"}
+                  >
+                    Zoning Districts
+                  </Text>
                 </VStack>
-                <VStack width={20}>
-                  <img src="./tax_lots.jpg" />
-                  <Text>Tax Lots</Text>
+                <VStack
+                  width={20}
+                  justify="center"
+                  alignSelf={"flex-start"}
+                  onClick={toggleAllTaxLotsVisibility}
+                >
+                  <Box
+                    background={"url('./tax_lots.png') 50% / cover no-repeat;"}
+                    width={20}
+                    height={20}
+                    borderRadius={"12px"}
+                    border={allTaxLotsVisibility ? "2px solid" : "0"}
+                    borderColor={"primary.500"}
+                  />
+                  <Text
+                    align="center"
+                    color={allTaxLotsVisibility ? "primary.500" : "gray.600"}
+                    fontWeight={allTaxLotsVisibility ? "500" : "400"}
+                  >
+                    Tax Lots
+                  </Text>
                 </VStack>
               </Flex>
 
