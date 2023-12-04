@@ -1,14 +1,21 @@
 import { create } from "zustand";
 
 export type Store = {
-  zoningDistrictVisibility: boolean;
-  toggleZoningDistrictVisibility: () => void;
+  allZoningDistrictsVisibility: boolean;
+  toggleAllZoningDistrictsVisibility: () => void;
+  allTaxLotsVisibility: boolean;
+  toggleAllTaxLotsVisibility: () => void;
 };
 
 export const useStore = create<Store>()((set) => ({
-  zoningDistrictVisibility: false,
-  toggleZoningDistrictVisibility: () =>
+  allZoningDistrictsVisibility: false,
+  toggleAllZoningDistrictsVisibility: () =>
     set((state) => ({
-      zoningDistrictVisibility: !state.zoningDistrictVisibility,
+      allZoningDistrictsVisibility: !state.allZoningDistrictsVisibility,
+    })),
+  allTaxLotsVisibility: false,
+  toggleAllTaxLotsVisibility: () =>
+    set((state) => ({
+      allTaxLotsVisibility: !state.allTaxLotsVisibility,
     })),
 }));

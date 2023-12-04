@@ -38,19 +38,19 @@ function App() {
       },
     },
   );
-  // const [zoningDistrictVisibility, setZoningDistrictVisibility] = useState<boolean>(false);
-  const zoningDistrictVisibility = useStore(
-    (state) => state.zoningDistrictVisibility,
+
+  const allZoningDistrictsVisibility = useStore(
+    (state) => state.allZoningDistrictsVisibility,
   );
 
   const colorKey = processColors(useGetZoningDistrictClasses().data);
 
-  const zoningDistrictsLayer = new MVTLayer({
+  const allZoningDistrictsLayer = new MVTLayer({
     id: "zoningDistricts",
     // data: `${import.meta.env.VITE_ZONING_API_URL}/zoning-districts/{z}/{x}/{y}.pbf`,
     data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/zoning_district/{z}/{x}/{y}.pbf`,
     getLineColor: [192, 0, 192],
-    visible: zoningDistrictVisibility,
+    visible: allZoningDistrictsVisibility,
     getFillColor: (f: any) => {
       return (
         colorKey[f.properties.district.match(/\w\d*/)[0]] || [
@@ -82,7 +82,7 @@ function App() {
         initialViewState={INITIAL_VIEW_STATE}
         controller={true}
         onViewStateChange={updateViewState}
-        layers={[taxLotsLayer, zoningDistrictsLayer]}
+        layers={[taxLotsLayer, allZoningDistrictsLayer]}
       >
         {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
         <Map
