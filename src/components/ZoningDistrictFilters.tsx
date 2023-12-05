@@ -14,11 +14,24 @@ import {
   useGetZoningDistrictClassCategoryColors,
   useGetZoningDistrictClasses,
 } from "../gen";
+import { useStore } from "../store";
 
 function ZoningDistrictFilters() {
   const { data: classCategories } = useGetZoningDistrictClassCategoryColors();
   const { data: classes } = useGetZoningDistrictClasses();
 
+  const visibleZoningDistrictClasses = useStore(
+    (state) => state.visibleZoningDistrictClasses,
+  );
+  const toggleZoningDistrictClassVisibility = useStore(
+    (state) => state.toggleZoningDistrictClassVisibility,
+  );
+  const visibleZoningDistrictCategories = useStore(
+    (state) => state.visibleZoningDistrictCategories,
+  );
+  const toggleZoningDistrictCategoryVisibility = useStore(
+    (state) => state.toggleZoningDistrictCategoryVisibility,
+  );
   return (
     <Accordion allowMultiple>
       {classCategories
@@ -26,7 +39,13 @@ function ZoningDistrictFilters() {
         .map((category) => (
           <AccordionItem key={category.category}>
             <AccordionButton px={0} _hover={{ border: 0 }}>
-              <Switch size="sm" pr={2} />
+              <Switch
+                size="sm"
+                pr={2}
+                onChange={() =>
+                  toggleZoningDistrictClassVisibility(category.category)
+                }
+              />
               {category.category} Districts
               <LegendSquare color={category.color} />
               <Spacer />
@@ -45,7 +64,13 @@ function ZoningDistrictFilters() {
                     return x.category == category.category;
                   })
                   .map((c) => (
-                    <Checkbox size="sm" key={c.id}>
+                    <Checkbox
+                      size="sm"
+                      key={c.id}
+                      onChange={() =>
+                        toggleZoningDistrictCategoryVisibility(c.id)
+                      }
+                    >
                       {c.id}
                     </Checkbox>
                   ))}
