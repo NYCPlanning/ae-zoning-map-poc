@@ -17,6 +17,8 @@ import { useGetTaxLotByBbl } from "./gen";
 import { useGetZoningDistrictClasses } from "./gen/hooks/useGetZoningDistrictClasses";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
 import { useStore } from "./store";
+import { DataFilterExtension } from "@deck.gl/extensions";
+
 
 function updateViewState({ viewState }: DeckGLProps) {
   viewState.longitude = Math.min(
@@ -42,6 +44,15 @@ function App() {
   const allZoningDistrictsVisibility = useStore(
     (state) => state.allZoningDistrictsVisibility,
   );
+  const visibleZoningDistrictClasses = useStore(
+    (state) => state.visibleZoningDistrictClasses,
+  );
+  const visibleZoningDistrictCategories = useStore(
+    (state) => state.visibleZoningDistrictCategories,
+  );
+  const wholeStore = useStore(
+    (state) => state,
+  );
 
   const colorKey = processColors(useGetZoningDistrictClasses().data);
 
@@ -50,7 +61,14 @@ function App() {
     // data: `${import.meta.env.VITE_ZONING_API_URL}/zoning-districts/{z}/{x}/{y}.pbf`,
     data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/zoning_district/{z}/{x}/{y}.pbf`,
     getLineColor: [192, 0, 192],
-    visible: allZoningDistrictsVisibility,
+    extensions: [new DataFilterExtension({filterSize: 1})],
+    getFilterValue: (f: any) => {
+      return (allZoningDistrictsVisibility ||
+             (visibleZoningDistrictClasses.has(f.properties.district[0])) &&
+             visibleZoningDistrictCategories.has(f.properties.district.match(/\w\d*/)[0])) ?
+              1 : 0;
+    },
+    filterRange: [1, 1],
     getFillColor: (f: any) => {
       return (
         colorKey[f.properties.district.match(/\w\d*/)[0]] || [
@@ -60,6 +78,10 @@ function App() {
           [1],
         ]
       );
+    },
+    updateTriggers: {
+      getFilterValue: [wholeStore],
+      getFillColor: [wholeStore]
     },
   });
 

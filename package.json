@@ -12,6 +12,7 @@
     "generate": "kubb generate"
   },
   "dependencies": {
+    "@deck.gl/extensions": "^8.9.33",
     "@deck.gl/geo-layers": "^8.9.32",
     "@deck.gl/react": "^8.9.31",
     "@kubb/cli": "^1.14.9",
