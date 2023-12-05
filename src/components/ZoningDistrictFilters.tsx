@@ -32,6 +32,7 @@ function ZoningDistrictFilters() {
   const toggleZoningDistrictCategoryVisibility = useStore(
     (state) => state.toggleZoningDistrictCategoryVisibility,
   );
+
   return (
     <Accordion allowMultiple>
       {classCategories
@@ -43,7 +44,7 @@ function ZoningDistrictFilters() {
                 size="sm"
                 pr={2}
                 onChange={() =>
-                  toggleZoningDistrictClassVisibility(category.category)
+                  toggleZoningDistrictClassVisibility(category.category[0])
                 }
               />
               {category.category} Districts
@@ -67,9 +68,10 @@ function ZoningDistrictFilters() {
                     <Checkbox
                       size="sm"
                       key={c.id}
-                      onChange={() =>
+                      onChange={() => 
                         toggleZoningDistrictCategoryVisibility(c.id)
                       }
+                      defaultChecked
                     >
                       {c.id}
                     </Checkbox>
