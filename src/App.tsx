@@ -17,8 +17,7 @@ import { useGetTaxLotByBbl } from "./gen";
 import { useGetZoningDistrictClasses } from "./gen/hooks/useGetZoningDistrictClasses";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
 import { useStore } from "./store";
-import { DataFilterExtension } from "@deck.gl/extensions";
-
+import { DataFilterExtension } from "@deck.gl/extensions/typed";
 
 function updateViewState({ viewState }: DeckGLProps) {
   viewState.longitude = Math.min(
@@ -50,9 +49,7 @@ function App() {
   const visibleZoningDistrictClasses = useStore(
     (state) => state.visibleZoningDistrictClasses,
   );
-  const wholeStore = useStore(
-    (state) => state,
-  );
+  const wholeStore = useStore((state) => state);
 
   const colorKey = processColors(useGetZoningDistrictClasses().data);
 
@@ -61,14 +58,40 @@ function App() {
     // data: `${import.meta.env.VITE_ZONING_API_URL}/zoning-districts/{z}/{x}/{y}.pbf`,
     data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/zoning_district/{z}/{x}/{y}.pbf`,
     getLineColor: [192, 0, 192],
-    extensions: [new DataFilterExtension({filterSize: 1})],
+    minZoom: 9,
+    maxZoom: 10,
+    visible: allZoningDistrictsVisibility,
+    // filterSize is 2 because we're filtering on two dimensions - category and class
+    extensions: [new DataFilterExtension({ filterSize: 2 })],
     getFilterValue: (f: any) => {
-      return (allZoningDistrictsVisibility ||
-             (visibleZoningDistrictCategories.has(f.properties.district[0])) &&
-             visibleZoningDistrictClasses.has(f.properties.district.match(/\w\d*/)[0])) ?
-              1 : 0;
+      // the label datapoints don't have all of the properties we need, so just always show those for now
+      if (f.properties.layerName.includes("label")) {
+        return [1, 1];
+      }
+      // A generic result array with length equivalent to filterSize.
+      const result = [0, 0];
+      // Loop through the possible categories
+      visibleZoningDistrictCategories.forEach((category) => {
+        if (Object.prototype.hasOwnProperty.call(f.properties, category)) {
+          // if (f.properties.hasOwnProperty(category)) {
+          // If the feature has a property key for this category, set the first number in our result array to 1 (true)
+          result[0] = 1;
+          // If the class for the category exists in the list of visible class ids, set the second number to 1 (true)
+          if (visibleZoningDistrictClasses.has(f.properties[category])) {
+            result[1] = 1;
+          }
+          // For now, we show a district if it belongs to any visible categories
+          // therefore, we can break out of the loop as soon as we find one match by returning false
+          return false;
+        }
+      });
+      return result;
     },
-    filterRange: [1, 1],
+    // The first array here is the range for filtering by category. The second is the range for filtering by class
+    filterRange: [
+      [1, 1],
+      [1, 1],
+    ],
     getFillColor: (f: any) => {
       return (
         colorKey[f.properties.district.match(/\w\d*/)[0]] || [
@@ -80,8 +103,11 @@ function App() {
       );
     },
     updateTriggers: {
-      getFilterValue: [wholeStore],
-      getFillColor: [wholeStore]
+      getFilterValue: [
+        visibleZoningDistrictCategories.size,
+        visibleZoningDistrictClasses.size,
+      ],
+      // getFillColor: [wholeStore],
     },
   });
 

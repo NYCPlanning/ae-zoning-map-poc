@@ -38,8 +38,14 @@ function ZoningDistrictFilters() {
   );
 
   useEffect(() => {
-    const zoningDistrictClassIds = classes.reduce((acc: Array<string>, curr: any) => [...acc, curr.id], []);
-    setDefaultStateBasedOnApiData(zoningDistrictClassIds)
+    const zoningDistrictClassIds =
+      typeof classes === "undefined"
+        ? []
+        : classes.reduce(
+            (acc: Array<string>, curr: any) => [...acc, curr.id],
+            [],
+          );
+    setDefaultStateBasedOnApiData(zoningDistrictClassIds);
   }, []);
 
   return (
@@ -53,7 +59,9 @@ function ZoningDistrictFilters() {
                 size="sm"
                 pr={2}
                 onChange={() =>
-                  toggleZoningDistrictCategoryVisibility(category.category[0])
+                  toggleZoningDistrictCategoryVisibility(
+                    category.category.toLocaleLowerCase(),
+                  )
                 }
               />
               {category.category} Districts
@@ -77,9 +85,7 @@ function ZoningDistrictFilters() {
                     <Checkbox
                       size="sm"
                       key={c.id}
-                      onChange={() => 
-                        toggleZoningDistrictClassVisibility(c.id)
-                      }
+                      onChange={() => toggleZoningDistrictClassVisibility(c.id)}
                       defaultChecked
                     >
                       {c.id}
