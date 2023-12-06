@@ -9,7 +9,9 @@ export type Store = {
   toggleZoningDistrictClassVisibility: (categoryId: string) => void;
   allTaxLotsVisibility: boolean;
   toggleAllTaxLotsVisibility: () => void;
-  setDefaultStateBasedOnApiData: (zoningDistrictClassIds: Array<string>) => void;
+  setDefaultStateBasedOnApiData: (
+    zoningDistrictClassIds: Array<string>,
+  ) => void;
 };
 
 export const useStore = create<Store>()((set) => ({
@@ -39,9 +41,12 @@ export const useStore = create<Store>()((set) => ({
     set((state) => ({
       allTaxLotsVisibility: !state.allTaxLotsVisibility,
     })),
-  setDefaultStateBasedOnApiData: (zoningDistrictClassIds: Array<string>) => 
+  setDefaultStateBasedOnApiData: (zoningDistrictClassIds: Array<string>) =>
     set((state) => ({
-      visibleZoningDistrictClasses: addToList(state.visibleZoningDistrictClasses, zoningDistrictClassIds),
+      visibleZoningDistrictClasses: addToList(
+        state.visibleZoningDistrictClasses,
+        zoningDistrictClassIds,
+      ),
     })),
 }));
 
@@ -51,6 +56,6 @@ function toggleVisibility(list: Set<string>, id: string) {
 }
 
 function addToList(list: Set<string>, ids: Array<string>) {
-  ids.forEach(id => list.add(id));
+  ids.forEach((id) => list.add(id));
   return list;
 }
