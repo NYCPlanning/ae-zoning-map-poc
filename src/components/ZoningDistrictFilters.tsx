@@ -15,6 +15,7 @@ import {
   useGetZoningDistrictClasses,
 } from "../gen";
 import { useStore } from "../store";
+import { useEffect } from "react";
 
 function ZoningDistrictFilters() {
   const { data: classCategories } = useGetZoningDistrictClassCategoryColors();
@@ -32,6 +33,14 @@ function ZoningDistrictFilters() {
   const toggleZoningDistrictClassVisibility = useStore(
     (state) => state.toggleZoningDistrictClassVisibility,
   );
+  const setDefaultStateBasedOnApiData = useStore(
+    (state) => state.setDefaultStateBasedOnApiData,
+  );
+
+  useEffect(() => {
+    const zoningDistrictClassIds = classes.reduce((acc: Array<string>, curr: any) => [...acc, curr.id], []);
+    setDefaultStateBasedOnApiData(zoningDistrictClassIds)
+  }, []);
 
   return (
     <Accordion allowMultiple>
