@@ -20,17 +20,17 @@ function ZoningDistrictFilters() {
   const { data: classCategories } = useGetZoningDistrictClassCategoryColors();
   const { data: classes } = useGetZoningDistrictClasses();
 
-  const visibleZoningDistrictClasses = useStore(
-    (state) => state.visibleZoningDistrictClasses,
-  );
-  const toggleZoningDistrictClassVisibility = useStore(
-    (state) => state.toggleZoningDistrictClassVisibility,
-  );
   const visibleZoningDistrictCategories = useStore(
     (state) => state.visibleZoningDistrictCategories,
   );
   const toggleZoningDistrictCategoryVisibility = useStore(
     (state) => state.toggleZoningDistrictCategoryVisibility,
+  );
+  const visibleZoningDistrictClasses = useStore(
+    (state) => state.visibleZoningDistrictClasses,
+  );
+  const toggleZoningDistrictClassVisibility = useStore(
+    (state) => state.toggleZoningDistrictClassVisibility,
   );
 
   return (
@@ -44,7 +44,7 @@ function ZoningDistrictFilters() {
                 size="sm"
                 pr={2}
                 onChange={() =>
-                  toggleZoningDistrictClassVisibility(category.category[0])
+                  toggleZoningDistrictCategoryVisibility(category.category[0])
                 }
               />
               {category.category} Districts
@@ -69,7 +69,7 @@ function ZoningDistrictFilters() {
                       size="sm"
                       key={c.id}
                       onChange={() => 
-                        toggleZoningDistrictCategoryVisibility(c.id)
+                        toggleZoningDistrictClassVisibility(c.id)
                       }
                       defaultChecked
                     >
