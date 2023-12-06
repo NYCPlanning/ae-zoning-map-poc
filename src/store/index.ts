@@ -3,10 +3,10 @@ import { create } from "zustand";
 export type Store = {
   allZoningDistrictsVisibility: boolean;
   toggleAllZoningDistrictsVisibility: () => void;
-  visibleZoningDistrictClasses: Set<string>;
-  toggleZoningDistrictClassVisibility: (classId: string) => void;
   visibleZoningDistrictCategories: Set<string>;
-  toggleZoningDistrictCategoryVisibility: (categoryId: string) => void;
+  toggleZoningDistrictCategoryVisibility: (classId: string) => void;
+  visibleZoningDistrictClasses: Set<string>;
+  toggleZoningDistrictClassVisibility: (categoryId: string) => void;
   allTaxLotsVisibility: boolean;
   toggleAllTaxLotsVisibility: () => void;
 };
@@ -17,19 +17,19 @@ export const useStore = create<Store>()((set) => ({
     set((state) => ({
       allZoningDistrictsVisibility: !state.allZoningDistrictsVisibility,
     })),
-  visibleZoningDistrictClasses: new Set([]),
-  toggleZoningDistrictClassVisibility: (classId: string) =>
-    set((state) => ({
-      visibleZoningDistrictClasses: toggleVisibility(
-        state.visibleZoningDistrictClasses,
-        classId,
-      ),
-    })),
   visibleZoningDistrictCategories: new Set([]),
-  toggleZoningDistrictCategoryVisibility: (categoryId: string) =>
+  toggleZoningDistrictCategoryVisibility: (classId: string) =>
     set((state) => ({
       visibleZoningDistrictCategories: toggleVisibility(
         state.visibleZoningDistrictCategories,
+        classId,
+      ),
+    })),
+  visibleZoningDistrictClasses: new Set([]),
+  toggleZoningDistrictClassVisibility: (categoryId: string) =>
+    set((state) => ({
+      visibleZoningDistrictClasses: toggleVisibility(
+        state.visibleZoningDistrictClasses,
         categoryId,
       ),
     })),

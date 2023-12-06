@@ -44,11 +44,11 @@ function App() {
   const allZoningDistrictsVisibility = useStore(
     (state) => state.allZoningDistrictsVisibility,
   );
-  const visibleZoningDistrictClasses = useStore(
-    (state) => state.visibleZoningDistrictClasses,
-  );
   const visibleZoningDistrictCategories = useStore(
     (state) => state.visibleZoningDistrictCategories,
+  );
+  const visibleZoningDistrictClasses = useStore(
+    (state) => state.visibleZoningDistrictClasses,
   );
   const wholeStore = useStore(
     (state) => state,
@@ -64,8 +64,8 @@ function App() {
     extensions: [new DataFilterExtension({filterSize: 1})],
     getFilterValue: (f: any) => {
       return (allZoningDistrictsVisibility ||
-             (visibleZoningDistrictClasses.has(f.properties.district[0])) &&
-             visibleZoningDistrictCategories.has(f.properties.district.match(/\w\d*/)[0])) ?
+             (visibleZoningDistrictCategories.has(f.properties.district[0])) &&
+             visibleZoningDistrictClasses.has(f.properties.district.match(/\w\d*/)[0])) ?
               1 : 0;
     },
     filterRange: [1, 1],
