@@ -107,7 +107,6 @@ function App() {
         visibleZoningDistrictCategories.size,
         visibleZoningDistrictClasses.size,
       ],
-      // getFillColor: [wholeStore],
     },
   });
 
