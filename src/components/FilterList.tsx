@@ -17,7 +17,7 @@ function FilterList() {
   const anyTaxLotsVisibility = useStore((state) => state.anyTaxLotsVisibility);
 
   return (
-    <Accordion allowMultiple>
+    <Accordion allowMultiple defaultIndex={[0, 1]}>
       <AccordionItem display={anyZoningDistrictsVisibility ? "" : "none"}>
         <AccordionButton px={0} _hover={{ border: 0 }}>
           Zoning Districts
