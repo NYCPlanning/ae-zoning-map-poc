@@ -38,6 +38,16 @@ function ZoningDistrictFilters() {
   );
 
   useEffect(() => {
+    const zoningDistrictCategoryIds =
+      typeof classCategories === "undefined"
+        ? []
+        : classCategories.reduce(
+            (acc: Array<string>, curr: any) => [
+              ...acc,
+              curr.category.toLocaleLowerCase(),
+            ],
+            [],
+          );
     const zoningDistrictClassIds =
       typeof classes === "undefined"
         ? []
@@ -45,8 +55,11 @@ function ZoningDistrictFilters() {
             (acc: Array<string>, curr: any) => [...acc, curr.id],
             [],
           );
-    setDefaultStateBasedOnApiData(zoningDistrictClassIds);
-  }, []);
+    setDefaultStateBasedOnApiData(
+      zoningDistrictCategoryIds,
+      zoningDistrictClassIds,
+    );
+  }, [classCategories, classes]);
 
   return (
     <Accordion allowMultiple>
@@ -63,6 +76,7 @@ function ZoningDistrictFilters() {
                     category.category.toLocaleLowerCase(),
                   )
                 }
+                defaultChecked
               />
               {category.category} Districts
               <LegendSquare color={category.color} />
