@@ -180,7 +180,13 @@ function LayersFilters() {
                     <Text textStyle="body" fontWeight={700} py={1}>
                       Filters
                     </Text>
-                    <AccordionIcon />
+                    <AccordionIcon
+                      display={
+                        anyZoningDistrictsVisibility || anyTaxLotsVisibility
+                          ? ""
+                          : "none"
+                      }
+                    />
                     <Spacer />
                     <Text
                       textStyle="body"
