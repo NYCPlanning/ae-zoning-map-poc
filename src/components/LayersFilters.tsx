@@ -12,8 +12,18 @@ import {
 } from "@nycplanning/streetscape";
 import FilterList from "./FilterList";
 import { useStore } from "../store";
+import {
+  useGetZoningDistrictClassCategoryColors,
+  useGetZoningDistrictClasses,
+} from "../gen";
 
 function LayersFilters() {
+  const { data: classCategories } = useGetZoningDistrictClassCategoryColors();
+  const { data: classes } = useGetZoningDistrictClasses();
+
+  const visibleZoningDistrictClasses = useStore(
+    (state) => state.visibleZoningDistrictClasses,
+  );
   const anyZoningDistrictsVisibility = useStore(
     (state) => state.anyZoningDistrictsVisibility,
   );
@@ -27,6 +37,40 @@ function LayersFilters() {
   const toggleAnyTaxLotsVisibility = useStore(
     (state) => state.toggleAnyTaxLotsVisibility,
   );
+  const setDefaultStateBasedOnApiData = useStore(
+    (state) => state.setDefaultStateBasedOnApiData,
+  );
+
+  function handleZoningDistrictsVisibility() {
+    toggleAnyZoningDistrictsVisibility();
+    // The below resets all toggles and checkboxes if they are all untoggled/unchecked
+    if (
+      visibleZoningDistrictClasses.size == 0 &&
+      visibleZoningDistrictCategories.size == 0
+    ) {
+      const zoningDistrictCategoryIds =
+        typeof classCategories === "undefined"
+          ? []
+          : classCategories.reduce(
+              (acc: Array<string>, curr: any) => [
+                ...acc,
+                curr.category.toLocaleLowerCase(),
+              ],
+              [],
+            );
+      const zoningDistrictClassIds =
+        typeof classes === "undefined"
+          ? []
+          : classes.reduce(
+              (acc: Array<string>, curr: any) => [...acc, curr.id],
+              [],
+            );
+      setDefaultStateBasedOnApiData(
+        zoningDistrictCategoryIds,
+        zoningDistrictClassIds,
+      );
+    }
+  }
 
   return (
     <AccordionItem
@@ -79,7 +123,7 @@ function LayersFilters() {
                   width={20}
                   justify="center"
                   alignSelf={"flex-start"}
-                  onClick={toggleAnyZoningDistrictsVisibility}
+                  onClick={handleZoningDistrictsVisibility}
                 >
                   <Box
                     background={
