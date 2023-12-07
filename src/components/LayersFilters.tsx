@@ -14,15 +14,18 @@ import FilterList from "./FilterList";
 import { useStore } from "../store";
 
 function LayersFilters() {
-  const allZoningDistrictsVisibility = useStore(
-    (state) => state.allZoningDistrictsVisibility,
+  const anyZoningDistrictsVisibility = useStore(
+    (state) => state.anyZoningDistrictsVisibility,
   );
-  const toggleAllZoningDistrictsVisibility = useStore(
-    (state) => state.toggleAllZoningDistrictsVisibility,
+  const toggleAnyZoningDistrictsVisibility = useStore(
+    (state) => state.toggleAnyZoningDistrictsVisibility,
   );
-  const allTaxLotsVisibility = useStore((state) => state.allTaxLotsVisibility);
-  const toggleAllTaxLotsVisibility = useStore(
-    (state) => state.toggleAllTaxLotsVisibility,
+  const visibleZoningDistrictCategories = useStore(
+    (state) => state.visibleZoningDistrictCategories,
+  );
+  const anyTaxLotsVisibility = useStore((state) => state.anyTaxLotsVisibility);
+  const toggleAnyTaxLotsVisibility = useStore(
+    (state) => state.toggleAnyTaxLotsVisibility,
   );
 
   return (
@@ -76,7 +79,7 @@ function LayersFilters() {
                   width={20}
                   justify="center"
                   alignSelf={"flex-start"}
-                  onClick={toggleAllZoningDistrictsVisibility}
+                  onClick={toggleAnyZoningDistrictsVisibility}
                 >
                   <Box
                     background={
@@ -85,15 +88,15 @@ function LayersFilters() {
                     width={20}
                     height={20}
                     borderRadius={"12px"}
-                    border={allZoningDistrictsVisibility ? "2px solid" : "0"}
+                    border={anyZoningDistrictsVisibility ? "2px solid" : "0"}
                     borderColor={"primary.500"}
                   />
                   <Text
                     align="center"
                     color={
-                      allZoningDistrictsVisibility ? "primary.500" : "gray.600"
+                      anyZoningDistrictsVisibility ? "primary.500" : "gray.600"
                     }
-                    fontWeight={allZoningDistrictsVisibility ? "500" : "400"}
+                    fontWeight={anyZoningDistrictsVisibility ? "500" : "400"}
                   >
                     Zoning Districts
                   </Text>
@@ -102,20 +105,20 @@ function LayersFilters() {
                   width={20}
                   justify="center"
                   alignSelf={"flex-start"}
-                  onClick={toggleAllTaxLotsVisibility}
+                  onClick={toggleAnyTaxLotsVisibility}
                 >
                   <Box
                     background={"url('./tax_lots.png') 50% / cover no-repeat;"}
                     width={20}
                     height={20}
                     borderRadius={"12px"}
-                    border={allTaxLotsVisibility ? "2px solid" : "0"}
+                    border={anyTaxLotsVisibility ? "2px solid" : "0"}
                     borderColor={"primary.500"}
                   />
                   <Text
                     align="center"
-                    color={allTaxLotsVisibility ? "primary.500" : "gray.600"}
-                    fontWeight={allTaxLotsVisibility ? "500" : "400"}
+                    color={anyTaxLotsVisibility ? "primary.500" : "gray.600"}
+                    fontWeight={anyTaxLotsVisibility ? "500" : "400"}
                   >
                     Tax Lots
                   </Text>
@@ -144,7 +147,12 @@ function LayersFilters() {
                       border={"1px solid"}
                       borderColor={"brand.100"}
                     >
-                      Selected (5)
+                      {/* TODO: add the tax lots size once that variable exists */}
+                      Selected (
+                      {anyZoningDistrictsVisibility
+                        ? visibleZoningDistrictCategories.size
+                        : "0"}
+                      )
                     </Text>
                   </AccordionButton>
                   <AccordionPanel px={0}>

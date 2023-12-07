@@ -1,24 +1,25 @@
 import { create } from "zustand";
 
 export type Store = {
-  allZoningDistrictsVisibility: boolean;
-  toggleAllZoningDistrictsVisibility: () => void;
+  anyZoningDistrictsVisibility: boolean;
+  toggleAnyZoningDistrictsVisibility: () => void;
   visibleZoningDistrictCategories: Set<string>;
   toggleZoningDistrictCategoryVisibility: (classId: string) => void;
   visibleZoningDistrictClasses: Set<string>;
   toggleZoningDistrictClassVisibility: (categoryId: string) => void;
-  allTaxLotsVisibility: boolean;
-  toggleAllTaxLotsVisibility: () => void;
+  anyTaxLotsVisibility: boolean;
+  toggleAnyTaxLotsVisibility: () => void;
   setDefaultStateBasedOnApiData: (
+    zoningDistrictCategoryIds: Array<string>,
     zoningDistrictClassIds: Array<string>,
   ) => void;
 };
 
 export const useStore = create<Store>()((set) => ({
-  allZoningDistrictsVisibility: false,
-  toggleAllZoningDistrictsVisibility: () =>
+  anyZoningDistrictsVisibility: false,
+  toggleAnyZoningDistrictsVisibility: () =>
     set((state) => ({
-      allZoningDistrictsVisibility: !state.allZoningDistrictsVisibility,
+      anyZoningDistrictsVisibility: !state.anyZoningDistrictsVisibility,
     })),
   visibleZoningDistrictCategories: new Set([]),
   toggleZoningDistrictCategoryVisibility: (classId: string) =>
@@ -36,13 +37,20 @@ export const useStore = create<Store>()((set) => ({
         categoryId,
       ),
     })),
-  allTaxLotsVisibility: false,
-  toggleAllTaxLotsVisibility: () =>
+  anyTaxLotsVisibility: false,
+  toggleAnyTaxLotsVisibility: () =>
     set((state) => ({
-      allTaxLotsVisibility: !state.allTaxLotsVisibility,
+      anyTaxLotsVisibility: !state.anyTaxLotsVisibility,
     })),
-  setDefaultStateBasedOnApiData: (zoningDistrictClassIds: Array<string>) =>
+  setDefaultStateBasedOnApiData: (
+    zoningDistrictCategoryIds: Array<string>,
+    zoningDistrictClassIds: Array<string>,
+  ) =>
     set((state) => ({
+      visibleZoningDistrictCategories: addToList(
+        state.visibleZoningDistrictCategories,
+        zoningDistrictCategoryIds,
+      ),
       visibleZoningDistrictClasses: addToList(
         state.visibleZoningDistrictClasses,
         zoningDistrictClassIds,

@@ -40,8 +40,8 @@ function App() {
     },
   );
 
-  const allZoningDistrictsVisibility = useStore(
-    (state) => state.allZoningDistrictsVisibility,
+  const anyZoningDistrictsVisibility = useStore(
+    (state) => state.anyZoningDistrictsVisibility,
   );
   const visibleZoningDistrictCategories = useStore(
     (state) => state.visibleZoningDistrictCategories,
@@ -60,7 +60,7 @@ function App() {
     getLineColor: [192, 0, 192],
     minZoom: 9,
     maxZoom: 10,
-    visible: allZoningDistrictsVisibility,
+    visible: anyZoningDistrictsVisibility,
     // filterSize is 2 because we're filtering on two dimensions - category and class
     extensions: [new DataFilterExtension({ filterSize: 2 })],
     getFilterValue: (f: any) => {
