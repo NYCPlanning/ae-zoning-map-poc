@@ -21,6 +21,9 @@ function ZoningDistrictFilters() {
   const { data: classCategories } = useGetZoningDistrictClassCategoryColors();
   const { data: classes } = useGetZoningDistrictClasses();
 
+  const anyZoningDistrictsVisibility = useStore(
+    (state) => state.anyZoningDistrictsVisibility,
+  );
   const visibleZoningDistrictCategories = useStore(
     (state) => state.visibleZoningDistrictCategories,
   );
@@ -62,7 +65,10 @@ function ZoningDistrictFilters() {
   }, [classCategories, classes]);
 
   return (
-    <Accordion allowMultiple>
+    <Accordion
+      allowMultiple
+      display={anyZoningDistrictsVisibility ? "" : "none"}
+    >
       {classCategories
         ?.sort((a, b) => a.category.localeCompare(b.category))
         .map((category) => (

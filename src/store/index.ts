@@ -36,6 +36,9 @@ export const useStore = create<Store>()((set) => ({
         state.visibleZoningDistrictClasses,
         categoryId,
       ),
+      anyZoningDistrictsVisibility: layerVisibilityCheck(
+        state.visibleZoningDistrictClasses,
+      ),
     })),
   anyTaxLotsVisibility: false,
   toggleAnyTaxLotsVisibility: () =>
@@ -61,6 +64,10 @@ export const useStore = create<Store>()((set) => ({
 function toggleVisibility(list: Set<string>, id: string) {
   list.has(id) ? list.delete(id) : list.add(id);
   return list;
+}
+
+function layerVisibilityCheck(list: Set<string>) {
+  return list.size == 0 ? false : true;
 }
 
 function addToList(list: Set<string>, ids: Array<string>) {
