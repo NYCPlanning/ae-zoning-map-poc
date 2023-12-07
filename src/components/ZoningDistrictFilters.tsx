@@ -82,7 +82,9 @@ function ZoningDistrictFilters() {
                     category.category.toLocaleLowerCase(),
                   )
                 }
-                defaultChecked
+                isChecked={visibleZoningDistrictCategories.has(
+                  category.category.toLocaleLowerCase(),
+                )}
               />
               {category.category} Districts
               <LegendSquare color={category.color} />
@@ -106,7 +108,7 @@ function ZoningDistrictFilters() {
                       size="sm"
                       key={c.id}
                       onChange={() => toggleZoningDistrictClassVisibility(c.id)}
-                      defaultChecked
+                      isChecked={visibleZoningDistrictClasses.has(c.id)}
                     >
                       {c.id}
                     </Checkbox>
