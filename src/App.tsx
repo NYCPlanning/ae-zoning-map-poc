@@ -52,7 +52,7 @@ function App() {
 
   const colorKey = processColors(useGetZoningDistrictClasses().data);
 
-  const allZoningDistrictsLayer = new MVTLayer({
+  const zoningDistrictsLayer = new MVTLayer({
     id: "zoningDistricts",
     // data: `${import.meta.env.VITE_ZONING_API_URL}/zoning-districts/{z}/{x}/{y}.pbf`,
     data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/zoning_district/{z}/{x}/{y}.pbf`,
@@ -134,7 +134,7 @@ function App() {
         initialViewState={INITIAL_VIEW_STATE}
         controller={true}
         onViewStateChange={updateViewState}
-        layers={[taxLotsLayer, allZoningDistrictsLayer]}
+        layers={[taxLotsLayer, zoningDistrictsLayer]}
       >
         {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
         <Map
