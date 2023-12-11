@@ -42,8 +42,9 @@ export function hexToRgba(hex: string) {
   r = parseInt(r, 16);
   g = parseInt(g, 16);
   b = parseInt(b, 16);
-  a = parseInt(a, 16) / 255;
-  return [r, g, b, [a]];
+  a = parseInt(a, 16);
+  // return alpha value of 76 (30%) for now because data have 100% opacity.
+  return [r, g, b, 76];
 }
 
 export function processColors(colors: any | null) {

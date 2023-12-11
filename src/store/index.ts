@@ -62,8 +62,9 @@ export const useStore = create<Store>()((set) => ({
 }));
 
 function toggleVisibility(list: Set<string>, id: string) {
-  list.has(id) ? list.delete(id) : list.add(id);
-  return list;
+  const newSet = new Set(list);
+  newSet.has(id) ? newSet.delete(id) : newSet.add(id);
+  return newSet;
 }
 
 function layerVisibilityCheck(list: Set<string>) {
@@ -71,6 +72,7 @@ function layerVisibilityCheck(list: Set<string>) {
 }
 
 function addToList(list: Set<string>, ids: Array<string>) {
-  ids.forEach((id) => list.add(id));
-  return list;
+  const newSet = new Set(list);
+  ids.forEach((id) => newSet.add(id));
+  return newSet;
 }

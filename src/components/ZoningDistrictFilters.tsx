@@ -8,6 +8,7 @@ import {
   Spacer,
   Stack,
   Switch,
+  HStack,
 } from "@nycplanning/streetscape";
 import LegendSquare from "./LegendSquare";
 import {
@@ -15,31 +16,22 @@ import {
   useGetZoningDistrictClasses,
 } from "../gen";
 import { useStore } from "../store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function ZoningDistrictFilters() {
   const { data: classCategories } = useGetZoningDistrictClassCategoryColors();
   const { data: classes } = useGetZoningDistrictClasses();
 
-  const anyZoningDistrictsVisibility = useStore(
-    (state) => state.anyZoningDistrictsVisibility,
-  );
-  const visibleZoningDistrictCategories = useStore(
-    (state) => state.visibleZoningDistrictCategories,
-  );
-  const toggleZoningDistrictCategoryVisibility = useStore(
-    (state) => state.toggleZoningDistrictCategoryVisibility,
-  );
-  const visibleZoningDistrictClasses = useStore(
-    (state) => state.visibleZoningDistrictClasses,
-  );
-  const toggleZoningDistrictClassVisibility = useStore(
-    (state) => state.toggleZoningDistrictClassVisibility,
-  );
-  const setDefaultStateBasedOnApiData = useStore(
-    (state) => state.setDefaultStateBasedOnApiData,
-  );
+  const {
+    anyZoningDistrictsVisibility,
+    visibleZoningDistrictCategories,
+    toggleZoningDistrictCategoryVisibility,
+    visibleZoningDistrictClasses,
+    toggleZoningDistrictClassVisibility,
+    setDefaultStateBasedOnApiData,
+  } = useStore((state) => state);
 
+  const [expandedIndices, setExpandedIndicies] = useState<number[]>([]);
   useEffect(() => {
     const zoningDistrictCategoryIds =
       typeof classCategories === "undefined"
@@ -68,29 +60,67 @@ function ZoningDistrictFilters() {
     <Accordion
       allowMultiple
       display={anyZoningDistrictsVisibility ? "" : "none"}
+      index={expandedIndices}
     >
       {classCategories
         ?.sort((a, b) => a.category.localeCompare(b.category))
-        .map((category) => (
+        .map((category, i) => (
           <AccordionItem key={category.category}>
-            <AccordionButton px={0} _hover={{ border: 0 }}>
+            <HStack>
               <Switch
                 size="sm"
                 pr={2}
-                onChange={() =>
+                onChange={() => {
+                  if (
+                    visibleZoningDistrictCategories.has(
+                      category.category.toLocaleLowerCase(),
+                    )
+                  ) {
+                    if (expandedIndices.includes(i)) {
+                      setExpandedIndicies(
+                        expandedIndices.filter(
+                          (expandedIndex) => expandedIndex !== i,
+                        ),
+                      );
+                    }
+                  } else {
+                    setExpandedIndicies(expandedIndices.concat([i]));
+                  }
                   toggleZoningDistrictCategoryVisibility(
                     category.category.toLocaleLowerCase(),
-                  )
-                }
+                  );
+                }}
                 isChecked={visibleZoningDistrictCategories.has(
                   category.category.toLocaleLowerCase(),
                 )}
               />
-              {category.category} Districts
-              <LegendSquare color={category.color} />
-              <Spacer />
-              <AccordionIcon />
-            </AccordionButton>
+              <AccordionButton
+                px={0}
+                _hover={{ border: 0 }}
+                onClick={() => {
+                  if (
+                    visibleZoningDistrictCategories.has(
+                      category.category.toLocaleLowerCase(),
+                    )
+                  ) {
+                    if (expandedIndices.includes(i)) {
+                      setExpandedIndicies(
+                        expandedIndices.filter(
+                          (expandedIndex) => expandedIndex !== i,
+                        ),
+                      );
+                    } else {
+                      setExpandedIndicies(expandedIndices.concat([i]));
+                    }
+                  }
+                }}
+              >
+                {category.category} Districts
+                <LegendSquare color={category.color} />
+                <Spacer />
+                <AccordionIcon />
+              </AccordionButton>
+            </HStack>
             <AccordionPanel>
               <Stack
                 direction={["column", "row"]}
@@ -100,14 +130,16 @@ function ZoningDistrictFilters() {
                 px={9}
               >
                 {classes
-                  ?.filter((x) => {
-                    return x.category == category.category;
+                  ?.filter((c) => {
+                    return c.category == category.category;
                   })
                   .map((c) => (
                     <Checkbox
                       size="sm"
                       key={c.id}
-                      onChange={() => toggleZoningDistrictClassVisibility(c.id)}
+                      onChange={() => {
+                        toggleZoningDistrictClassVisibility(c.id);
+                      }}
                       isChecked={visibleZoningDistrictClasses.has(c.id)}
                     >
                       {c.id}
