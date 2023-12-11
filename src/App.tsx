@@ -49,7 +49,6 @@ function App() {
   const visibleZoningDistrictClasses = useStore(
     (state) => state.visibleZoningDistrictClasses,
   );
-  const wholeStore = useStore((state) => state);
 
   const colorKey = processColors(useGetZoningDistrictClasses().data);
 
@@ -61,6 +60,11 @@ function App() {
     minZoom: 9,
     maxZoom: 10,
     visible: anyZoningDistrictsVisibility,
+    pointType: "text",
+    getText: (f: any) => f.properties.district,
+    getTextColor: [98, 98, 98, 255],
+    textFontFamily: "Helvetica Neue, Arial, sans-serif",
+    getTextSize: 8,
     // filterSize is 2 because we're filtering on two dimensions - category and class
     extensions: [new DataFilterExtension({ filterSize: 2 })],
     getFilterValue: (f: any) => {
@@ -73,7 +77,6 @@ function App() {
       // Loop through the possible categories
       visibleZoningDistrictCategories.forEach((category) => {
         if (Object.prototype.hasOwnProperty.call(f.properties, category)) {
-          // if (f.properties.hasOwnProperty(category)) {
           // If the feature has a property key for this category, set the first number in our result array to 1 (true)
           result[0] = 1;
           // If the class for the category exists in the list of visible class ids, set the second number to 1 (true)
@@ -93,14 +96,16 @@ function App() {
       [1, 1],
     ],
     getFillColor: (f: any) => {
-      return (
-        colorKey[f.properties.district.match(/\w\d*/)[0]] || [
-          192,
-          192,
-          192,
-          [1],
-        ]
-      );
+      let color = [192, 192, 192, 255];
+      visibleZoningDistrictCategories.forEach((category) => {
+        if (Object.prototype.hasOwnProperty.call(f.properties, category)) {
+          if (visibleZoningDistrictClasses.has(f.properties[category])) {
+            color = colorKey[f.properties[category]];
+          }
+          return false;
+        }
+      });
+      return color;
     },
     updateTriggers: {
       getFilterValue: [
@@ -117,7 +122,7 @@ function App() {
     zoom: 10,
     pitch: 0,
     bearing: 0,
-    maxZoom: 11,
+    maxZoom: 20,
     minZoom: 10,
     minPitch: 0,
     maxPitch: 0,
