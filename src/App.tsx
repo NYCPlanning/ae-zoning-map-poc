@@ -50,7 +50,8 @@ function App() {
     (state) => state.visibleZoningDistrictClasses,
   );
 
-  const colorKey = processColors(useGetZoningDistrictClasses().data);
+  const { data } = useGetZoningDistrictClasses();
+  const colorKey = data === undefined ? {} : processColors(data);
 
   const zoningDistrictsLayer = new MVTLayer({
     id: "zoningDistricts",

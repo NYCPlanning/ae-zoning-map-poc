@@ -22,7 +22,7 @@ export function hexToRgba(hex: string) {
     b = hex.substring(4, 6);
     a = hex.substring(6, 8);
   } else {
-    return "";
+    throw new Error("hex of invalid length");
   }
   if ("undefined" === typeof a) {
     a = "ff";
@@ -47,13 +47,10 @@ export function hexToRgba(hex: string) {
   return [r, g, b, 76];
 }
 
-export function processColors(colors: any | null) {
-  if (colors == null) {
-    return null;
-  }
-  const colorsObj: any = {};
-  for (let i = 0; i < colors.length; i++) {
-    colorsObj[colors[i].id] = hexToRgba(colors[i].color);
+export function processColors(data: Array<{ color: string; id: string }>) {
+  const colorsObj: Record<string, number[]> = {};
+  for (let i = 0; i < data.length; i++) {
+    colorsObj[data[i].id] = hexToRgba(data[i].color);
   }
   return colorsObj;
 }
