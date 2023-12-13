@@ -13,8 +13,7 @@ import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
 import { TaxLotDetails } from "./components/TaxLotDetails";
 import { taxLotsLayer, processColors } from "./layers";
-import { useGetTaxLotByBbl } from "./gen";
-import { useGetZoningDistrictClasses } from "./gen/hooks/useGetZoningDistrictClasses";
+import { useGetAllZoningDistrictClasses, useGetTaxLotByBbl } from "./gen";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
 import { useStore } from "./store";
 import { DataFilterExtension } from "@deck.gl/extensions/typed";
@@ -50,8 +49,9 @@ function App() {
     (state) => state.visibleZoningDistrictClasses,
   );
 
-  const { data } = useGetZoningDistrictClasses();
-  const colorKey = data === undefined ? {} : processColors(data);
+  const { data } = useGetAllZoningDistrictClasses();
+  const colorKey =
+    data === undefined ? {} : processColors(data.zoningDistrictClasses);
 
   const zoningDistrictsLayer = new MVTLayer({
     id: "zoningDistricts",

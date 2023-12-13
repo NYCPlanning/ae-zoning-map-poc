@@ -14,7 +14,7 @@ import {
   Text,
 } from "@nycplanning/streetscape";
 import { useForm, Controller } from "react-hook-form";
-import { useGetBoroughs, useGetTaxLotByBbl } from "../gen";
+import { useGetBoroughs } from "../gen";
 
 type FormData = {
   borough: string;
@@ -27,7 +27,7 @@ interface LocationSearchProps {
 }
 
 function LocationSearch({ handleBblSearched }: LocationSearchProps) {
-  const { data: boroughs } = useGetBoroughs();
+  const { data } = useGetBoroughs();
   const { handleSubmit, control } = useForm<FormData>({
     defaultValues: {
       block: "",
@@ -96,8 +96,8 @@ function LocationSearch({ handleBblSearched }: LocationSearchProps) {
                   control={control}
                   render={({ field }) => (
                     <Select placeholder="-Select-" variant="base" {...field}>
-                      {boroughs !== undefined
-                        ? boroughs.map((borough) => (
+                      {data !== undefined
+                        ? data.boroughs.map((borough) => (
                             <option key={borough.id} value={borough.id}>
                               {borough.title}
                             </option>

@@ -1,6 +1,11 @@
 import type { Borough } from "./Borough";
 
 /**
- * @description An array of borough objects.
+ * @description An object containing all boroughs.
  */
-export type GetBoroughsQueryResponse = Borough[];
+export type GetBoroughsQueryResponse = {
+  /**
+   * @type array
+   */
+  boroughs: Borough[];
+};

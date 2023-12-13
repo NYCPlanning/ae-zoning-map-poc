@@ -5,7 +5,7 @@ import createSwaggerTS from "@kubb/swagger-ts";
 
 export default defineConfig({
   input: {
-    path: "https://raw.githubusercontent.com/NYCPlanning/ae-zoning-api/main/openapi/openapi.yaml",
+    path: "https://raw.githubusercontent.com/NYCPlanning/ae-zoning-api/stable/openapi/openapi.yaml",
   },
   output: {
     path: "./src/gen",

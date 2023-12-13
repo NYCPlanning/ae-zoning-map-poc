@@ -1,5 +1,3 @@
-import { MVTLayer } from "@deck.gl/geo-layers/typed";
-
 export function hexToRgba(hex: string) {
   let r, g, b, a;
   hex = hex.replace("#", "");

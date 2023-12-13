@@ -13,14 +13,15 @@ import {
 import LegendSquare from "./LegendSquare";
 import {
   useGetZoningDistrictClassCategoryColors,
-  useGetZoningDistrictClasses,
+  useGetAllZoningDistrictClasses,
 } from "../gen";
 import { useStore } from "../store";
 import { useEffect, useState } from "react";
 
 function ZoningDistrictFilters() {
-  const { data: classCategories } = useGetZoningDistrictClassCategoryColors();
-  const { data: classes } = useGetZoningDistrictClasses();
+  const { data: categoryColorsData } =
+    useGetZoningDistrictClassCategoryColors();
+  const { data: classesData } = useGetAllZoningDistrictClasses();
 
   const {
     anyZoningDistrictsVisibility,
@@ -34,9 +35,9 @@ function ZoningDistrictFilters() {
   const [expandedIndices, setExpandedIndicies] = useState<number[]>([]);
   useEffect(() => {
     const zoningDistrictCategoryIds =
-      typeof classCategories === "undefined"
+      categoryColorsData === undefined
         ? []
-        : classCategories.reduce(
+        : categoryColorsData.zoningDistrictClassCategoryColors.reduce(
             (acc: Array<string>, curr: any) => [
               ...acc,
               curr.category.toLocaleLowerCase(),
@@ -44,9 +45,9 @@ function ZoningDistrictFilters() {
             [],
           );
     const zoningDistrictClassIds =
-      typeof classes === "undefined"
+      classesData === undefined
         ? []
-        : classes.reduce(
+        : classesData.zoningDistrictClasses.reduce(
             (acc: Array<string>, curr: any) => [...acc, curr.id],
             [],
           );
@@ -54,7 +55,7 @@ function ZoningDistrictFilters() {
       zoningDistrictCategoryIds,
       zoningDistrictClassIds,
     );
-  }, [classCategories, classes]);
+  }, [categoryColorsData, classesData, setDefaultStateBasedOnApiData]);
 
   return (
     <Accordion
@@ -62,8 +63,8 @@ function ZoningDistrictFilters() {
       display={anyZoningDistrictsVisibility ? "" : "none"}
       index={expandedIndices}
     >
-      {classCategories
-        ?.sort((a, b) => a.category.localeCompare(b.category))
+      {categoryColorsData?.zoningDistrictClassCategoryColors
+        .sort((a, b) => a.category.localeCompare(b.category))
         .map((category, i) => (
           <AccordionItem key={category.category}>
             <HStack>
@@ -129,8 +130,8 @@ function ZoningDistrictFilters() {
                 justifyContent={"flex-start"}
                 px={9}
               >
-                {classes
-                  ?.filter((c) => {
+                {classesData?.zoningDistrictClasses
+                  .filter((c) => {
                     return c.category == category.category;
                   })
                   .map((c) => (

@@ -8,6 +8,11 @@ export type GetZoningDistrictsByTaxLotBblPathParams = {
 };
 
 /**
- * @description An array of zoning district objects
+ * @description An object containing zoning districts.
  */
-export type GetZoningDistrictsByTaxLotBblQueryResponse = ZoningDistrict[];
+export type GetZoningDistrictsByTaxLotBblQueryResponse = {
+  /**
+   * @type array
+   */
+  zoningDistricts: ZoningDistrict[];
+};

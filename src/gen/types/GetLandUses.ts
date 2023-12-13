@@ -1,6 +1,11 @@
 import type { LandUse } from "./LandUse";
 
 /**
- * @description An array of land use objects.
+ * @description An object containing all land uses.
  */
-export type GetLandUsesQueryResponse = LandUse[];
+export type GetLandUsesQueryResponse = {
+  /**
+   * @type array
+   */
+  landUses: LandUse[];
+};
