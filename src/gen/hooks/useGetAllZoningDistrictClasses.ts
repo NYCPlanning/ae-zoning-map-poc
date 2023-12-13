@@ -6,17 +6,17 @@ import type {
 } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import client from "../../client.ts";
-import type { GetZoningDistrictClassesQueryResponse } from "../types/GetZoningDistrictClasses";
+import type { GetAllZoningDistrictClassesQueryResponse } from "../types/GetAllZoningDistrictClasses";
 
-export const getZoningDistrictClassesQueryKey = () =>
+export const getAllZoningDistrictClassesQueryKey = () =>
   [{ url: `/zoning-district-classes` }] as const;
-export function getZoningDistrictClassesQueryOptions<
-  TData = GetZoningDistrictClassesQueryResponse,
+export function getAllZoningDistrictClassesQueryOptions<
+  TData = GetAllZoningDistrictClassesQueryResponse,
   TError = unknown,
 >(
   options: Partial<Parameters<typeof client>[0]> = {},
 ): UseQueryOptions<TData, TError> {
-  const queryKey = getZoningDistrictClassesQueryKey();
+  const queryKey = getAllZoningDistrictClassesQueryKey();
 
   return {
     queryKey,
@@ -32,12 +32,12 @@ export function getZoningDistrictClassesQueryOptions<
 }
 
 /**
- * @summary List ZoningDistrictClasses
+ * @summary Class schemas for all zoning districts
  * @link /zoning-district-classes
  */
 
-export function useGetZoningDistrictClasses<
-  TData = GetZoningDistrictClassesQueryResponse,
+export function useGetAllZoningDistrictClasses<
+  TData = GetAllZoningDistrictClassesQueryResponse,
   TError = unknown,
 >(
   options: {
@@ -46,10 +46,11 @@ export function useGetZoningDistrictClasses<
   } = {},
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const { query: queryOptions, client: clientOptions = {} } = options ?? {};
-  const queryKey = queryOptions?.queryKey ?? getZoningDistrictClassesQueryKey();
+  const queryKey =
+    queryOptions?.queryKey ?? getAllZoningDistrictClassesQueryKey();
 
   const query = useQuery<TData, TError>({
-    ...getZoningDistrictClassesQueryOptions<TData, TError>(clientOptions),
+    ...getAllZoningDistrictClassesQueryOptions<TData, TError>(clientOptions),
     ...queryOptions,
   }) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

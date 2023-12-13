@@ -14,12 +14,13 @@ import FilterList from "./FilterList";
 import { useStore } from "../store";
 import {
   useGetZoningDistrictClassCategoryColors,
-  useGetZoningDistrictClasses,
+  useGetAllZoningDistrictClasses,
 } from "../gen";
 
 function LayersFilters() {
-  const { data: classCategories } = useGetZoningDistrictClassCategoryColors();
-  const { data: classes } = useGetZoningDistrictClasses();
+  const { data: categoryColorsData } =
+    useGetZoningDistrictClassCategoryColors();
+  const { data: classesData } = useGetAllZoningDistrictClasses();
 
   const visibleZoningDistrictClasses = useStore(
     (state) => state.visibleZoningDistrictClasses,
@@ -49,9 +50,9 @@ function LayersFilters() {
       visibleZoningDistrictCategories.size == 0
     ) {
       const zoningDistrictCategoryIds =
-        typeof classCategories === "undefined"
+        categoryColorsData === undefined
           ? []
-          : classCategories.reduce(
+          : categoryColorsData.zoningDistrictClassCategoryColors.reduce(
               (acc: Array<string>, curr: any) => [
                 ...acc,
                 curr.category.toLocaleLowerCase(),
@@ -59,9 +60,9 @@ function LayersFilters() {
               [],
             );
       const zoningDistrictClassIds =
-        typeof classes === "undefined"
+        classesData === undefined
           ? []
-          : classes.reduce(
+          : classesData.zoningDistrictClasses.reduce(
               (acc: Array<string>, curr: any) => [...acc, curr.id],
               [],
             );

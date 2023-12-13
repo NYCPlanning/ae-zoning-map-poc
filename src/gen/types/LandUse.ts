@@ -14,7 +14,7 @@ export type LandUse = {
   /**
    * @description Hex-style color code to represent the land use.
    * @type string
-   * @example #fc2929
+   * @example #fc2929ff
    */
   color: string;
 };

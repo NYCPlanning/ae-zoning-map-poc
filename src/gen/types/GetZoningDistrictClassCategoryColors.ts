@@ -1,7 +1,11 @@
-import type { ZoningDistrictClassCategoryColor } from ".";
+import type { ZoningDistrictClassCategoryColor } from "./ZoningDistrictClassCategoryColor";
 
 /**
- * @description An array of zoning district class objects.
+ * @description An object containing all zoning district category colors.
  */
-export type GetZoningDistrictClassCategoryColorsQueryResponse =
-  ZoningDistrictClassCategoryColor[];
+export type GetZoningDistrictClassCategoryColorsQueryResponse = {
+  /**
+   * @type array
+   */
+  zoningDistrictClassCategoryColors: ZoningDistrictClassCategoryColor[];
+};
