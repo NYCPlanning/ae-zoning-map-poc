@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
 export type Store = {
+  infoPane: string;
+  setInfoPane: (info: string) => void;
   anyZoningDistrictsVisibility: boolean;
   toggleAnyZoningDistrictsVisibility: () => void;
   visibleZoningDistrictCategories: Set<string>;
@@ -16,6 +18,11 @@ export type Store = {
 };
 
 export const useStore = create<Store>()((set) => ({
+  infoPane: "",
+  setInfoPane: (info: string) =>
+    set(() => ({
+      infoPane: info,
+    })),
   anyZoningDistrictsVisibility: false,
   toggleAnyZoningDistrictsVisibility: () =>
     set((state) => ({

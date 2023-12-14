@@ -12,8 +12,13 @@ import { useMediaQuery, Accordion } from "@nycplanning/streetscape";
 import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
 import { TaxLotDetails } from "./components/TaxLotDetails";
+import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
 import { taxLotsLayer, processColors } from "./layers";
-import { useGetAllZoningDistrictClasses, useGetTaxLotByBbl } from "./gen";
+import {
+  useGetAllZoningDistrictClasses,
+  useGetTaxLotByBbl,
+  useGetZoningDistrictClassesByUuid,
+} from "./gen";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
 import { useStore } from "./store";
 import { DataFilterExtension } from "@deck.gl/extensions/typed";
@@ -38,7 +43,18 @@ function App() {
       },
     },
   );
+  const [selectedZoningDistrictClasses, setSelectedZoningDistrictClasses] =
+    useState<string | null>(null);
+  const { data: zoningDistrictClasses } = useGetZoningDistrictClassesByUuid(
+    selectedZoningDistrictClasses === null ? "" : selectedZoningDistrictClasses,
+    {
+      query: {
+        enabled: selectedZoningDistrictClasses !== null,
+      },
+    },
+  );
 
+  const setInfoPane = useStore((state) => state.setInfoPane);
   const anyZoningDistrictsVisibility = useStore(
     (state) => state.anyZoningDistrictsVisibility,
   );
@@ -96,6 +112,13 @@ function App() {
       [1, 1],
       [1, 1],
     ],
+    pickable: true,
+    onClick: (f: any) => {
+      setSelectedZoningDistrictClasses(f.object.properties.id);
+      // setSelectedZoningDistrictClasses('0025a136-64fe-4838-bdf2-c3d3f80634cd')
+      // setSelectedZoningDistrictClasses('06673772-22df-4324-9a9e-816c1397e89e')
+      setInfoPane("zoningDistrict");
+    },
     getFillColor: (f: any) => {
       let color = [192, 192, 192, 255];
       visibleZoningDistrictCategories.forEach((category) => {
@@ -180,11 +203,17 @@ function App() {
           <LocationSearch
             handleBblSearched={(bbl) => {
               setSelectedBbl(bbl);
+              setInfoPane("bbl");
             }}
           />
           <LayersFilters />
 
           <TaxLotDetails taxLot={taxLot === undefined ? null : taxLot} />
+          <ZoningDistrictDetails
+            zoningDistrictClasses={
+              new Set(zoningDistrictClasses?.zoningDistrictClasses)
+            }
+          />
         </Accordion>
       </DeckGL>
     </MapProvider>

@@ -1,32 +1,17 @@
 import { TaxLot } from "../gen";
-import {
-  Box,
-  Flex,
-  HStack,
-  Text,
-  VStack,
-  Link,
-} from "@nycplanning/streetscape";
-import { CloseButton } from "@chakra-ui/react";
+import { Flex, HStack, Text, VStack, Link } from "@nycplanning/streetscape";
+import { CloseableModal } from "./CloseableModal";
+import { useStore } from "../store";
 
 interface TaxLotDetailsProps {
   taxLot: TaxLot | null;
 }
 
 export const TaxLotDetails = ({ taxLot }: TaxLotDetailsProps) => {
-  return taxLot === null ? null : (
-    <Box
-      bg="white"
-      mb={6}
-      p={4}
-      borderRadius="base"
-      border="0"
-      position="fixed"
-      top={6}
-      right={6}
-      width={"27.5rem"}
-    >
-      <CloseButton position="absolute" top={2} right={2} size="sm" />
+  const infoPane = useStore((state) => state.infoPane);
+
+  return taxLot === null || infoPane !== "bbl" ? null : (
+    <CloseableModal>
       <VStack alignItems={"flex-start"} alignContent={"flex-start"}>
         <Text fontSize={"xl"} fontWeight={"bold"}>
           {taxLot.address}, [ZIP]
@@ -211,6 +196,6 @@ export const TaxLotDetails = ({ taxLot }: TaxLotDetailsProps) => {
           </VStack>
         </HStack>
       </VStack>
-    </Box>
+    </CloseableModal>
   );
 };
