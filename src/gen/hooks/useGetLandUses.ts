@@ -6,12 +6,16 @@ import type {
 } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import client from "../../client.ts";
-import type { GetLandUsesQueryResponse } from "../types/GetLandUses";
+import type {
+  GetLandUsesQueryResponse,
+  GetLandUses400,
+  GetLandUses500,
+} from "../types/GetLandUses";
 
 export const getLandUsesQueryKey = () => [{ url: `/land-uses` }] as const;
 export function getLandUsesQueryOptions<
   TData = GetLandUsesQueryResponse,
-  TError = unknown,
+  TError = GetLandUses400 | GetLandUses500,
 >(
   options: Partial<Parameters<typeof client>[0]> = {},
 ): UseQueryOptions<TData, TError> {
@@ -37,7 +41,7 @@ export function getLandUsesQueryOptions<
 
 export function useGetLandUses<
   TData = GetLandUsesQueryResponse,
-  TError = unknown,
+  TError = GetLandUses400 | GetLandUses500,
 >(
   options: {
     query?: UseQueryOptions<TData, TError>;
