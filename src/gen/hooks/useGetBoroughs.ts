@@ -6,12 +6,16 @@ import type {
 } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import client from "../../client.ts";
-import type { GetBoroughsQueryResponse } from "../types/GetBoroughs";
+import type {
+  GetBoroughsQueryResponse,
+  GetBoroughs400,
+  GetBoroughs500,
+} from "../types/GetBoroughs";
 
 export const getBoroughsQueryKey = () => [{ url: `/boroughs` }] as const;
 export function getBoroughsQueryOptions<
   TData = GetBoroughsQueryResponse,
-  TError = unknown,
+  TError = GetBoroughs400 | GetBoroughs500,
 >(
   options: Partial<Parameters<typeof client>[0]> = {},
 ): UseQueryOptions<TData, TError> {
@@ -37,7 +41,7 @@ export function getBoroughsQueryOptions<
 
 export function useGetBoroughs<
   TData = GetBoroughsQueryResponse,
-  TError = unknown,
+  TError = GetBoroughs400 | GetBoroughs500,
 >(
   options: {
     query?: UseQueryOptions<TData, TError>;
