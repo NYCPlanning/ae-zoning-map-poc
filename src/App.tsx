@@ -110,8 +110,8 @@ function App() {
     },
     updateTriggers: {
       getFilterValue: [
-        visibleZoningDistrictCategories.size,
-        visibleZoningDistrictClasses.size,
+        visibleZoningDistrictCategories,
+        visibleZoningDistrictClasses,
       ],
     },
   });
