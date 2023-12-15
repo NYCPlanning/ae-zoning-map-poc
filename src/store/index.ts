@@ -13,6 +13,10 @@ export type Store = {
   toggleZoningDistrictClassVisibility: (categoryId: string) => void;
   anyTaxLotsVisibility: boolean;
   toggleAnyTaxLotsVisibility: () => void;
+  visibleTaxLotsBoundaries: boolean;
+  toggleVisibleTaxLotsBoundaries: () => void;
+  visibleLandUseColors: boolean;
+  toggleVisibleLandUseColors: () => void;
   setDefaultStateBasedOnApiData: (
     zoningDistrictCategoryIds: Array<string>,
     zoningDistrictClassIds: Array<string>,
@@ -58,6 +62,16 @@ export const useStore = create<Store>()((set) => ({
   toggleAnyTaxLotsVisibility: () =>
     set((state) => ({
       anyTaxLotsVisibility: !state.anyTaxLotsVisibility,
+    })),
+  visibleTaxLotsBoundaries: false,
+  toggleVisibleTaxLotsBoundaries: () =>
+    set((state) => ({
+      visibleTaxLotsBoundaries: !state.visibleTaxLotsBoundaries,
+    })),
+  visibleLandUseColors: false,
+  toggleVisibleLandUseColors: () =>
+    set((state) => ({
+      visibleLandUseColors: !state.visibleLandUseColors,
     })),
   setDefaultStateBasedOnApiData: (
     zoningDistrictCategoryIds: Array<string>,

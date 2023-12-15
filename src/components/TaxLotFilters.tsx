@@ -11,21 +11,44 @@ import {
 } from "@nycplanning/streetscape";
 import LegendSquare from "./LegendSquare";
 import { useGetLandUses } from "../gen";
+import { useStore } from "../store";
 
 function TaxLotFilters() {
   const { data } = useGetLandUses();
 
+  const {
+    anyTaxLotsVisibility,
+    visibleTaxLotsBoundaries,
+    toggleVisibleTaxLotsBoundaries,
+    visibleLandUseColors,
+    toggleVisibleLandUseColors,
+  } = useStore((state) => state);
+
   return (
     <>
       <Flex alignSelf={"flex-start"}>
-        <Switch size="sm" pr={2} />
+        <Switch
+          size="sm"
+          pr={2}
+          onChange={() => {
+            if (anyTaxLotsVisibility) toggleVisibleTaxLotsBoundaries();
+          }}
+          isChecked={visibleTaxLotsBoundaries}
+        />
         Tax Lot Boundaries
       </Flex>
 
       <Accordion allowToggle border={0}>
         <AccordionItem border={0}>
           <AccordionButton px={0} _hover={{ border: 0 }}>
-            <Switch size="sm" pr={2} />
+            <Switch
+              size="sm"
+              pr={2}
+              onChange={() => {
+                if (anyTaxLotsVisibility) toggleVisibleLandUseColors();
+              }}
+              isChecked={visibleLandUseColors}
+            />
             Land Use Colors
             <Spacer />
             <AccordionIcon />
