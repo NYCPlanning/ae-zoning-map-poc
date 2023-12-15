@@ -66,6 +66,7 @@ function App() {
     getTextColor: [98, 98, 98, 255],
     textFontFamily: "Helvetica Neue, Arial, sans-serif",
     getTextSize: 8,
+    pickable: true,
     // filterSize is 2 because we're filtering on two dimensions - category and class
     extensions: [new DataFilterExtension({ filterSize: 2 })],
     getFilterValue: (f: any) => {
@@ -107,6 +108,9 @@ function App() {
         }
       });
       return color;
+    },
+    onClick: (f: any) => {
+      console.info("layer was clicked", f);
     },
     updateTriggers: {
       getFilterValue: [
