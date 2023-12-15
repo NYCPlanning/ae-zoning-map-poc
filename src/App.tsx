@@ -12,16 +12,17 @@ import { useMediaQuery, Accordion } from "@nycplanning/streetscape";
 import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
 import { TaxLotDetails } from "./components/TaxLotDetails";
-import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
-import { taxLotsLayer, processColors } from "./layers";
+import { hexToRgba, processColors } from "./layers";
 import {
   useGetAllZoningDistrictClasses,
+  useGetLandUses,
   useGetTaxLotByBbl,
   useGetZoningDistrictClassesByUuid,
 } from "./gen";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
 import { useStore } from "./store";
 import { DataFilterExtension } from "@deck.gl/extensions/typed";
+import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
 
 function updateViewState({ viewState }: DeckGLProps) {
   viewState.longitude = Math.min(
@@ -43,6 +44,7 @@ function App() {
       },
     },
   );
+  const { data: landUses } = useGetLandUses();
 
   const selectedZoningDistrictUuid = useStore(
     (state) => state.selectedZoningDistrictUuid,
@@ -69,6 +71,11 @@ function App() {
   const visibleZoningDistrictClasses = useStore(
     (state) => state.visibleZoningDistrictClasses,
   );
+  const anyTaxLotsVisibility = useStore((state) => state.anyTaxLotsVisibility);
+  const visibleTaxLotsBoundaries = useStore(
+    (state) => state.visibleTaxLotsBoundaries,
+  );
+  const visibleLandUseColors = useStore((state) => state.visibleLandUseColors);
 
   const { data } = useGetAllZoningDistrictClasses();
   const colorKey =
@@ -142,11 +149,40 @@ function App() {
     },
   });
 
+  console.log("app - landuses", landUses);
+
+  const taxLotsLayer = new MVTLayer({
+    id: "taxLots",
+    // data: `${import.meta.env.VITE_ZONING_API_URL}/tax-lot/{z}/{x}/{y}.pbf`,
+    data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/tax_lot/{z}/{x}/{y}.pbf`,
+    getLineColor: visibleTaxLotsBoundaries ? [0, 0, 0] : null,
+    visible: anyTaxLotsVisibility,
+    minZoom: 15,
+    maxZoom: 16,
+    getFillColor: (f: any) => {
+      let color = [192, 192, 192, 0];
+      if (visibleLandUseColors && f.properties.layerName === "fill") {
+        const landUseId = f.properties.landUseId;
+        const landUseColor = landUses
+          ? landUses.find((landUse) => landUseId === landUse.id)?.color
+          : null;
+        const landUseColorHex = landUseColor ? hexToRgba(landUseColor) : null;
+        color = landUseColorHex ? landUseColorHex : color;
+      }
+      return color;
+    },
+    updateTriggers: {
+      getLineColor: [visibleTaxLotsBoundaries],
+      getFillColor: [visibleLandUseColors],
+    },
+  });
+
   // Viewport settings
   const INITIAL_VIEW_STATE = {
     longitude: -74.0008,
     latitude: 40.7018,
-    zoom: 10,
+    // TODO Change this back to 10
+    zoom: 16,
     pitch: 0,
     bearing: 0,
     maxZoom: 20,

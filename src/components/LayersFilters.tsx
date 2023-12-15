@@ -38,6 +38,16 @@ function LayersFilters() {
   const toggleAnyTaxLotsVisibility = useStore(
     (state) => state.toggleAnyTaxLotsVisibility,
   );
+  const visibleTaxLotsBoundaries = useStore(
+    (state) => state.visibleTaxLotsBoundaries,
+  );
+  const toggleVisibleTaxLotsBoundaries = useStore(
+    (state) => state.toggleVisibleTaxLotsBoundaries,
+  );
+  const visibleLandUseColors = useStore((state) => state.visibleLandUseColors);
+  const toggleVisibleLandUseColors = useStore(
+    (state) => state.toggleVisibleLandUseColors,
+  );
   const setDefaultStateBasedOnApiData = useStore(
     (state) => state.setDefaultStateBasedOnApiData,
   );
@@ -70,6 +80,14 @@ function LayersFilters() {
         zoningDistrictCategoryIds,
         zoningDistrictClassIds,
       );
+    }
+  }
+
+  function handleTaxLotsVisibility() {
+    toggleAnyTaxLotsVisibility();
+    if (!visibleTaxLotsBoundaries && !visibleLandUseColors) {
+      toggleVisibleTaxLotsBoundaries();
+      toggleVisibleLandUseColors();
     }
   }
 
