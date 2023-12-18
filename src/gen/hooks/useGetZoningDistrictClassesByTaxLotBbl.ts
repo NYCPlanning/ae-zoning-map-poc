@@ -9,6 +9,9 @@ import client from "../../client.ts";
 import type {
   GetZoningDistrictClassesByTaxLotBblQueryResponse,
   GetZoningDistrictClassesByTaxLotBblPathParams,
+  GetZoningDistrictClassesByTaxLotBbl400,
+  GetZoningDistrictClassesByTaxLotBbl404,
+  GetZoningDistrictClassesByTaxLotBbl500,
 } from "../types/GetZoningDistrictClassesByTaxLotBbl";
 
 export const getZoningDistrictClassesByTaxLotBblQueryKey = (
@@ -19,7 +22,10 @@ export const getZoningDistrictClassesByTaxLotBblQueryKey = (
   ] as const;
 export function getZoningDistrictClassesByTaxLotBblQueryOptions<
   TData = GetZoningDistrictClassesByTaxLotBblQueryResponse,
-  TError = unknown,
+  TError =
+    | GetZoningDistrictClassesByTaxLotBbl400
+    | GetZoningDistrictClassesByTaxLotBbl404
+    | GetZoningDistrictClassesByTaxLotBbl500,
 >(
   bbl: GetZoningDistrictClassesByTaxLotBblPathParams["bbl"],
   options: Partial<Parameters<typeof client>[0]> = {},
@@ -46,7 +52,10 @@ export function getZoningDistrictClassesByTaxLotBblQueryOptions<
 
 export function useGetZoningDistrictClassesByTaxLotBbl<
   TData = GetZoningDistrictClassesByTaxLotBblQueryResponse,
-  TError = unknown,
+  TError =
+    | GetZoningDistrictClassesByTaxLotBbl400
+    | GetZoningDistrictClassesByTaxLotBbl404
+    | GetZoningDistrictClassesByTaxLotBbl500,
 >(
   bbl: GetZoningDistrictClassesByTaxLotBblPathParams["bbl"],
   options: {

@@ -9,13 +9,16 @@ import client from "../../client.ts";
 import type {
   GetTaxLotByBblQueryResponse,
   GetTaxLotByBblPathParams,
+  GetTaxLotByBbl400,
+  GetTaxLotByBbl404,
+  GetTaxLotByBbl500,
 } from "../types/GetTaxLotByBbl";
 
 export const getTaxLotByBblQueryKey = (bbl: GetTaxLotByBblPathParams["bbl"]) =>
   [{ url: `/tax-lots/${bbl}`, params: { bbl: bbl } }] as const;
 export function getTaxLotByBblQueryOptions<
   TData = GetTaxLotByBblQueryResponse,
-  TError = unknown,
+  TError = GetTaxLotByBbl400 | GetTaxLotByBbl404 | GetTaxLotByBbl500,
 >(
   bbl: GetTaxLotByBblPathParams["bbl"],
   options: Partial<Parameters<typeof client>[0]> = {},
@@ -42,7 +45,7 @@ export function getTaxLotByBblQueryOptions<
 
 export function useGetTaxLotByBbl<
   TData = GetTaxLotByBblQueryResponse,
-  TError = unknown,
+  TError = GetTaxLotByBbl400 | GetTaxLotByBbl404 | GetTaxLotByBbl500,
 >(
   bbl: GetTaxLotByBblPathParams["bbl"],
   options: {

@@ -9,6 +9,9 @@ import client from "../../client.ts";
 import type {
   GetZoningDistrictsByTaxLotBblQueryResponse,
   GetZoningDistrictsByTaxLotBblPathParams,
+  GetZoningDistrictsByTaxLotBbl400,
+  GetZoningDistrictsByTaxLotBbl404,
+  GetZoningDistrictsByTaxLotBbl500,
 } from "../types/GetZoningDistrictsByTaxLotBbl";
 
 export const getZoningDistrictsByTaxLotBblQueryKey = (
@@ -17,7 +20,10 @@ export const getZoningDistrictsByTaxLotBblQueryKey = (
   [{ url: `/tax-lots/${bbl}/zoning-districts`, params: { bbl: bbl } }] as const;
 export function getZoningDistrictsByTaxLotBblQueryOptions<
   TData = GetZoningDistrictsByTaxLotBblQueryResponse,
-  TError = unknown,
+  TError =
+    | GetZoningDistrictsByTaxLotBbl400
+    | GetZoningDistrictsByTaxLotBbl404
+    | GetZoningDistrictsByTaxLotBbl500,
 >(
   bbl: GetZoningDistrictsByTaxLotBblPathParams["bbl"],
   options: Partial<Parameters<typeof client>[0]> = {},
@@ -44,7 +50,10 @@ export function getZoningDistrictsByTaxLotBblQueryOptions<
 
 export function useGetZoningDistrictsByTaxLotBbl<
   TData = GetZoningDistrictsByTaxLotBblQueryResponse,
-  TError = unknown,
+  TError =
+    | GetZoningDistrictsByTaxLotBbl400
+    | GetZoningDistrictsByTaxLotBbl404
+    | GetZoningDistrictsByTaxLotBbl500,
 >(
   bbl: GetZoningDistrictsByTaxLotBblPathParams["bbl"],
   options: {

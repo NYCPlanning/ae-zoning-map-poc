@@ -9,6 +9,9 @@ import client from "../../client.ts";
 import type {
   GetTaxLotGeoJsonByBblQueryResponse,
   GetTaxLotGeoJsonByBblPathParams,
+  GetTaxLotGeoJsonByBbl400,
+  GetTaxLotGeoJsonByBbl404,
+  GetTaxLotGeoJsonByBbl500,
 } from "../types/GetTaxLotGeoJsonByBbl";
 
 export const getTaxLotGeoJsonByBblQueryKey = (
@@ -16,7 +19,10 @@ export const getTaxLotGeoJsonByBblQueryKey = (
 ) => [{ url: `/tax-lots/${bbl}/geojson`, params: { bbl: bbl } }] as const;
 export function getTaxLotGeoJsonByBblQueryOptions<
   TData = GetTaxLotGeoJsonByBblQueryResponse,
-  TError = unknown,
+  TError =
+    | GetTaxLotGeoJsonByBbl400
+    | GetTaxLotGeoJsonByBbl404
+    | GetTaxLotGeoJsonByBbl500,
 >(
   bbl: GetTaxLotGeoJsonByBblPathParams["bbl"],
   options: Partial<Parameters<typeof client>[0]> = {},
@@ -43,7 +49,10 @@ export function getTaxLotGeoJsonByBblQueryOptions<
 
 export function useGetTaxLotGeoJsonByBbl<
   TData = GetTaxLotGeoJsonByBblQueryResponse,
-  TError = unknown,
+  TError =
+    | GetTaxLotGeoJsonByBbl400
+    | GetTaxLotGeoJsonByBbl404
+    | GetTaxLotGeoJsonByBbl500,
 >(
   bbl: GetTaxLotGeoJsonByBblPathParams["bbl"],
   options: {
