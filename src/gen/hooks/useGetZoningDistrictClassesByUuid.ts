@@ -9,6 +9,9 @@ import client from "../../client.ts";
 import type {
   GetZoningDistrictClassesByUuidQueryResponse,
   GetZoningDistrictClassesByUuidPathParams,
+  GetZoningDistrictClassesByUuid400,
+  GetZoningDistrictClassesByUuid404,
+  GetZoningDistrictClassesByUuid500,
 } from "../types/GetZoningDistrictClassesByUuid";
 
 export const getZoningDistrictClassesByUuidQueryKey = (
@@ -19,7 +22,10 @@ export const getZoningDistrictClassesByUuidQueryKey = (
   ] as const;
 export function getZoningDistrictClassesByUuidQueryOptions<
   TData = GetZoningDistrictClassesByUuidQueryResponse,
-  TError = unknown,
+  TError =
+    | GetZoningDistrictClassesByUuid400
+    | GetZoningDistrictClassesByUuid404
+    | GetZoningDistrictClassesByUuid500,
 >(
   uuid: GetZoningDistrictClassesByUuidPathParams["uuid"],
   options: Partial<Parameters<typeof client>[0]> = {},
@@ -46,7 +52,10 @@ export function getZoningDistrictClassesByUuidQueryOptions<
 
 export function useGetZoningDistrictClassesByUuid<
   TData = GetZoningDistrictClassesByUuidQueryResponse,
-  TError = unknown,
+  TError =
+    | GetZoningDistrictClassesByUuid400
+    | GetZoningDistrictClassesByUuid404
+    | GetZoningDistrictClassesByUuid500,
 >(
   uuid: GetZoningDistrictClassesByUuidPathParams["uuid"],
   options: {
