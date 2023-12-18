@@ -6,13 +6,17 @@ import type {
 } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import client from "../../client.ts";
-import type { GetAllZoningDistrictClassesQueryResponse } from "../types/GetAllZoningDistrictClasses";
+import type {
+  GetAllZoningDistrictClassesQueryResponse,
+  GetAllZoningDistrictClasses400,
+  GetAllZoningDistrictClasses500,
+} from "../types/GetAllZoningDistrictClasses";
 
 export const getAllZoningDistrictClassesQueryKey = () =>
   [{ url: `/zoning-district-classes` }] as const;
 export function getAllZoningDistrictClassesQueryOptions<
   TData = GetAllZoningDistrictClassesQueryResponse,
-  TError = unknown,
+  TError = GetAllZoningDistrictClasses400 | GetAllZoningDistrictClasses500,
 >(
   options: Partial<Parameters<typeof client>[0]> = {},
 ): UseQueryOptions<TData, TError> {
@@ -38,7 +42,7 @@ export function getAllZoningDistrictClassesQueryOptions<
 
 export function useGetAllZoningDistrictClasses<
   TData = GetAllZoningDistrictClassesQueryResponse,
-  TError = unknown,
+  TError = GetAllZoningDistrictClasses400 | GetAllZoningDistrictClasses500,
 >(
   options: {
     query?: UseQueryOptions<TData, TError>;

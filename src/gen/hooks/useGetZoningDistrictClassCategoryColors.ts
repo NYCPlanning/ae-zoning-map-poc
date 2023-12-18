@@ -6,13 +6,19 @@ import type {
 } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import client from "../../client.ts";
-import type { GetZoningDistrictClassCategoryColorsQueryResponse } from "../types/GetZoningDistrictClassCategoryColors";
+import type {
+  GetZoningDistrictClassCategoryColorsQueryResponse,
+  GetZoningDistrictClassCategoryColors400,
+  GetZoningDistrictClassCategoryColors500,
+} from "../types/GetZoningDistrictClassCategoryColors";
 
 export const getZoningDistrictClassCategoryColorsQueryKey = () =>
   [{ url: `/zoning-district-classes/category-colors` }] as const;
 export function getZoningDistrictClassCategoryColorsQueryOptions<
   TData = GetZoningDistrictClassCategoryColorsQueryResponse,
-  TError = unknown,
+  TError =
+    | GetZoningDistrictClassCategoryColors400
+    | GetZoningDistrictClassCategoryColors500,
 >(
   options: Partial<Parameters<typeof client>[0]> = {},
 ): UseQueryOptions<TData, TError> {
@@ -38,7 +44,9 @@ export function getZoningDistrictClassCategoryColorsQueryOptions<
 
 export function useGetZoningDistrictClassCategoryColors<
   TData = GetZoningDistrictClassCategoryColorsQueryResponse,
-  TError = unknown,
+  TError =
+    | GetZoningDistrictClassCategoryColors400
+    | GetZoningDistrictClassCategoryColors500,
 >(
   options: {
     query?: UseQueryOptions<TData, TError>;

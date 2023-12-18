@@ -9,6 +9,9 @@ import client from "../../client.ts";
 import type {
   GetZoningDistrictClassesByIdQueryResponse,
   GetZoningDistrictClassesByIdPathParams,
+  GetZoningDistrictClassesById400,
+  GetZoningDistrictClassesById404,
+  GetZoningDistrictClassesById500,
 } from "../types/GetZoningDistrictClassesById";
 
 export const getZoningDistrictClassesByIdQueryKey = (
@@ -16,7 +19,10 @@ export const getZoningDistrictClassesByIdQueryKey = (
 ) => [{ url: `/zoning-district-classes/${id}`, params: { id: id } }] as const;
 export function getZoningDistrictClassesByIdQueryOptions<
   TData = GetZoningDistrictClassesByIdQueryResponse,
-  TError = unknown,
+  TError =
+    | GetZoningDistrictClassesById400
+    | GetZoningDistrictClassesById404
+    | GetZoningDistrictClassesById500,
 >(
   id: GetZoningDistrictClassesByIdPathParams["id"],
   options: Partial<Parameters<typeof client>[0]> = {},
@@ -43,7 +49,10 @@ export function getZoningDistrictClassesByIdQueryOptions<
 
 export function useGetZoningDistrictClassesById<
   TData = GetZoningDistrictClassesByIdQueryResponse,
-  TError = unknown,
+  TError =
+    | GetZoningDistrictClassesById400
+    | GetZoningDistrictClassesById404
+    | GetZoningDistrictClassesById500,
 >(
   id: GetZoningDistrictClassesByIdPathParams["id"],
   options: {
