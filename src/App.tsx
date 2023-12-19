@@ -120,8 +120,6 @@ function App() {
     pickable: true,
     onClick: (f: any) => {
       setSelectedZoningDistrictUuid(f.object.properties.id);
-      // setSelectedZoningDistrictUuid('0025a136-64fe-4838-bdf2-c3d3f80634cd')
-      // setSelectedZoningDistrictUuid('06673772-22df-4324-9a9e-816c1397e89e')
       setInfoPane("zoningDistrict");
     },
     getFillColor: (f: any) => {
