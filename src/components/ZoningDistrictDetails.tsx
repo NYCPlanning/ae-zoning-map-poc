@@ -13,8 +13,6 @@ export const ZoningDistrictDetails = ({
 }: ZoningDistrictClassesDetailsProps) => {
   const infoPane = useStore((state) => state.infoPane);
 
-  const zds = [...zoningDistrictClasses];
-
   return zoningDistrictClasses === null ||
     infoPane !== "zoningDistrict" ? null : (
     <CloseableModal>
@@ -24,13 +22,16 @@ export const ZoningDistrictDetails = ({
         width={"296px"}
       >
         <Text fontSize={"lg"} fontWeight={"bold"}>
-          Zoning District {zds.map((zd) => zd?.id).join(", ")}
+          Zoning District{" "}
+          {Array.from(zoningDistrictClasses)
+            .map((zd) => zd?.id)
+            .join(", ")}
         </Text>
-        {zds.map((district) => (
+        {Array.from(zoningDistrictClasses).map((district) => (
           <ZoningDistrictDetailsInfo
             key={district?.id}
             zd={district}
-            multiDistrict={zds.length > 1}
+            multiDistrict={zoningDistrictClasses.size > 1}
           />
         ))}
       </VStack>

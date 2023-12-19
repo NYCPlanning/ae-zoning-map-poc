@@ -43,13 +43,18 @@ function App() {
       },
     },
   );
-  const [selectedZoningDistrictClasses, setSelectedZoningDistrictClasses] =
-    useState<string | null>(null);
+
+  const selectedZoningDistrictUuid = useStore(
+    (state) => state.selectedZoningDistrictUuid,
+  );
+  const setSelectedZoningDistrictUuid = useStore(
+    (state) => state.setSelectedZoningDistrictUuid,
+  );
   const { data: zoningDistrictClasses } = useGetZoningDistrictClassesByUuid(
-    selectedZoningDistrictClasses === null ? "" : selectedZoningDistrictClasses,
+    selectedZoningDistrictUuid === null ? "" : selectedZoningDistrictUuid,
     {
       query: {
-        enabled: selectedZoningDistrictClasses !== null,
+        enabled: selectedZoningDistrictUuid !== null,
       },
     },
   );
@@ -114,9 +119,9 @@ function App() {
     ],
     pickable: true,
     onClick: (f: any) => {
-      setSelectedZoningDistrictClasses(f.object.properties.id);
-      // setSelectedZoningDistrictClasses('0025a136-64fe-4838-bdf2-c3d3f80634cd')
-      // setSelectedZoningDistrictClasses('06673772-22df-4324-9a9e-816c1397e89e')
+      setSelectedZoningDistrictUuid(f.object.properties.id);
+      // setSelectedZoningDistrictUuid('0025a136-64fe-4838-bdf2-c3d3f80634cd')
+      // setSelectedZoningDistrictUuid('06673772-22df-4324-9a9e-816c1397e89e')
       setInfoPane("zoningDistrict");
     },
     getFillColor: (f: any) => {

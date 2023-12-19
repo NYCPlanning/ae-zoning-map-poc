@@ -1,8 +1,10 @@
 import { create } from "zustand";
 
 export type Store = {
-  infoPane: string;
-  setInfoPane: (info: string) => void;
+  infoPane: "zoningDistrict" | "bbl" | null;
+  setInfoPane: (info: "zoningDistrict" | "bbl" | null) => void;
+  selectedZoningDistrictUuid: string | null;
+  setSelectedZoningDistrictUuid: (uuid: string | null) => void;
   anyZoningDistrictsVisibility: boolean;
   toggleAnyZoningDistrictsVisibility: () => void;
   visibleZoningDistrictCategories: Set<string>;
@@ -18,10 +20,15 @@ export type Store = {
 };
 
 export const useStore = create<Store>()((set) => ({
-  infoPane: "",
-  setInfoPane: (info: string) =>
+  infoPane: null,
+  setInfoPane: (info: "zoningDistrict" | "bbl" | null) =>
     set(() => ({
       infoPane: info,
+    })),
+  selectedZoningDistrictUuid: null,
+  setSelectedZoningDistrictUuid: (uuid: string | null) =>
+    set(() => ({
+      selectedZoningDistrictUuid: uuid,
     })),
   anyZoningDistrictsVisibility: false,
   toggleAnyZoningDistrictsVisibility: () =>

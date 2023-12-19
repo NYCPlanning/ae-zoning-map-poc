@@ -23,7 +23,7 @@ export const CloseableModal = ({ children }: any) => {
         top={2}
         right={2}
         size="sm"
-        onClick={() => setInfoPane("")}
+        onClick={() => setInfoPane(null)}
       />
       <VStack alignItems={"flex-start"} alignContent={"flex-start"}>
         {children}
