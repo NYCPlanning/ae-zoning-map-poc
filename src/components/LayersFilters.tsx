@@ -52,6 +52,18 @@ function LayersFilters() {
     (state) => state.setDefaultStateBasedOnApiData,
   );
 
+  function getFilterCount() {
+    let zoningFilterCount = 0;
+    let taxLotFilterCount = 0;
+    if (anyZoningDistrictsVisibility)
+      zoningFilterCount = visibleZoningDistrictCategories.size;
+    if (anyTaxLotsVisibility) {
+      if (visibleTaxLotsBoundaries) taxLotFilterCount++;
+      if (visibleLandUseColors) taxLotFilterCount++;
+    }
+    return zoningFilterCount + taxLotFilterCount;
+  }
+
   function handleZoningDistrictsVisibility() {
     toggleAnyZoningDistrictsVisibility();
     // The below resets all toggles and checkboxes if they are all untoggled/unchecked
@@ -80,14 +92,6 @@ function LayersFilters() {
         zoningDistrictCategoryIds,
         zoningDistrictClassIds,
       );
-    }
-  }
-
-  function handleTaxLotsVisibility() {
-    toggleAnyTaxLotsVisibility();
-    if (!visibleTaxLotsBoundaries && !visibleLandUseColors) {
-      toggleVisibleTaxLotsBoundaries();
-      toggleVisibleLandUseColors();
     }
   }
 
@@ -216,12 +220,7 @@ function LayersFilters() {
                       border={"1px solid"}
                       borderColor={"brand.100"}
                     >
-                      {/* TODO: add the tax lots size once that variable exists */}
-                      Selected (
-                      {anyZoningDistrictsVisibility
-                        ? visibleZoningDistrictCategories.size
-                        : "0"}
-                      )
+                      Selected ({getFilterCount()})
                     </Text>
                   </AccordionButton>
                   <AccordionPanel px={0}>
