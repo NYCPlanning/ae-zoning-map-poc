@@ -149,13 +149,15 @@ function App() {
     },
   });
 
-  console.log("app - landuses", landUses);
-
   const taxLotsLayer = new MVTLayer({
     id: "taxLots",
     // data: `${import.meta.env.VITE_ZONING_API_URL}/tax-lot/{z}/{x}/{y}.pbf`,
     data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/tax_lot/{z}/{x}/{y}.pbf`,
-    getLineColor: visibleTaxLotsBoundaries ? [0, 0, 0] : null,
+    getLineColor: () => {
+      let color = undefined;
+      if (visibleTaxLotsBoundaries) color = [0, 0, 0];
+      return color;
+    },
     visible: anyTaxLotsVisibility,
     minZoom: 15,
     maxZoom: 16,
@@ -163,8 +165,8 @@ function App() {
       let color = [192, 192, 192, 0];
       if (visibleLandUseColors && f.properties.layerName === "fill") {
         const landUseId = f.properties.landUseId;
-        const landUseColor = landUses
-          ? landUses.find((landUse) => landUseId === landUse.id)?.color
+        const landUseColor = landUses?.landUses
+          ? landUses.landUses.find((landUse) => landUseId === landUse.id)?.color
           : null;
         const landUseColorHex = landUseColor ? hexToRgba(landUseColor) : null;
         color = landUseColorHex ? landUseColorHex : color;
@@ -181,8 +183,7 @@ function App() {
   const INITIAL_VIEW_STATE = {
     longitude: -74.0008,
     latitude: 40.7018,
-    // TODO Change this back to 10
-    zoom: 16,
+    zoom: 10,
     pitch: 0,
     bearing: 0,
     maxZoom: 20,
