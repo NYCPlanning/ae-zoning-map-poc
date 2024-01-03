@@ -76,8 +76,10 @@ function App() {
 
   const zoningDistrictsLayer = new MVTLayer({
     id: "zoningDistricts",
-    // data: `${import.meta.env.VITE_ZONING_API_URL}/zoning-districts/{z}/{x}/{y}.pbf`,
-    data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/zoning_district/{z}/{x}/{y}.pbf`,
+    // data: `${import.meta.env.VITE_ZONING_API_URL}/zoning-districts/{z}/{x}/{y}`,
+    // data: `http://localhost:5433/zoning_district`,
+    data: `http://localhost:5433/function_zxy_query`,
+    // data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/zoning_district/{z}/{x}/{y}.pbf`,
     getLineColor: [192, 0, 192],
     minZoom: 9,
     maxZoom: 10,
@@ -123,6 +125,7 @@ function App() {
       setInfoPane("zoningDistrict");
     },
     getFillColor: (f: any) => {
+      console.info(f);
       let color = [192, 192, 192, 255];
       visibleZoningDistrictCategories.forEach((category) => {
         if (Object.prototype.hasOwnProperty.call(f.properties, category)) {
