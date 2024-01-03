@@ -75,70 +75,57 @@ function App() {
     data === undefined ? {} : processColors(data.zoningDistrictClasses);
 
   const zoningDistrictsLayer = new MVTLayer({
-    id: "zoningDistricts",
-    // data: `${import.meta.env.VITE_ZONING_API_URL}/zoning-districts/{z}/{x}/{y}`,
-    // data: `http://localhost:5433/zoning_district`,
-    data: `http://localhost:5433/function_zxy_query`,
-    // data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/zoning_district/{z}/{x}/{y}.pbf`,
-    getLineColor: [192, 0, 192],
-    minZoom: 9,
-    maxZoom: 10,
+    id: "zoning_district_fill",
+    data: `http://localhost:5433/zoning_district_fill`,
     visible: anyZoningDistrictsVisibility,
-    pointType: "text",
-    getText: (f: any) => f.properties.district,
-    getTextColor: [98, 98, 98, 255],
-    textFontFamily: "Helvetica Neue, Arial, sans-serif",
-    getTextSize: 8,
-    // filterSize is 2 because we're filtering on two dimensions - category and class
-    extensions: [new DataFilterExtension({ filterSize: 2 })],
-    getFilterValue: (f: any) => {
-      // the label datapoints don't have all of the properties we need, so just always show those for now
-      if (f.properties.layerName.includes("label")) {
-        return [1, 1];
-      }
-      // A generic result array with length equivalent to filterSize.
-      const result = [0, 0];
-      // Loop through the possible categories
-      visibleZoningDistrictCategories.forEach((category) => {
-        if (Object.prototype.hasOwnProperty.call(f.properties, category)) {
-          // If the feature has a property key for this category, set the first number in our result array to 1 (true)
-          result[0] = 1;
-          // If the class for the category exists in the list of visible class ids, set the second number to 1 (true)
-          if (visibleZoningDistrictClasses.has(f.properties[category])) {
-            result[1] = 1;
-          }
-          // For now, we show a district if it belongs to any visible categories
-          // therefore, we can break out of the loop as soon as we find one match by returning false
-          return false;
-        }
-      });
-      return result;
-    },
-    // The first array here is the range for filtering by category. The second is the range for filtering by class
-    filterRange: [
-      [1, 1],
-      [1, 1],
-    ],
-    pickable: true,
-    onClick: (f: any) => {
-      setSelectedZoningDistrictUuid(f.object.properties.id);
-      setInfoPane("zoningDistrict");
-    },
     getFillColor: (f: any) => {
-      console.info(f);
-      let color = [192, 192, 192, 255];
-      visibleZoningDistrictCategories.forEach((category) => {
-        if (Object.prototype.hasOwnProperty.call(f.properties, category)) {
-          if (visibleZoningDistrictClasses.has(f.properties[category])) {
-            color = colorKey[f.properties[category]];
-          }
-          return false;
-        }
-      });
+      // console.info(f.properties.color);
+      const color = JSON.parse(f.properties.color);
+      color[3] =
+        visibleZoningDistrictCategories.has(
+          f.properties.category.toLowerCase(),
+        ) && visibleZoningDistrictClasses.has(f.properties.class)
+          ? 120
+          : 0;
+
       return color;
     },
+    getLineColor: [192, 192, 192],
     updateTriggers: {
-      getFilterValue: [
+      getFillColor: [
+        visibleZoningDistrictCategories.size,
+        visibleZoningDistrictClasses.size,
+      ],
+    },
+  });
+
+  const zoningDistrictsLabelLayer = new MVTLayer({
+    id: "zoning_district_label",
+    data: `http://localhost:5433/zoning_district_label`,
+    visible: anyZoningDistrictsVisibility,
+    minZoom: 14,
+    pointType: "text",
+    getTextColor: (f: any) => {
+      const color = [98, 98, 98, 255];
+      const zoningCategories: Array<string> = JSON.parse(
+        f.properties.zd_category,
+      );
+      const zoningClasses: Array<string> = JSON.parse(f.properties.zd_class);
+      const hasActiveCategory = zoningCategories.some((zoningCategory) =>
+        visibleZoningDistrictCategories.has(zoningCategory.toLowerCase()),
+      );
+      const hasActiveClass = zoningClasses.some((zoningClass) =>
+        visibleZoningDistrictClasses.has(zoningClass),
+      );
+      color[3] = hasActiveCategory && hasActiveClass ? 120 : 0;
+      return color;
+    },
+    getTextSize: 12,
+    getText: (f: any) => {
+      return f.properties.label;
+    },
+    updateTriggers: {
+      getTextColor: [
         visibleZoningDistrictCategories.size,
         visibleZoningDistrictClasses.size,
       ],
@@ -164,7 +151,7 @@ function App() {
         initialViewState={INITIAL_VIEW_STATE}
         controller={true}
         onViewStateChange={updateViewState}
-        layers={[taxLotsLayer, zoningDistrictsLayer]}
+        layers={[zoningDistrictsLayer, zoningDistrictsLabelLayer]}
       >
         {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
         <Map
