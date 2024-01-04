@@ -101,23 +101,24 @@ function App() {
 
   const zoningDistrictsLabelLayer = new MVTLayer({
     id: "zoning_district_label",
-    data: `http://localhost:5433/zoning_district_label`,
+    data: `http://localhost:3000/api/zoning-districts/labels/{z}/{x}/{y}`,
     visible: anyZoningDistrictsVisibility,
     minZoom: 14,
     pointType: "text",
-    getTextColor: (f: any) => {
+    // getTextColor: (f: any) => {
+    getTextColor: () => {
       const color = [98, 98, 98, 255];
-      const zoningCategories: Array<string> = JSON.parse(
-        f.properties.zd_category,
-      );
-      const zoningClasses: Array<string> = JSON.parse(f.properties.zd_class);
-      const hasActiveCategory = zoningCategories.some((zoningCategory) =>
-        visibleZoningDistrictCategories.has(zoningCategory.toLowerCase()),
-      );
-      const hasActiveClass = zoningClasses.some((zoningClass) =>
-        visibleZoningDistrictClasses.has(zoningClass),
-      );
-      color[3] = hasActiveCategory && hasActiveClass ? 120 : 0;
+      // const zoningCategories: Array<string> = JSON.parse(
+      //   f.properties.zd_category,
+      // );
+      // const zoningClasses: Array<string> = JSON.parse(f.properties.zd_class);
+      // const hasActiveCategory = zoningCategories.some((zoningCategory) =>
+      //   visibleZoningDistrictCategories.has(zoningCategory.toLowerCase()),
+      // );
+      // const hasActiveClass = zoningClasses.some((zoningClass) =>
+      //   visibleZoningDistrictClasses.has(zoningClass),
+      // );
+      // color[3] = hasActiveCategory && hasActiveClass ? 120 : 0;
       return color;
     },
     getTextSize: 12,
