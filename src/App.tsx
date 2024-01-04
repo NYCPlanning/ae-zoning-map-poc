@@ -154,7 +154,7 @@ function App() {
     // data: `${import.meta.env.VITE_ZONING_API_URL}/tax-lot/{z}/{x}/{y}.pbf`,
     data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/tax_lot/{z}/{x}/{y}.pbf`,
     getLineColor: () => {
-      let color = undefined;
+      let color = [0, 0, 0, 0];
       if (visibleTaxLotsBoundaries) color = [0, 0, 0];
       return color;
     },
@@ -173,6 +173,11 @@ function App() {
       }
       return color;
     },
+    pointType: "text",
+    getText: (f: any) => f.properties.lot,
+    getTextColor: [98, 98, 98, 255],
+    textFontFamily: "Helvetica Neue, Arial, sans-serif",
+    getTextSize: 8,
     updateTriggers: {
       getLineColor: [visibleTaxLotsBoundaries],
       getFillColor: [visibleLandUseColors],

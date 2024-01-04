@@ -17,7 +17,6 @@ function TaxLotFilters() {
   const { data } = useGetLandUses();
 
   const {
-    anyTaxLotsVisibility,
     visibleTaxLotsBoundaries,
     toggleVisibleTaxLotsBoundaries,
     visibleLandUseColors,
@@ -30,9 +29,7 @@ function TaxLotFilters() {
         <Switch
           size="sm"
           pr={2}
-          onChange={() => {
-            if (anyTaxLotsVisibility) toggleVisibleTaxLotsBoundaries();
-          }}
+          onChange={toggleVisibleTaxLotsBoundaries}
           isChecked={visibleTaxLotsBoundaries}
         />
         Tax Lot Boundaries
@@ -44,9 +41,7 @@ function TaxLotFilters() {
             <Switch
               size="sm"
               pr={2}
-              onChange={() => {
-                if (anyTaxLotsVisibility) toggleVisibleLandUseColors();
-              }}
+              onChange={toggleVisibleLandUseColors}
               isChecked={visibleLandUseColors}
             />
             Land Use Colors
