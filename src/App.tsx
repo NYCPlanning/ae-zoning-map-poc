@@ -66,7 +66,9 @@ function App() {
 
   const zoningDistrictsLayer = new MVTLayer({
     id: "zoning_district_fill",
-    data: `http://localhost:3000/api/zoning-districts/fills/{z}/{x}/{y}`,
+    data: `${
+      import.meta.env.VITE_ZONING_API_URL
+    }/zoning-districts/fills/{z}/{x}/{y}`,
     visible: anyZoningDistrictsVisibility,
     getFillColor: (f: any) => {
       const color = JSON.parse(f.properties.color);
@@ -90,7 +92,9 @@ function App() {
 
   const zoningDistrictsLabelLayer = new MVTLayer({
     id: "zoning_district_label",
-    data: `http://localhost:3000/api/zoning-districts/labels/{z}/{x}/{y}`,
+    data: `${
+      import.meta.env.VITE_ZONING_API_URL
+    }/zoning-districts/labels/{z}/{x}/{y}`,
     visible: anyZoningDistrictsVisibility,
     minZoom: 14,
     pointType: "text",
