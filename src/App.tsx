@@ -13,15 +13,9 @@ import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
 import { TaxLotDetails } from "./components/TaxLotDetails";
 import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
-import { taxLotsLayer, processColors } from "./layers";
-import {
-  useGetAllZoningDistrictClasses,
-  useGetTaxLotByBbl,
-  useGetZoningDistrictClassesByUuid,
-} from "./gen";
+import { useGetTaxLotByBbl, useGetZoningDistrictClassesByUuid } from "./gen";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
 import { useStore } from "./store";
-import { DataFilterExtension } from "@deck.gl/extensions/typed";
 
 function updateViewState({ viewState }: DeckGLProps) {
   viewState.longitude = Math.min(
@@ -70,16 +64,11 @@ function App() {
     (state) => state.visibleZoningDistrictClasses,
   );
 
-  const { data } = useGetAllZoningDistrictClasses();
-  const colorKey =
-    data === undefined ? {} : processColors(data.zoningDistrictClasses);
-
   const zoningDistrictsLayer = new MVTLayer({
     id: "zoning_district_fill",
     data: `http://localhost:3000/api/zoning-districts/fills/{z}/{x}/{y}`,
     visible: anyZoningDistrictsVisibility,
     getFillColor: (f: any) => {
-      console.info(f);
       const color = JSON.parse(f.properties.color);
       color[3] =
         visibleZoningDistrictCategories.has(
