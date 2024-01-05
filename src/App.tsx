@@ -76,10 +76,10 @@ function App() {
 
   const zoningDistrictsLayer = new MVTLayer({
     id: "zoning_district_fill",
-    data: `http://localhost:5433/zoning_district_fill`,
+    data: `http://localhost:3000/api/zoning-districts/fills/{z}/{x}/{y}`,
     visible: anyZoningDistrictsVisibility,
     getFillColor: (f: any) => {
-      // console.info(f.properties.color);
+      console.info(f);
       const color = JSON.parse(f.properties.color);
       color[3] =
         visibleZoningDistrictCategories.has(
@@ -106,7 +106,6 @@ function App() {
     minZoom: 14,
     pointType: "text",
     getTextColor: (f: any) => {
-      // console.debug(JSON.parse(f));
       const color = [98, 98, 98, 255];
       const zoningCategories: Array<string> = JSON.parse(f.properties.category);
       const zoningClasses: Array<string> = JSON.parse(f.properties.class);
@@ -151,6 +150,7 @@ function App() {
         initialViewState={INITIAL_VIEW_STATE}
         controller={true}
         onViewStateChange={updateViewState}
+        // layers={[zoningDistrictsLabelLayer]}
         layers={[zoningDistrictsLayer, zoningDistrictsLabelLayer]}
       >
         {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
