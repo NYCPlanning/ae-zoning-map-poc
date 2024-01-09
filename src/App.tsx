@@ -157,10 +157,9 @@ function App() {
       return color;
     },
     getTextSize: 12,
-    getText: (f: any) => {
-      return f.properties.label;
+    getText: (f: { properties: { label: string } }) => {
+      return f.properties.label.replace("/", "\n");
     },
-    textMaxWidth: 3,
     updateTriggers: {
       getTextColor: [
         visibleZoningDistrictCategories.size,
