@@ -64,6 +64,51 @@ function App() {
     (state) => state.visibleZoningDistrictClasses,
   );
 
+  const taxLotLabelLayer = new MVTLayer({
+    id: "tax_lot_label",
+    data: `${
+      import.meta.env.VITE_ZONING_API_URL
+    }/tax-lots/labels/{z}/{x}/{y}.pbf`,
+    visible: true,
+    minZoom: 19,
+    pointType: "text",
+    getTextSize: 12,
+    getText: (f: { properties: { bbl: string } }) => {
+      const { bbl } = f.properties;
+      return `${bbl.substring(0, 1)}\n${bbl.substring(1, 6)}\n${bbl.substring(
+        6,
+        10,
+      )}`;
+    },
+    getTextColor: [120, 120, 120, 200],
+  });
+
+  const taxLotFillLayer = new MVTLayer({
+    id: "tax_lot_fill",
+    data: `${
+      import.meta.env.VITE_ZONING_API_URL
+    }/tax-lots/fills/{z}/{x}/{y}.pbf`,
+    visible: true,
+    minZoom: 15,
+    getLineColor: [120, 120, 120, 120],
+    // stroked: false,
+    // filled: false,
+    getFillColor: (f: {
+      properties: {
+        bbl: string;
+        color: string /** JSON stringified Array<number> */;
+      };
+    }) => {
+      let color: Array<number>;
+      try {
+        color = JSON.parse(f.properties.color);
+        color[3] = 120;
+      } catch {
+        color = [0, 0, 0, 0];
+      }
+      return color;
+    },
+  });
   const zoningDistrictsLayer = new MVTLayer({
     id: "zoning_district_fill",
     data: `${
@@ -144,7 +189,12 @@ function App() {
         controller={true}
         onViewStateChange={updateViewState}
         // layers={[zoningDistrictsLabelLayer]}
-        layers={[zoningDistrictsLayer, zoningDistrictsLabelLayer]}
+        layers={[
+          taxLotFillLayer,
+          taxLotLabelLayer,
+          zoningDistrictsLayer,
+          zoningDistrictsLabelLayer,
+        ]}
       >
         {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
         <Map
