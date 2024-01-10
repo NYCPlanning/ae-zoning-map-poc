@@ -113,7 +113,7 @@ function App() {
     id: "zoning_district_fill",
     data: `${
       import.meta.env.VITE_ZONING_API_URL
-    }/zoning-districts/fills/{z}/{x}/{y}`,
+    }/zoning-districts/fills/{z}/{x}/{y}.pbf`,
     visible: anyZoningDistrictsVisibility,
     getFillColor: (f: any) => {
       const color = JSON.parse(f.properties.color);
@@ -139,7 +139,7 @@ function App() {
     id: "zoning_district_label",
     data: `${
       import.meta.env.VITE_ZONING_API_URL
-    }/zoning-districts/labels/{z}/{x}/{y}`,
+    }/zoning-districts/labels/{z}/{x}/{y}.pbf`,
     visible: anyZoningDistrictsVisibility,
     minZoom: 14,
     pointType: "text",
