@@ -13,6 +13,7 @@
     "generate": "kubb generate"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.1.1",
     "@deck.gl/extensions": "^8.9.33",
     "@deck.gl/geo-layers": "^8.9.32",
     "@deck.gl/react": "^8.9.31",
@@ -21,7 +22,7 @@
     "@kubb/swagger": "^1.14.9",
     "@kubb/swagger-tanstack-query": "^1.14.9",
     "@kubb/swagger-ts": "^1.14.9",
-    "@nycplanning/streetscape": "^0.8.2",
+    "@nycplanning/streetscape": "^0.9.0",
     "@tanstack/react-query": "^4.36.1",
     "axios": "^1.6.1",
     "maplibre-gl": "^3.4.0",
