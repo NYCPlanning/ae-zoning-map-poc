@@ -6,9 +6,14 @@ import Map, {
 import { useState } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
-import DeckGL, { DeckGLProps } from "@deck.gl/react/typed";
-import { MapProvider } from "react-map-gl/maplibre";
-import { useMediaQuery, Accordion } from "@nycplanning/streetscape";
+import DeckGL from "@deck.gl/react/typed";
+import {
+  useMediaQuery,
+  Accordion,
+  IconButton,
+  ButtonGroup,
+} from "@nycplanning/streetscape";
+import { AddIcon, MinusIcon } from "@chakra-ui/icons";
 import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
 import { TaxLotDetails } from "./components/TaxLotDetails";
@@ -24,14 +29,15 @@ import { useStore } from "./store";
 import { DataFilterExtension } from "@deck.gl/extensions/typed";
 import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
 
-function updateViewState({ viewState }: DeckGLProps) {
-  viewState.longitude = Math.min(
-    -73.6311,
-    Math.max(-74.3308, viewState.longitude),
-  );
-  viewState.latitude = Math.min(41.103, Math.max(40.2989, viewState.latitude));
-  return viewState;
-}
+type ViewState = {
+  latitude: number;
+  longitude: number;
+  zoom: number;
+  bearing: number;
+  pitch: number;
+  transitionDuration?: number;
+  transitionEasing?: (t: number) => number;
+};
 
 function App() {
   const isMobile = useMediaQuery("(max-width: 767px)")[0];
@@ -97,10 +103,6 @@ function App() {
     // filterSize is 2 because we're filtering on two dimensions - category and class
     extensions: [new DataFilterExtension({ filterSize: 2 })],
     getFilterValue: (f: any) => {
-      // the label datapoints don't have all of the properties we need, so just always show those for now
-      if (f.properties.layerName.includes("label")) {
-        return [1, 1];
-      }
       // A generic result array with length equivalent to filterSize.
       const result = [0, 0];
       // Loop through the possible categories
@@ -184,42 +186,46 @@ function App() {
     },
   });
 
-  // Viewport settings
-  const INITIAL_VIEW_STATE = {
+  const [viewState, setViewState] = useState<ViewState>({
     longitude: -74.0008,
     latitude: 40.7018,
-    zoom: 10,
-    pitch: 0,
+    zoom: 15,
     bearing: 0,
-    maxZoom: 20,
-    minZoom: 10,
-    minPitch: 0,
-    maxPitch: 0,
-  };
+    pitch: 0,
+  });
 
   return (
-    <MapProvider>
+    <>
       <DeckGL
-        initialViewState={INITIAL_VIEW_STATE}
-        controller={true}
-        onViewStateChange={updateViewState}
+        controller={{
+          doubleClickZoom: false,
+        }}
+        viewState={viewState}
+        onViewStateChange={({ viewState: newViewState }) => {
+          setViewState({
+            longitude: Math.min(
+              -73.6311,
+              Math.max(-74.3308, newViewState.longitude),
+            ),
+            latitude: Math.min(
+              41.103,
+              Math.max(40.2989, newViewState.latitude),
+            ),
+            bearing: newViewState.bearing,
+            pitch: newViewState.pitch,
+            zoom: newViewState.zoom,
+          });
+        }}
         layers={[taxLotsLayer, zoningDistrictsLayer]}
       >
         {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
         <Map
-          initialViewState={INITIAL_VIEW_STATE}
           style={{ width: "100vw", height: "100vh" }}
           mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
           // disable the default attribution
           attributionControl={false}
         >
           <AttributionControl compact={isMobile ? true : false} />
-
-          <NavigationControl
-            position={isMobile ? "top-right" : "bottom-right"}
-            showCompass={true}
-            showZoom={true}
-          />
 
           {isMobile ? null : (
             <ScaleControl
@@ -235,33 +241,80 @@ function App() {
           alt="NYC Planning"
           src="https://raw.githubusercontent.com/NYCPlanning/dcp-logo/master/dcp_logo_772.png"
         />
-
-        <Accordion
-          id="map-selections"
-          position="fixed"
-          top={6}
-          left={6}
-          allowMultiple
-          width={"27.5rem"}
-          defaultIndex={[0, 1]}
-        >
-          <LocationSearch
-            handleBblSearched={(bbl) => {
-              setSelectedBbl(bbl);
-              setInfoPane("bbl");
-            }}
-          />
-          <LayersFilters />
-
-          <TaxLotDetails taxLot={taxLot === undefined ? null : taxLot} />
-          <ZoningDistrictDetails
-            zoningDistrictClasses={
-              new Set(zoningDistrictClasses?.zoningDistrictClasses)
-            }
-          />
-        </Accordion>
       </DeckGL>
-    </MapProvider>
+      <ButtonGroup
+        position="absolute"
+        bottom={28}
+        right={6}
+        isAttached={true}
+        orientation="vertical"
+      >
+        <IconButton
+          minH={8}
+          minW={8}
+          _active={{
+            background: "white",
+          }}
+          variant={"secondary"}
+          aria-label="Zoom in"
+          icon={<AddIcon />}
+          onClick={() => {
+            setViewState({
+              ...viewState,
+              zoom: viewState.zoom + 1,
+              transitionDuration: 750,
+              transitionEasing: (x) => {
+                return 1 - Math.pow(1 - x, 4);
+              },
+            });
+          }}
+        />
+        <IconButton
+          minH={8}
+          minW={8}
+          _active={{
+            background: "white",
+          }}
+          variant={"secondary"}
+          aria-label="Zoom out"
+          icon={<MinusIcon />}
+          onClick={() => {
+            setViewState({
+              ...viewState,
+              zoom: viewState.zoom - 1,
+              transitionDuration: 750,
+              transitionEasing: (x) => {
+                return 1 - Math.pow(1 - x, 4);
+              },
+            });
+          }}
+        />
+      </ButtonGroup>
+      <Accordion
+        id="map-selections"
+        position="fixed"
+        top={6}
+        left={6}
+        allowMultiple
+        width={"21.25rem"}
+        defaultIndex={[0, 1]}
+      >
+        <LocationSearch
+          handleBblSearched={(bbl) => {
+            setSelectedBbl(bbl);
+            setInfoPane("bbl");
+          }}
+        />
+        <LayersFilters />
+
+        <TaxLotDetails taxLot={taxLot === undefined ? null : taxLot} />
+        <ZoningDistrictDetails
+          zoningDistrictClasses={
+            new Set(zoningDistrictClasses?.zoningDistrictClasses)
+          }
+        />
+      </Accordion>
+    </>
   );
 }
 
