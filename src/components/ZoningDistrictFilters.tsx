@@ -122,12 +122,13 @@ function ZoningDistrictFilters() {
                 <AccordionIcon />
               </AccordionButton>
             </HStack>
-            <AccordionPanel>
+            <AccordionPanel p={0}>
               <Stack
                 direction={["column", "row"]}
                 spacing={8}
                 flexWrap={"wrap"}
                 justifyContent={"flex-start"}
+                py={2.5}
                 px={9}
               >
                 {classesData?.zoningDistrictClasses

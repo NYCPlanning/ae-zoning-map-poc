@@ -90,27 +90,34 @@ function LayersFilters() {
   }
 
   return (
-    <AccordionItem
-      bg="white"
-      mb={6}
-      borderRadius="0.75rem 0 0.75rem 0.75rem"
-      border="0"
-    >
+    <AccordionItem mb={6} borderRadius="0.75rem" border="0">
       {({ isExpanded }: { isExpanded: boolean }) => (
         <>
-          <AccordionButton p={0} _hover={{ borderColor: "white" }}>
+          <AccordionButton
+            height={16}
+            background="white"
+            px={4}
+            py={0}
+            borderRadius={isExpanded ? "0.75rem 0 0 0" : "0.75rem"}
+            _hover={{ backgroundColor: "white" }}
+          >
+            <Text fontSize={"lg"} fontWeight={"bold"}>
+              Layers and Filters
+            </Text>
+            <Spacer />
             <Flex
-              width={"30rem"}
-              mr="-4rem"
-              bg="white"
-              borderRadius={"base"}
-              py={4}
-              pl={4}
-              pr={2}
+              height={"full"}
+              borderTopRightRadius={"base"}
+              borderBottomRightRadius={"base"}
+              backgroundColor={"white"}
+              align={"center"}
+              transform={isExpanded ? "translateX(3rem)" : ""}
+              transition={"all 0.25s"}
             >
-              <Text textStyle="lead">Layers and Filters</Text>
-              <Spacer />
-              <Box transform={isExpanded ? "" : "rotate(180deg);"}>
+              <Box
+                transform={isExpanded ? "" : "rotate(180deg)"}
+                transition={"all 0.25s"}
+              >
                 <svg
                   width="32"
                   height="32"
@@ -126,16 +133,17 @@ function LayersFilters() {
               </Box>
             </Flex>
           </AccordionButton>
-          <AccordionPanel pt={0} pb={4}>
+          <AccordionPanel
+            pt={5}
+            pb={4}
+            px={4}
+            background={"white"}
+            borderTop="1px dotted"
+            borderColor="gray.400"
+            borderRadius={"0 0 0.75rem 0.75rem"}
+          >
             <form>
-              <Flex
-                id="layers"
-                borderTop="1px solid"
-                borderColor="gray.400"
-                pt={4}
-                justify="center"
-                gap={6}
-              >
+              <Flex id="layers" justify="center" gap={6}>
                 <VStack
                   width={20}
                   justify="center"
