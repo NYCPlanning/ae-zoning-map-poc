@@ -16,7 +16,6 @@ export const CloseableModal = ({ children }: any) => {
       position="fixed"
       top={6}
       right={6}
-      // width={"296px"}
     >
       <CloseButton
         position="absolute"

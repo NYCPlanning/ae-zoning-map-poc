@@ -46,27 +46,34 @@ function LocationSearch({ handleBblSearched }: LocationSearchProps) {
   });
 
   return (
-    <AccordionItem
-      bg="white"
-      mb={6}
-      borderRadius="0.75rem 0 0.75rem 0.75rem"
-      border="0"
-    >
+    <AccordionItem mb={6} border="0">
       {({ isExpanded }: { isExpanded: boolean }) => (
         <>
-          <AccordionButton p={0} _hover={{ borderColor: "white" }}>
+          <AccordionButton
+            height={16}
+            background="white"
+            px={4}
+            py={0}
+            borderRadius={isExpanded ? "0.75rem 0 0 0" : "0.75rem"}
+            _hover={{ backgroundColor: "white" }}
+          >
+            <Text fontSize={"lg"} fontWeight={"bold"}>
+              Location Search
+            </Text>
+            <Spacer />
             <Flex
-              width={"30rem"}
-              mr="-4rem"
-              bg="white"
-              borderRadius={"base"}
-              py={4}
-              pl={4}
-              pr={2}
+              height={"full"}
+              borderTopRightRadius={"base"}
+              borderBottomRightRadius={"base"}
+              backgroundColor={"white"}
+              align={"center"}
+              transform={isExpanded ? "translateX(3rem)" : ""}
+              transition={"all 0.25s"}
             >
-              <Text textStyle="lead">Location Search</Text>
-              <Spacer />
-              <Box transform={isExpanded ? "" : "rotate(180deg);"}>
+              <Box
+                transform={isExpanded ? "" : "rotate(180deg)"}
+                transition={"all 0.25s"}
+              >
                 <svg
                   width="32"
                   height="32"
@@ -82,14 +89,17 @@ function LocationSearch({ handleBblSearched }: LocationSearchProps) {
               </Box>
             </Flex>
           </AccordionButton>
-          <AccordionPanel pt={0} pb={4}>
+          <AccordionPanel
+            pt={5}
+            pb={4}
+            px={4}
+            background={"white"}
+            borderTop="1px dotted"
+            borderColor="gray.400"
+            borderRadius={"0 0 0.75rem 0.75rem"}
+          >
             <form onSubmit={onSubmit}>
-              <FormControl
-                id="borough"
-                borderTop="1px solid"
-                borderColor="gray.400"
-                pt={4}
-              >
+              <FormControl id="borough">
                 <FormLabel>Borough</FormLabel>
                 <Controller
                   name="borough"
