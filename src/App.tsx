@@ -67,6 +67,9 @@ function App() {
     },
   );
 
+  const MAX_ZOOM = 20;
+  const MIN_ZOOM = 10;
+
   const setInfoPane = useStore((state) => state.setInfoPane);
   const anyZoningDistrictsVisibility = useStore(
     (state) => state.anyZoningDistrictsVisibility,
@@ -189,7 +192,7 @@ function App() {
   const [viewState, setViewState] = useState<ViewState>({
     longitude: -74.0008,
     latitude: 40.7018,
-    zoom: 15,
+    zoom: 10,
     bearing: 0,
     pitch: 0,
   });
@@ -213,7 +216,7 @@ function App() {
             ),
             bearing: newViewState.bearing,
             pitch: newViewState.pitch,
-            zoom: newViewState.zoom,
+            zoom: Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, newViewState.zoom)),
           });
         }}
         layers={[taxLotsLayer, zoningDistrictsLayer]}
@@ -244,7 +247,8 @@ function App() {
       </DeckGL>
       <ButtonGroup
         position="absolute"
-        bottom={28}
+        bottom={["unset", 28]}
+        top={[4, "unset"]}
         right={6}
         isAttached={true}
         orientation="vertical"
@@ -259,14 +263,15 @@ function App() {
           aria-label="Zoom in"
           icon={<AddIcon />}
           onClick={() => {
-            setViewState({
-              ...viewState,
-              zoom: viewState.zoom + 1,
-              transitionDuration: 750,
-              transitionEasing: (x) => {
-                return 1 - Math.pow(1 - x, 4);
-              },
-            });
+            viewState.zoom < MAX_ZOOM &&
+              setViewState({
+                ...viewState,
+                zoom: viewState.zoom + 1,
+                transitionDuration: 750,
+                transitionEasing: (x) => {
+                  return 1 - Math.pow(1 - x, 4);
+                },
+              });
           }}
         />
         <IconButton
@@ -279,14 +284,15 @@ function App() {
           aria-label="Zoom out"
           icon={<MinusIcon />}
           onClick={() => {
-            setViewState({
-              ...viewState,
-              zoom: viewState.zoom - 1,
-              transitionDuration: 750,
-              transitionEasing: (x) => {
-                return 1 - Math.pow(1 - x, 4);
-              },
-            });
+            viewState.zoom > MIN_ZOOM &&
+              setViewState({
+                ...viewState,
+                zoom: viewState.zoom - 1,
+                transitionDuration: 750,
+                transitionEasing: (x) => {
+                  return 1 - Math.pow(1 - x, 4);
+                },
+              });
           }}
         />
       </ButtonGroup>
