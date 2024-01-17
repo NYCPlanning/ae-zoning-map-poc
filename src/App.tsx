@@ -7,6 +7,7 @@ import { useState } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
 import DeckGL from "@deck.gl/react/typed";
+import { FlyToInterpolator } from "@deck.gl/core/typed";
 import {
   useMediaQuery,
   Accordion,
@@ -37,6 +38,7 @@ type ViewState = {
   pitch: number;
   transitionDuration?: number;
   transitionEasing?: (t: number) => number;
+  transitionInterpolator?: FlyToInterpolator;
 };
 
 function App() {
@@ -190,6 +192,8 @@ function App() {
         ...viewState,
         longitude: f.coordinate[0],
         latitude: f.coordinate[1],
+        transitionDuration: 750,
+        transitionInterpolator: new FlyToInterpolator(),
         zoom: 18,
       });
     },
