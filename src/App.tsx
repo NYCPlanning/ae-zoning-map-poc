@@ -164,6 +164,7 @@ function App() {
       return color;
     },
     visible: anyTaxLotsVisibility,
+    pickable: true,
     minZoom: 15,
     maxZoom: 16,
     getFillColor: (f: any) => {
@@ -180,6 +181,12 @@ function App() {
     },
     pointType: "text",
     getText: (f: any) => f.properties.lot,
+    onClick: (f: any) => {
+      setSelectedBbl(
+        `${f.object.properties.borough}${f.object.properties.block}${f.object.properties.lot}`,
+      );
+      setInfoPane("bbl");
+    },
     getTextColor: [98, 98, 98, 255],
     textFontFamily: "Helvetica Neue, Arial, sans-serif",
     getTextSize: 8,
