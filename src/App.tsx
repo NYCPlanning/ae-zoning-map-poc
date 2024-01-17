@@ -186,6 +186,12 @@ function App() {
         `${f.object.properties.borough}${f.object.properties.block}${f.object.properties.lot}`,
       );
       setInfoPane("bbl");
+      setViewState({
+        ...viewState,
+        longitude: f.coordinate[0],
+        latitude: f.coordinate[1],
+        zoom: 18,
+      });
     },
     getTextColor: [98, 98, 98, 255],
     textFontFamily: "Helvetica Neue, Arial, sans-serif",
