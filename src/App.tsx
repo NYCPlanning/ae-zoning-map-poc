@@ -8,6 +8,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
 import DeckGL from "@deck.gl/react/typed";
 import { FlyToInterpolator } from "@deck.gl/core/typed";
+import { PathStyleExtension } from "@deck.gl/extensions/typed";
 import {
   useMediaQuery,
   Accordion,
@@ -160,16 +161,38 @@ function App() {
     id: "taxLots",
     // data: `${import.meta.env.VITE_ZONING_API_URL}/tax-lot/{z}/{x}/{y}.pbf`,
     data: `https://de-sandbox.nyc3.digitaloceanspaces.com/ae-pilot-project/tilesets/tax_lot/{z}/{x}/{y}.pbf`,
-    getLineColor: () => {
+    getLineColor: (f: any) => {
+      if (
+        selectedBbl ===
+        `${f.properties.borough}${f.properties.block}${f.properties.lot}`
+      ) {
+        return [43, 108, 176, 255];
+      }
       let color = [0, 0, 0, 0];
       if (visibleTaxLotsBoundaries) color = [0, 0, 0];
       return color;
+    },
+    extensions: [new PathStyleExtension({ dash: true })],
+    getDashArray: (f: any) => {
+      if (
+        selectedBbl ===
+        `${f.properties.borough}${f.properties.block}${f.properties.lot}`
+      ) {
+        return [2, 1.5];
+      }
+      return [2, 0];
     },
     visible: anyTaxLotsVisibility,
     pickable: true,
     minZoom: 15,
     maxZoom: 16,
     getFillColor: (f: any) => {
+      if (
+        selectedBbl ===
+        `${f.properties.borough}${f.properties.block}${f.properties.lot}`
+      ) {
+        return [43, 108, 176, 153];
+      }
       let color = [192, 192, 192, 0];
       if (visibleLandUseColors && f.properties.layerName === "fill") {
         const landUseId = f.properties.landUseId;
@@ -201,8 +224,9 @@ function App() {
     textFontFamily: "Helvetica Neue, Arial, sans-serif",
     getTextSize: 8,
     updateTriggers: {
-      getLineColor: [visibleTaxLotsBoundaries],
-      getFillColor: [visibleLandUseColors],
+      getLineColor: [visibleTaxLotsBoundaries, selectedBbl],
+      getDashArray: [selectedBbl],
+      getFillColor: [visibleLandUseColors, selectedBbl],
     },
   });
 
