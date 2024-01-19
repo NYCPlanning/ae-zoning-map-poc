@@ -23,7 +23,7 @@ import { hexToRgba, processColors } from "./layers";
 import {
   useGetAllZoningDistrictClasses,
   useGetLandUses,
-  useGetTaxLotByBbl,
+  useGetTaxLotGeoJsonByBbl,
   useGetZoningDistrictClassesByUuid,
 } from "./gen";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
@@ -45,7 +45,7 @@ type ViewState = {
 function App() {
   const isMobile = useMediaQuery("(max-width: 767px)")[0];
   const [selectedBbl, setSelectedBbl] = useState<string | null>(null);
-  const { data: taxLot } = useGetTaxLotByBbl(
+  const { data: taxLot } = useGetTaxLotGeoJsonByBbl(
     selectedBbl === null ? "" : selectedBbl,
     {
       query: {
@@ -84,6 +84,9 @@ function App() {
     (state) => state.visibleZoningDistrictClasses,
   );
   const anyTaxLotsVisibility = useStore((state) => state.anyTaxLotsVisibility);
+  const toggleAnyTaxLotsVisibility = useStore(
+    (state) => state.toggleAnyTaxLotsVisibility,
+  );
   const visibleTaxLotsBoundaries = useStore(
     (state) => state.visibleTaxLotsBoundaries,
   );
@@ -238,6 +241,39 @@ function App() {
     pitch: 0,
   });
 
+  const [flyToCentroid, setFlyToCentroid] = useState<boolean>(false);
+  if (flyToCentroid && taxLot) {
+    const minMax = taxLot.geometry.coordinates[0][0].reduce(
+      (acc, curr) => {
+        return {
+          longMin: Math.min(acc.longMin, curr[0]),
+          longMax: Math.max(acc.longMax, curr[0]),
+          latMin: Math.min(acc.latMin, curr[1]),
+          latMax: Math.max(acc.latMax, curr[1]),
+        };
+      },
+      {
+        longMin: taxLot.geometry.coordinates[0][0][0][0],
+        longMax: taxLot.geometry.coordinates[0][0][0][0],
+        latMin: taxLot.geometry.coordinates[0][0][0][1],
+        latMax: taxLot.geometry.coordinates[0][0][0][1],
+      },
+    );
+    // This is needed because it won't appear highlighted if tax lot visibility is off
+    if (!anyTaxLotsVisibility) {
+      toggleAnyTaxLotsVisibility();
+    }
+    setViewState({
+      ...viewState,
+      longitude: (minMax.longMin + minMax.longMax) / 2,
+      latitude: (minMax.latMin + minMax.latMax) / 2,
+      transitionDuration: 750,
+      transitionInterpolator: new FlyToInterpolator(),
+      zoom: 18,
+    });
+    setFlyToCentroid(false);
+  }
+
   return (
     <>
       <DeckGL
@@ -350,11 +386,14 @@ function App() {
           handleBblSearched={(bbl) => {
             setSelectedBbl(bbl);
             setInfoPane("bbl");
+            setFlyToCentroid(true);
           }}
         />
         <LayersFilters />
 
-        <TaxLotDetails taxLot={taxLot === undefined ? null : taxLot} />
+        <TaxLotDetails
+          taxLot={taxLot === undefined ? null : taxLot.properties}
+        />
         <ZoningDistrictDetails
           zoningDistrictClasses={
             new Set(zoningDistrictClasses?.zoningDistrictClasses)
