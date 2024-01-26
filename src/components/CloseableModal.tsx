@@ -16,6 +16,8 @@ export const CloseableModal = ({ children }: any) => {
       position="fixed"
       top={6}
       right={6}
+      maxH={"60vh"}
+      overflowY={"scroll"}
     >
       <CloseButton
         position="absolute"

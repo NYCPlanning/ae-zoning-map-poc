@@ -1,5 +1,6 @@
 import { TaxLot } from "../gen";
 import { Flex, HStack, Text, VStack, Link } from "@nycplanning/streetscape";
+import { useGetZoningDistrictsByTaxLotBbl } from "../gen";
 import { CloseableModal } from "./CloseableModal";
 import { useStore } from "../store";
 
@@ -9,12 +10,17 @@ interface TaxLotDetailsProps {
 
 export const TaxLotDetails = ({ taxLot }: TaxLotDetailsProps) => {
   const infoPane = useStore((state) => state.infoPane);
-
+  const { data } = useGetZoningDistrictsByTaxLotBbl(
+    taxLot === null ? "" : taxLot.bbl,
+    {
+      query: { enabled: taxLot !== null },
+    },
+  );
   return taxLot === null || infoPane !== "bbl" ? null : (
     <CloseableModal>
       <VStack alignItems={"flex-start"} alignContent={"flex-start"}>
         <Text fontSize={"xl"} fontWeight={"bold"}>
-          {taxLot.address}, [ZIP]
+          {taxLot.address}
         </Text>
         <Text>Tax Lot: BBL{taxLot.bbl}</Text>
         <VStack
@@ -49,7 +55,8 @@ export const TaxLotDetails = ({ taxLot }: TaxLotDetailsProps) => {
               </VStack>
             </HStack>
             <Link
-              href={`http://maps.nyc.gov/taxmap/map.htm?searchType=BblSearch&featureTypeName=EVERY_BBL&featureName=${taxLot.bbl}`}
+              // href={`http://maps.nyc.gov/taxmap/map.htm?searchType=BblSearch&featureTypeName=EVERY_BBL&featureName=${taxLot.bbl}`}
+              href={`https://propertyinformationportal.nyc.gov/parcels/parcel/${taxLot.bbl}`}
               isExternal
               alignSelf={"flex-start"}
             >
@@ -72,7 +79,7 @@ export const TaxLotDetails = ({ taxLot }: TaxLotDetailsProps) => {
                   </g>
                 </svg>
                 <Text textDecorationLine={"underline"}>
-                  View Digital Tax Map
+                  View in Property Information Portal
                 </Text>
               </HStack>
             </Link>
@@ -104,58 +111,45 @@ export const TaxLotDetails = ({ taxLot }: TaxLotDetailsProps) => {
           <HStack alignItems={"flex-start"} py={2}>
             <Text fontWeight={"bold"}>Zoning District:</Text>
             <VStack alignItems={"flex-start"}>
-              <Text>C5-3</Text>
-              <Text>LM</Text>
+              {typeof data?.zoningDistricts === "undefined"
+                ? null
+                : data.zoningDistricts.map((zoningDistrict) => (
+                    <Text key={zoningDistrict.id}>{zoningDistrict.label}</Text>
+                  ))}
             </VStack>
           </HStack>
-          <Link href="https://chakra-ui.com" isExternal>
-            <HStack gap={1}>
-              <svg
-                viewBox="0 0 24 24"
-                focusable="false"
-                width="1.5em"
-                height="1.5em"
-              >
-                <g
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeWidth="2"
+          {typeof data?.zoningDistricts === "undefined"
+            ? null
+            : data.zoningDistricts.map((zoningDistrict) => (
+                <Link
+                  href={`https://www.nyc.gov/site/planning/zoning/districts-tools/${zoningDistrict.label.toLocaleLowerCase()}.page`}
+                  key={zoningDistrict.id}
+                  isExternal
                 >
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <path d="M15 3h6v6"></path>
-                  <path d="M10 14L21 3"></path>
-                </g>
-              </svg>
-              <Text textDecorationLine={"underline"}>
-                View C5-3 district guide
-              </Text>
-            </HStack>
-          </Link>
-          <Link href="https://chakra-ui.com" isExternal>
-            <HStack gap={1}>
-              <svg
-                viewBox="0 0 24 24"
-                focusable="false"
-                width="1.5em"
-                height="1.5em"
-              >
-                <g
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeWidth="2"
-                >
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <path d="M15 3h6v6"></path>
-                  <path d="M10 14L21 3"></path>
-                </g>
-              </svg>
-              <Text textDecorationLine={"underline"}>
-                View LM district guide
-              </Text>
-            </HStack>{" "}
-          </Link>
+                  <HStack gap={1}>
+                    <svg
+                      viewBox="0 0 24 24"
+                      focusable="false"
+                      width="1.5em"
+                      height="1.5em"
+                    >
+                      <g
+                        fill="none"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeWidth="2"
+                      >
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                      </g>
+                    </svg>
+                    <Text textDecorationLine={"underline"}>
+                      View {zoningDistrict.label} district guide
+                    </Text>
+                  </HStack>
+                </Link>
+              ))}
         </VStack>
         <Flex
           borderBottom="1px solid"
