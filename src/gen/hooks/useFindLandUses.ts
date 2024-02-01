@@ -7,19 +7,19 @@ import type {
 import { useQuery } from "@tanstack/react-query";
 import client from "../../client.ts";
 import type {
-  GetLandUsesQueryResponse,
-  GetLandUses400,
-  GetLandUses500,
-} from "../types/GetLandUses";
+  FindLandUsesQueryResponse,
+  FindLandUses400,
+  FindLandUses500,
+} from "../types/FindLandUses";
 
-export const getLandUsesQueryKey = () => [{ url: `/land-uses` }] as const;
-export function getLandUsesQueryOptions<
-  TData = GetLandUsesQueryResponse,
-  TError = GetLandUses400 | GetLandUses500,
+export const findLandUsesQueryKey = () => [{ url: `/land-uses` }] as const;
+export function findLandUsesQueryOptions<
+  TData = FindLandUsesQueryResponse,
+  TError = FindLandUses400 | FindLandUses500,
 >(
   options: Partial<Parameters<typeof client>[0]> = {},
 ): UseQueryOptions<TData, TError> {
-  const queryKey = getLandUsesQueryKey();
+  const queryKey = findLandUsesQueryKey();
 
   return {
     queryKey,
@@ -39,9 +39,9 @@ export function getLandUsesQueryOptions<
  * @link /land-uses
  */
 
-export function useGetLandUses<
-  TData = GetLandUsesQueryResponse,
-  TError = GetLandUses400 | GetLandUses500,
+export function useFindLandUses<
+  TData = FindLandUsesQueryResponse,
+  TError = FindLandUses400 | FindLandUses500,
 >(
   options: {
     query?: UseQueryOptions<TData, TError>;
@@ -49,10 +49,10 @@ export function useGetLandUses<
   } = {},
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const { query: queryOptions, client: clientOptions = {} } = options ?? {};
-  const queryKey = queryOptions?.queryKey ?? getLandUsesQueryKey();
+  const queryKey = queryOptions?.queryKey ?? findLandUsesQueryKey();
 
   const query = useQuery<TData, TError>({
-    ...getLandUsesQueryOptions<TData, TError>(clientOptions),
+    ...findLandUsesQueryOptions<TData, TError>(clientOptions),
     ...queryOptions,
   }) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

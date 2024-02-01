@@ -14,7 +14,7 @@ import {
   Text,
 } from "@nycplanning/streetscape";
 import { useForm, Controller } from "react-hook-form";
-import { useGetBoroughs } from "../gen";
+import { useFindBoroughs } from "../gen";
 
 type FormData = {
   borough: string;
@@ -27,7 +27,7 @@ interface LocationSearchProps {
 }
 
 function LocationSearch({ handleBblSearched }: LocationSearchProps) {
-  const { data } = useGetBoroughs();
+  const { data } = useFindBoroughs();
   const { handleSubmit, control } = useForm<FormData>({
     defaultValues: {
       block: "",
