@@ -22,8 +22,8 @@ import { TaxLotDetails } from "./components/TaxLotDetails";
 import { hexToRgba, processColors } from "./layers";
 import {
   useGetAllZoningDistrictClasses,
-  useGetLandUses,
   useGetTaxLotGeoJsonByBbl,
+  useFindLandUses,
   useGetZoningDistrictClassesByUuid,
 } from "./gen";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
@@ -72,7 +72,7 @@ function App() {
       });
     }
   }, [taxLot]);
-  const { data: landUses } = useGetLandUses();
+  const { data: landUses } = useFindLandUses();
 
   const selectedZoningDistrictUuid = useStore(
     (state) => state.selectedZoningDistrictUuid,

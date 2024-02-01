@@ -10,11 +10,11 @@ import {
   VStack,
 } from "@nycplanning/streetscape";
 import LegendSquare from "./LegendSquare";
-import { useGetLandUses } from "../gen";
+import { useFindLandUses } from "../gen";
 import { useStore } from "../store";
 
 function TaxLotFilters() {
-  const { data } = useGetLandUses();
+  const { data } = useFindLandUses();
 
   const {
     visibleTaxLotsBoundaries,

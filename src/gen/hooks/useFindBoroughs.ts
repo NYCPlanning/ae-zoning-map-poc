@@ -7,19 +7,19 @@ import type {
 import { useQuery } from "@tanstack/react-query";
 import client from "../../client.ts";
 import type {
-  GetBoroughsQueryResponse,
-  GetBoroughs400,
-  GetBoroughs500,
-} from "../types/GetBoroughs";
+  FindBoroughsQueryResponse,
+  FindBoroughs400,
+  FindBoroughs500,
+} from "../types/FindBoroughs";
 
-export const getBoroughsQueryKey = () => [{ url: `/boroughs` }] as const;
-export function getBoroughsQueryOptions<
-  TData = GetBoroughsQueryResponse,
-  TError = GetBoroughs400 | GetBoroughs500,
+export const findBoroughsQueryKey = () => [{ url: `/boroughs` }] as const;
+export function findBoroughsQueryOptions<
+  TData = FindBoroughsQueryResponse,
+  TError = FindBoroughs400 | FindBoroughs500,
 >(
   options: Partial<Parameters<typeof client>[0]> = {},
 ): UseQueryOptions<TData, TError> {
-  const queryKey = getBoroughsQueryKey();
+  const queryKey = findBoroughsQueryKey();
 
   return {
     queryKey,
@@ -39,9 +39,9 @@ export function getBoroughsQueryOptions<
  * @link /boroughs
  */
 
-export function useGetBoroughs<
-  TData = GetBoroughsQueryResponse,
-  TError = GetBoroughs400 | GetBoroughs500,
+export function useFindBoroughs<
+  TData = FindBoroughsQueryResponse,
+  TError = FindBoroughs400 | FindBoroughs500,
 >(
   options: {
     query?: UseQueryOptions<TData, TError>;
@@ -49,10 +49,10 @@ export function useGetBoroughs<
   } = {},
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const { query: queryOptions, client: clientOptions = {} } = options ?? {};
-  const queryKey = queryOptions?.queryKey ?? getBoroughsQueryKey();
+  const queryKey = queryOptions?.queryKey ?? findBoroughsQueryKey();
 
   const query = useQuery<TData, TError>({
-    ...getBoroughsQueryOptions<TData, TError>(clientOptions),
+    ...findBoroughsQueryOptions<TData, TError>(clientOptions),
     ...queryOptions,
   }) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
