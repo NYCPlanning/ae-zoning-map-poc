@@ -94,33 +94,43 @@ test.describe("Can search for a Tax Lot by BBL and see the details for a corresp
   test.beforeEach(async ({ page }) => {
     // Go to the starting url before each test.
     await page.goto("http://localhost:5173/");
-  });
-
-  test("Address shows correctly", async ({ page }) => {
     await page.getByLabel("Borough").selectOption("1");
     await page.getByLabel("Block").fill("47");
     await page.getByLabel("Lot", { exact: true }).fill("7501");
     await page.getByRole("button", { name: "Search", exact: true }).click();
-    await expect(
-      page.locator("div").filter({ hasText: "120 BROADWAY" }).nth(2),
-    ).toBeVisible();
   });
 
-  test("BBL shows correctly", async ({ page }) => {
-    await page.getByLabel("Borough").selectOption("4");
-    await page.getByLabel("Block").fill("1787");
-    await page.getByLabel("Lot", { exact: true }).fill("20");
-    await page.getByRole("button", { name: "Search", exact: true }).click();
-    await expect(page.locator(".css-1yf3ulg")).toContainText(
-      "Tax Lot: BBL4017870020",
+  test("Tax lot details show correctly", async ({ page }) => {
+    await expect(page.locator("#tax-lot-details")).toContainText(
+      "120 BROADWAY",
     );
+    await expect(page.locator("#tax-lot-details")).toContainText(
+      "Tax Lot: BBL1000477501",
+    );
+    await expect(page.locator("#tax-lot-details")).toContainText(
+      "Manhattan (Borough 1)",
+    );
+    await expect(page.locator("#tax-lot-details")).toContainText("47");
+    await expect(page.locator("#tax-lot-details")).toContainText("7501");
+    await expect(page.locator("#tax-lot-details")).toContainText(
+      "Commercial & Office Buildings",
+    );
+    await expect(page.locator("#tax-lot-details")).toContainText("C5-5");
+    await expect(page.locator("#tax-lot-details")).toContainText(
+      "47,539 sq ft",
+    );
+    await expect(page.locator("#tax-lot-details")).toContainText("195.17 ft");
+    await expect(page.locator("#tax-lot-details")).toContainText("249.33 ft");
   });
+});
 
-  test("Search for nonexistent BBL shows nothing", async ({ page }) => {
-    await page.getByLabel("Borough").selectOption("1");
-    await page.getByLabel("Block").fill("X");
-    await page.getByLabel("Lot", { exact: true }).fill("Y");
-    await page.getByRole("button", { name: "Search", exact: true }).click();
-    await expect(page.locator(".css-1yf3ulg")).not.toHaveClass(["css-1yf3ulg"]);
-  });
+test("Can search for a Tax Lot by BBL - Search for nonexistent BBL shows nothing", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:5173/");
+  await page.getByLabel("Borough").selectOption("1");
+  await page.getByLabel("Block").fill("X");
+  await page.getByLabel("Lot", { exact: true }).fill("Y");
+  await page.getByRole("button", { name: "Search", exact: true }).click();
+  await expect(page.locator(".css-1yf3ulg")).not.toHaveClass(["css-1yf3ulg"]);
 });
