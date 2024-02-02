@@ -3,7 +3,7 @@ import Map, {
   ScaleControl,
   AttributionControl,
 } from "react-map-gl/maplibre";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
 import DeckGL from "@deck.gl/react/typed";
@@ -30,6 +30,7 @@ import { MVTLayer } from "@deck.gl/geo-layers/typed";
 import { useStore } from "./store";
 import { DataFilterExtension } from "@deck.gl/extensions/typed";
 import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
+import centroid from '@turf/centroid';
 
 type ViewState = {
   latitude: number;
@@ -53,6 +54,24 @@ function App() {
       },
     },
   );
+  useEffect(() => {
+    if(taxLot !== undefined) {
+      const minMax = centroid(taxLot);
+      // This is needed because it won't appear highlighted if tax lot visibility is off
+      if (!anyTaxLotsVisibility) {
+        toggleAnyTaxLotsVisibility();
+      }
+      setInfoPane("bbl");
+      setViewState({
+        ...viewState,
+        longitude: minMax.geometry.coordinates[0],
+        latitude: minMax.geometry.coordinates[1],
+        transitionDuration: 750,
+        transitionInterpolator: new FlyToInterpolator(),
+        zoom: 18,
+      });
+    }
+  }, [taxLot]);
   const { data: landUses } = useGetLandUses();
 
   const selectedZoningDistrictUuid = useStore(
@@ -213,15 +232,6 @@ function App() {
       setSelectedBbl(
         `${f.object.properties.borough}${f.object.properties.block}${f.object.properties.lot}`,
       );
-      setInfoPane("bbl");
-      setViewState({
-        ...viewState,
-        longitude: f.coordinate[0],
-        latitude: f.coordinate[1],
-        transitionDuration: 750,
-        transitionInterpolator: new FlyToInterpolator(),
-        zoom: 18,
-      });
     },
     getTextColor: [98, 98, 98, 255],
     textFontFamily: "Helvetica Neue, Arial, sans-serif",
@@ -240,39 +250,6 @@ function App() {
     bearing: 0,
     pitch: 0,
   });
-
-  const [flyToCentroid, setFlyToCentroid] = useState<boolean>(false);
-  if (flyToCentroid && taxLot) {
-    const minMax = taxLot.geometry.coordinates[0][0].reduce(
-      (acc, curr) => {
-        return {
-          longMin: Math.min(acc.longMin, curr[0]),
-          longMax: Math.max(acc.longMax, curr[0]),
-          latMin: Math.min(acc.latMin, curr[1]),
-          latMax: Math.max(acc.latMax, curr[1]),
-        };
-      },
-      {
-        longMin: taxLot.geometry.coordinates[0][0][0][0],
-        longMax: taxLot.geometry.coordinates[0][0][0][0],
-        latMin: taxLot.geometry.coordinates[0][0][0][1],
-        latMax: taxLot.geometry.coordinates[0][0][0][1],
-      },
-    );
-    // This is needed because it won't appear highlighted if tax lot visibility is off
-    if (!anyTaxLotsVisibility) {
-      toggleAnyTaxLotsVisibility();
-    }
-    setViewState({
-      ...viewState,
-      longitude: (minMax.longMin + minMax.longMax) / 2,
-      latitude: (minMax.latMin + minMax.latMax) / 2,
-      transitionDuration: 750,
-      transitionInterpolator: new FlyToInterpolator(),
-      zoom: 18,
-    });
-    setFlyToCentroid(false);
-  }
 
   return (
     <>
@@ -385,8 +362,6 @@ function App() {
         <LocationSearch
           handleBblSearched={(bbl) => {
             setSelectedBbl(bbl);
-            setInfoPane("bbl");
-            setFlyToCentroid(true);
           }}
         />
         <LayersFilters />
