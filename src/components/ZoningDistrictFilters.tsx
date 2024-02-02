@@ -12,16 +12,16 @@ import {
 } from "@nycplanning/streetscape";
 import LegendSquare from "./LegendSquare";
 import {
-  useGetZoningDistrictClassCategoryColors,
-  useGetAllZoningDistrictClasses,
+  useFindZoningDistrictClassCategoryColors,
+  useFindZoningDistrictClasses,
 } from "../gen";
 import { useStore } from "../store";
 import { useEffect, useState } from "react";
 
 function ZoningDistrictFilters() {
   const { data: categoryColorsData } =
-    useGetZoningDistrictClassCategoryColors();
-  const { data: classesData } = useGetAllZoningDistrictClasses();
+    useFindZoningDistrictClassCategoryColors();
+  const { data: classesData } = useFindZoningDistrictClasses();
 
   const {
     anyZoningDistrictsVisibility,
