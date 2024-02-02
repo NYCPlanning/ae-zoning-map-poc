@@ -142,95 +142,101 @@ function LayersFilters() {
             borderColor="gray.400"
             borderRadius={"0 0 0.75rem 0.75rem"}
           >
-            <form>
-              <Flex id="layers" justify="center" gap={6}>
-                <VStack
-                  width={20}
-                  justify="center"
-                  alignSelf={"flex-start"}
-                  onClick={handleZoningDistrictsVisibility}
-                >
-                  <Box
-                    background={
-                      "url('./zoning_districts.png') 50% / cover no-repeat;"
-                    }
+            <Box maxH={"300px"} overflowY={"scroll"}>
+              <form>
+                <Flex id="layers" justify="center" gap={6}>
+                  <VStack
                     width={20}
-                    height={20}
-                    borderRadius={"12px"}
-                    border={anyZoningDistrictsVisibility ? "2px solid" : "0"}
-                    borderColor={"primary.500"}
-                  />
-                  <Text
-                    align="center"
-                    color={
-                      anyZoningDistrictsVisibility ? "primary.500" : "gray.600"
-                    }
-                    fontWeight={anyZoningDistrictsVisibility ? "500" : "400"}
+                    justify="center"
+                    alignSelf={"flex-start"}
+                    onClick={handleZoningDistrictsVisibility}
                   >
-                    Zoning Districts
-                  </Text>
-                </VStack>
-                <VStack
-                  width={20}
-                  justify="center"
-                  alignSelf={"flex-start"}
-                  onClick={toggleAnyTaxLotsVisibility}
-                >
-                  <Box
-                    background={"url('./tax_lots.png') 50% / cover no-repeat;"}
-                    width={20}
-                    height={20}
-                    borderRadius={"12px"}
-                    border={anyTaxLotsVisibility ? "2px solid" : "0"}
-                    borderColor={"primary.500"}
-                  />
-                  <Text
-                    align="center"
-                    color={anyTaxLotsVisibility ? "primary.500" : "gray.600"}
-                    fontWeight={anyTaxLotsVisibility ? "500" : "400"}
-                  >
-                    Tax Lots
-                  </Text>
-                </VStack>
-              </Flex>
-
-              <Accordion id="filters" allowToggle defaultIndex={0}>
-                <AccordionItem bg="white" border="0">
-                  <AccordionButton
-                    border="0"
-                    p={0}
-                    bg="white"
-                    _hover={{ backgroundColor: "white" }}
-                  >
-                    <Text textStyle="body" fontWeight={700} py={1}>
-                      Filters
-                    </Text>
-                    <AccordionIcon
-                      display={
-                        anyZoningDistrictsVisibility || anyTaxLotsVisibility
-                          ? ""
-                          : "none"
+                    <Box
+                      background={
+                        "url('./zoning_districts.png') 50% / cover no-repeat;"
                       }
+                      width={20}
+                      height={20}
+                      borderRadius={"12px"}
+                      border={anyZoningDistrictsVisibility ? "2px solid" : "0"}
+                      borderColor={"primary.500"}
                     />
-                    <Spacer />
                     <Text
-                      textStyle="body"
-                      backgroundColor={"brand.50"}
-                      px={2}
-                      py={1}
-                      borderRadius={"base"}
-                      border={"1px solid"}
-                      borderColor={"brand.100"}
+                      align="center"
+                      color={
+                        anyZoningDistrictsVisibility
+                          ? "primary.500"
+                          : "gray.600"
+                      }
+                      fontWeight={anyZoningDistrictsVisibility ? "500" : "400"}
                     >
-                      Selected ({getFilterCount()})
+                      Zoning Districts
                     </Text>
-                  </AccordionButton>
-                  <AccordionPanel px={0}>
-                    <FilterList />
-                  </AccordionPanel>
-                </AccordionItem>
-              </Accordion>
-            </form>
+                  </VStack>
+                  <VStack
+                    width={20}
+                    justify="center"
+                    alignSelf={"flex-start"}
+                    onClick={toggleAnyTaxLotsVisibility}
+                  >
+                    <Box
+                      background={
+                        "url('./tax_lots.png') 50% / cover no-repeat;"
+                      }
+                      width={20}
+                      height={20}
+                      borderRadius={"12px"}
+                      border={anyTaxLotsVisibility ? "2px solid" : "0"}
+                      borderColor={"primary.500"}
+                    />
+                    <Text
+                      align="center"
+                      color={anyTaxLotsVisibility ? "primary.500" : "gray.600"}
+                      fontWeight={anyTaxLotsVisibility ? "500" : "400"}
+                    >
+                      Tax Lots
+                    </Text>
+                  </VStack>
+                </Flex>
+
+                <Accordion id="filters" allowToggle defaultIndex={0}>
+                  <AccordionItem bg="white" border="0">
+                    <AccordionButton
+                      border="0"
+                      p={0}
+                      bg="white"
+                      _hover={{ backgroundColor: "white" }}
+                    >
+                      <Text textStyle="body" fontWeight={700} py={1}>
+                        Filters
+                      </Text>
+                      <AccordionIcon
+                        display={
+                          anyZoningDistrictsVisibility || anyTaxLotsVisibility
+                            ? ""
+                            : "none"
+                        }
+                      />
+                      <Spacer />
+                      <Text
+                        textStyle="body"
+                        backgroundColor={"brand.50"}
+                        px={2}
+                        py={1}
+                        borderRadius={"base"}
+                        border={"1px solid"}
+                        borderColor={"brand.100"}
+                      >
+                        Selected ({getFilterCount()})
+                      </Text>
+                    </AccordionButton>
+                    <AccordionPanel px={0}>
+                      <FilterList />
+                    </AccordionPanel>
+                  </AccordionItem>
+                </Accordion>
+              </form>
+            </Box>
           </AccordionPanel>
         </>
       )}
