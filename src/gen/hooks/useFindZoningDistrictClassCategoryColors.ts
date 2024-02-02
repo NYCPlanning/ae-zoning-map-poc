@@ -7,22 +7,22 @@ import type {
 import { useQuery } from "@tanstack/react-query";
 import client from "../../client.ts";
 import type {
-  GetZoningDistrictClassCategoryColorsQueryResponse,
-  GetZoningDistrictClassCategoryColors400,
-  GetZoningDistrictClassCategoryColors500,
-} from "../types/GetZoningDistrictClassCategoryColors";
+  FindZoningDistrictClassCategoryColorsQueryResponse,
+  FindZoningDistrictClassCategoryColors400,
+  FindZoningDistrictClassCategoryColors500,
+} from "../types/FindZoningDistrictClassCategoryColors";
 
-export const getZoningDistrictClassCategoryColorsQueryKey = () =>
+export const findZoningDistrictClassCategoryColorsQueryKey = () =>
   [{ url: `/zoning-district-classes/category-colors` }] as const;
-export function getZoningDistrictClassCategoryColorsQueryOptions<
-  TData = GetZoningDistrictClassCategoryColorsQueryResponse,
+export function findZoningDistrictClassCategoryColorsQueryOptions<
+  TData = FindZoningDistrictClassCategoryColorsQueryResponse,
   TError =
-    | GetZoningDistrictClassCategoryColors400
-    | GetZoningDistrictClassCategoryColors500,
+    | FindZoningDistrictClassCategoryColors400
+    | FindZoningDistrictClassCategoryColors500,
 >(
   options: Partial<Parameters<typeof client>[0]> = {},
 ): UseQueryOptions<TData, TError> {
-  const queryKey = getZoningDistrictClassCategoryColorsQueryKey();
+  const queryKey = findZoningDistrictClassCategoryColorsQueryKey();
 
   return {
     queryKey,
@@ -42,11 +42,11 @@ export function getZoningDistrictClassCategoryColorsQueryOptions<
  * @link /zoning-district-classes/category-colors
  */
 
-export function useGetZoningDistrictClassCategoryColors<
-  TData = GetZoningDistrictClassCategoryColorsQueryResponse,
+export function useFindZoningDistrictClassCategoryColors<
+  TData = FindZoningDistrictClassCategoryColorsQueryResponse,
   TError =
-    | GetZoningDistrictClassCategoryColors400
-    | GetZoningDistrictClassCategoryColors500,
+    | FindZoningDistrictClassCategoryColors400
+    | FindZoningDistrictClassCategoryColors500,
 >(
   options: {
     query?: UseQueryOptions<TData, TError>;
@@ -55,10 +55,10 @@ export function useGetZoningDistrictClassCategoryColors<
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const { query: queryOptions, client: clientOptions = {} } = options ?? {};
   const queryKey =
-    queryOptions?.queryKey ?? getZoningDistrictClassCategoryColorsQueryKey();
+    queryOptions?.queryKey ?? findZoningDistrictClassCategoryColorsQueryKey();
 
   const query = useQuery<TData, TError>({
-    ...getZoningDistrictClassCategoryColorsQueryOptions<TData, TError>(
+    ...findZoningDistrictClassCategoryColorsQueryOptions<TData, TError>(
       clientOptions,
     ),
     ...queryOptions,

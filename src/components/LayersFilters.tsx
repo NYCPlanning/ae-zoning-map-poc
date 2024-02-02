@@ -13,14 +13,14 @@ import {
 import FilterList from "./FilterList";
 import { useStore } from "../store";
 import {
-  useGetZoningDistrictClassCategoryColors,
-  useGetAllZoningDistrictClasses,
+  useFindZoningDistrictClassCategoryColors,
+  useFindZoningDistrictClasses,
 } from "../gen";
 
 function LayersFilters() {
   const { data: categoryColorsData } =
-    useGetZoningDistrictClassCategoryColors();
-  const { data: classesData } = useGetAllZoningDistrictClasses();
+    useFindZoningDistrictClassCategoryColors();
+  const { data: classesData } = useFindZoningDistrictClasses();
 
   const visibleZoningDistrictClasses = useStore(
     (state) => state.visibleZoningDistrictClasses,

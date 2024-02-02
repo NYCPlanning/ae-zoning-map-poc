@@ -21,10 +21,10 @@ import LayersFilters from "./components/LayersFilters";
 import { TaxLotDetails } from "./components/TaxLotDetails";
 import { hexToRgba, processColors } from "./layers";
 import {
-  useGetAllZoningDistrictClasses,
   useGetTaxLotGeoJsonByBbl,
   useFindLandUses,
-  useGetZoningDistrictClassesByUuid,
+  useFindZoningDistrictClasses,
+  useFindZoningDistrictClassesByZoningDistrictId,
 } from "./gen";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
 import { useStore } from "./store";
@@ -74,20 +74,21 @@ function App() {
   }, [taxLot]);
   const { data: landUses } = useFindLandUses();
 
-  const selectedZoningDistrictUuid = useStore(
-    (state) => state.selectedZoningDistrictUuid,
+  const selectedZoningDistrictId = useStore(
+    (state) => state.selectedZoningDistrictId,
   );
-  const setSelectedZoningDistrictUuid = useStore(
-    (state) => state.setSelectedZoningDistrictUuid,
+  const setSelectedZoningDistrictId = useStore(
+    (state) => state.setSelectedZoningDistrictId,
   );
-  const { data: zoningDistrictClasses } = useGetZoningDistrictClassesByUuid(
-    selectedZoningDistrictUuid === null ? "" : selectedZoningDistrictUuid,
-    {
-      query: {
-        enabled: selectedZoningDistrictUuid !== null,
+  const { data: zoningDistrictClasses } =
+    useFindZoningDistrictClassesByZoningDistrictId(
+      selectedZoningDistrictId === null ? "" : selectedZoningDistrictId,
+      {
+        query: {
+          enabled: selectedZoningDistrictId !== null,
+        },
       },
-    },
-  );
+    );
 
   const MAX_ZOOM = 20;
   const MIN_ZOOM = 10;
@@ -111,7 +112,7 @@ function App() {
   );
   const visibleLandUseColors = useStore((state) => state.visibleLandUseColors);
 
-  const { data } = useGetAllZoningDistrictClasses();
+  const { data } = useFindZoningDistrictClasses();
   const colorKey =
     data === undefined ? {} : processColors(data.zoningDistrictClasses);
 
@@ -156,7 +157,7 @@ function App() {
     ],
     pickable: true,
     onClick: (f: any) => {
-      setSelectedZoningDistrictUuid(f.object.properties.id);
+      setSelectedZoningDistrictId(f.object.properties.id);
       setInfoPane("zoningDistrict");
     },
     getFillColor: (f: any) => {
