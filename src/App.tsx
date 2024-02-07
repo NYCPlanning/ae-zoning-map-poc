@@ -3,7 +3,7 @@ import Map, {
   ScaleControl,
   AttributionControl,
 } from "react-map-gl/maplibre";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
 import DeckGL from "@deck.gl/react/typed";
@@ -23,13 +23,14 @@ import { hexToRgba, processColors } from "./layers";
 import {
   useGetAllZoningDistrictClasses,
   useGetLandUses,
-  useGetTaxLotByBbl,
+  useGetTaxLotGeoJsonByBbl,
   useGetZoningDistrictClassesByUuid,
 } from "./gen";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
 import { useStore } from "./store";
 import { DataFilterExtension } from "@deck.gl/extensions/typed";
 import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
+import centroid from '@turf/centroid';
 
 type ViewState = {
   latitude: number;
@@ -45,7 +46,7 @@ type ViewState = {
 function App() {
   const isMobile = useMediaQuery("(max-width: 767px)")[0];
   const [selectedBbl, setSelectedBbl] = useState<string | null>(null);
-  const { data: taxLot } = useGetTaxLotByBbl(
+  const { data: taxLot } = useGetTaxLotGeoJsonByBbl(
     selectedBbl === null ? "" : selectedBbl,
     {
       query: {
@@ -53,6 +54,24 @@ function App() {
       },
     },
   );
+  useEffect(() => {
+    if(taxLot !== undefined) {
+      const minMax = centroid(taxLot);
+      // This is needed because it won't appear highlighted if tax lot visibility is off
+      if (!anyTaxLotsVisibility) {
+        toggleAnyTaxLotsVisibility();
+      }
+      setInfoPane("bbl");
+      setViewState({
+        ...viewState,
+        longitude: minMax.geometry.coordinates[0],
+        latitude: minMax.geometry.coordinates[1],
+        transitionDuration: 750,
+        transitionInterpolator: new FlyToInterpolator(),
+        zoom: 18,
+      });
+    }
+  }, [taxLot]);
   const { data: landUses } = useGetLandUses();
 
   const selectedZoningDistrictUuid = useStore(
@@ -84,6 +103,9 @@ function App() {
     (state) => state.visibleZoningDistrictClasses,
   );
   const anyTaxLotsVisibility = useStore((state) => state.anyTaxLotsVisibility);
+  const toggleAnyTaxLotsVisibility = useStore(
+    (state) => state.toggleAnyTaxLotsVisibility,
+  );
   const visibleTaxLotsBoundaries = useStore(
     (state) => state.visibleTaxLotsBoundaries,
   );
@@ -210,15 +232,6 @@ function App() {
       setSelectedBbl(
         `${f.object.properties.borough}${f.object.properties.block}${f.object.properties.lot}`,
       );
-      setInfoPane("bbl");
-      setViewState({
-        ...viewState,
-        longitude: f.coordinate[0],
-        latitude: f.coordinate[1],
-        transitionDuration: 750,
-        transitionInterpolator: new FlyToInterpolator(),
-        zoom: 18,
-      });
     },
     getTextColor: [98, 98, 98, 255],
     textFontFamily: "Helvetica Neue, Arial, sans-serif",
@@ -349,12 +362,13 @@ function App() {
         <LocationSearch
           handleBblSearched={(bbl) => {
             setSelectedBbl(bbl);
-            setInfoPane("bbl");
           }}
         />
         <LayersFilters />
 
-        <TaxLotDetails taxLot={taxLot === undefined ? null : taxLot} />
+        <TaxLotDetails
+          taxLot={taxLot === undefined ? null : taxLot.properties}
+        />
         <ZoningDistrictDetails
           zoningDistrictClasses={
             new Set(zoningDistrictClasses?.zoningDistrictClasses)
