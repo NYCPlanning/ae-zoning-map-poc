@@ -101,6 +101,7 @@ test.describe("Can search for a Tax Lot by BBL and see the details for a corresp
   });
 
   test("Tax lot details show correctly", async ({ page }) => {
+    await expect(page.locator("#tax-lot-details")).toBeVisible();
     await expect(page.locator("#tax-lot-details")).toContainText(
       "120 BROADWAY",
     );
@@ -133,4 +134,5 @@ test("Can search for a Tax Lot by BBL - Search for nonexistent BBL shows nothing
   await page.getByLabel("Lot", { exact: true }).fill("Y");
   await page.getByRole("button", { name: "Search", exact: true }).click();
   await expect(page.locator(".css-1yf3ulg")).not.toHaveClass(["css-1yf3ulg"]);
+  await expect(page.locator("#tax-lot-details")).not.toBeVisible();
 });
