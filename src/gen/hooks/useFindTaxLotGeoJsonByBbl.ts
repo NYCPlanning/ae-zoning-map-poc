@@ -7,27 +7,27 @@ import type {
 import { useQuery } from "@tanstack/react-query";
 import client from "../../client.ts";
 import type {
-  GetTaxLotGeoJsonByBblQueryResponse,
-  GetTaxLotGeoJsonByBblPathParams,
-  GetTaxLotGeoJsonByBbl400,
-  GetTaxLotGeoJsonByBbl404,
-  GetTaxLotGeoJsonByBbl500,
-} from "../types/GetTaxLotGeoJsonByBbl";
+  FindTaxLotGeoJsonByBblQueryResponse,
+  FindTaxLotGeoJsonByBblPathParams,
+  FindTaxLotGeoJsonByBbl400,
+  FindTaxLotGeoJsonByBbl404,
+  FindTaxLotGeoJsonByBbl500,
+} from "../types/FindTaxLotGeoJsonByBbl";
 
-export const getTaxLotGeoJsonByBblQueryKey = (
-  bbl: GetTaxLotGeoJsonByBblPathParams["bbl"],
+export const findTaxLotGeoJsonByBblQueryKey = (
+  bbl: FindTaxLotGeoJsonByBblPathParams["bbl"],
 ) => [{ url: `/tax-lots/${bbl}/geojson`, params: { bbl: bbl } }] as const;
-export function getTaxLotGeoJsonByBblQueryOptions<
-  TData = GetTaxLotGeoJsonByBblQueryResponse,
+export function findTaxLotGeoJsonByBblQueryOptions<
+  TData = FindTaxLotGeoJsonByBblQueryResponse,
   TError =
-    | GetTaxLotGeoJsonByBbl400
-    | GetTaxLotGeoJsonByBbl404
-    | GetTaxLotGeoJsonByBbl500,
+    | FindTaxLotGeoJsonByBbl400
+    | FindTaxLotGeoJsonByBbl404
+    | FindTaxLotGeoJsonByBbl500,
 >(
-  bbl: GetTaxLotGeoJsonByBblPathParams["bbl"],
+  bbl: FindTaxLotGeoJsonByBblPathParams["bbl"],
   options: Partial<Parameters<typeof client>[0]> = {},
 ): UseQueryOptions<TData, TError> {
-  const queryKey = getTaxLotGeoJsonByBblQueryKey(bbl);
+  const queryKey = findTaxLotGeoJsonByBblQueryKey(bbl);
 
   return {
     queryKey,
@@ -47,24 +47,25 @@ export function getTaxLotGeoJsonByBblQueryOptions<
  * @link /tax-lots/:bbl/geojson
  */
 
-export function useGetTaxLotGeoJsonByBbl<
-  TData = GetTaxLotGeoJsonByBblQueryResponse,
+export function useFindTaxLotGeoJsonByBbl<
+  TData = FindTaxLotGeoJsonByBblQueryResponse,
   TError =
-    | GetTaxLotGeoJsonByBbl400
-    | GetTaxLotGeoJsonByBbl404
-    | GetTaxLotGeoJsonByBbl500,
+    | FindTaxLotGeoJsonByBbl400
+    | FindTaxLotGeoJsonByBbl404
+    | FindTaxLotGeoJsonByBbl500,
 >(
-  bbl: GetTaxLotGeoJsonByBblPathParams["bbl"],
+  bbl: FindTaxLotGeoJsonByBblPathParams["bbl"],
   options: {
     query?: UseQueryOptions<TData, TError>;
     client?: Partial<Parameters<typeof client<TData, TError>>[0]>;
   } = {},
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const { query: queryOptions, client: clientOptions = {} } = options ?? {};
-  const queryKey = queryOptions?.queryKey ?? getTaxLotGeoJsonByBblQueryKey(bbl);
+  const queryKey =
+    queryOptions?.queryKey ?? findTaxLotGeoJsonByBblQueryKey(bbl);
 
   const query = useQuery<TData, TError>({
-    ...getTaxLotGeoJsonByBblQueryOptions<TData, TError>(bbl, clientOptions),
+    ...findTaxLotGeoJsonByBblQueryOptions<TData, TError>(bbl, clientOptions),
     ...queryOptions,
   }) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

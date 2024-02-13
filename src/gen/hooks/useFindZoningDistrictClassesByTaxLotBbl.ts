@@ -7,30 +7,30 @@ import type {
 import { useQuery } from "@tanstack/react-query";
 import client from "../../client.ts";
 import type {
-  GetZoningDistrictClassesByTaxLotBblQueryResponse,
-  GetZoningDistrictClassesByTaxLotBblPathParams,
-  GetZoningDistrictClassesByTaxLotBbl400,
-  GetZoningDistrictClassesByTaxLotBbl404,
-  GetZoningDistrictClassesByTaxLotBbl500,
-} from "../types/GetZoningDistrictClassesByTaxLotBbl";
+  FindZoningDistrictClassesByTaxLotBblQueryResponse,
+  FindZoningDistrictClassesByTaxLotBblPathParams,
+  FindZoningDistrictClassesByTaxLotBbl400,
+  FindZoningDistrictClassesByTaxLotBbl404,
+  FindZoningDistrictClassesByTaxLotBbl500,
+} from "../types/FindZoningDistrictClassesByTaxLotBbl";
 
-export const getZoningDistrictClassesByTaxLotBblQueryKey = (
-  bbl: GetZoningDistrictClassesByTaxLotBblPathParams["bbl"],
+export const findZoningDistrictClassesByTaxLotBblQueryKey = (
+  bbl: FindZoningDistrictClassesByTaxLotBblPathParams["bbl"],
 ) =>
   [
     { url: `/tax-lots/${bbl}/zoning-districts/classes`, params: { bbl: bbl } },
   ] as const;
-export function getZoningDistrictClassesByTaxLotBblQueryOptions<
-  TData = GetZoningDistrictClassesByTaxLotBblQueryResponse,
+export function findZoningDistrictClassesByTaxLotBblQueryOptions<
+  TData = FindZoningDistrictClassesByTaxLotBblQueryResponse,
   TError =
-    | GetZoningDistrictClassesByTaxLotBbl400
-    | GetZoningDistrictClassesByTaxLotBbl404
-    | GetZoningDistrictClassesByTaxLotBbl500,
+    | FindZoningDistrictClassesByTaxLotBbl400
+    | FindZoningDistrictClassesByTaxLotBbl404
+    | FindZoningDistrictClassesByTaxLotBbl500,
 >(
-  bbl: GetZoningDistrictClassesByTaxLotBblPathParams["bbl"],
+  bbl: FindZoningDistrictClassesByTaxLotBblPathParams["bbl"],
   options: Partial<Parameters<typeof client>[0]> = {},
 ): UseQueryOptions<TData, TError> {
-  const queryKey = getZoningDistrictClassesByTaxLotBblQueryKey(bbl);
+  const queryKey = findZoningDistrictClassesByTaxLotBblQueryKey(bbl);
 
   return {
     queryKey,
@@ -50,14 +50,14 @@ export function getZoningDistrictClassesByTaxLotBblQueryOptions<
  * @link /tax-lots/:bbl/zoning-districts/classes
  */
 
-export function useGetZoningDistrictClassesByTaxLotBbl<
-  TData = GetZoningDistrictClassesByTaxLotBblQueryResponse,
+export function useFindZoningDistrictClassesByTaxLotBbl<
+  TData = FindZoningDistrictClassesByTaxLotBblQueryResponse,
   TError =
-    | GetZoningDistrictClassesByTaxLotBbl400
-    | GetZoningDistrictClassesByTaxLotBbl404
-    | GetZoningDistrictClassesByTaxLotBbl500,
+    | FindZoningDistrictClassesByTaxLotBbl400
+    | FindZoningDistrictClassesByTaxLotBbl404
+    | FindZoningDistrictClassesByTaxLotBbl500,
 >(
-  bbl: GetZoningDistrictClassesByTaxLotBblPathParams["bbl"],
+  bbl: FindZoningDistrictClassesByTaxLotBblPathParams["bbl"],
   options: {
     query?: UseQueryOptions<TData, TError>;
     client?: Partial<Parameters<typeof client<TData, TError>>[0]>;
@@ -65,10 +65,10 @@ export function useGetZoningDistrictClassesByTaxLotBbl<
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const { query: queryOptions, client: clientOptions = {} } = options ?? {};
   const queryKey =
-    queryOptions?.queryKey ?? getZoningDistrictClassesByTaxLotBblQueryKey(bbl);
+    queryOptions?.queryKey ?? findZoningDistrictClassesByTaxLotBblQueryKey(bbl);
 
   const query = useQuery<TData, TError>({
-    ...getZoningDistrictClassesByTaxLotBblQueryOptions<TData, TError>(
+    ...findZoningDistrictClassesByTaxLotBblQueryOptions<TData, TError>(
       bbl,
       clientOptions,
     ),
