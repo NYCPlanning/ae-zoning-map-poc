@@ -21,7 +21,7 @@ import LayersFilters from "./components/LayersFilters";
 import { TaxLotDetails } from "./components/TaxLotDetails";
 import { hexToRgba, processColors } from "./layers";
 import {
-  useGetTaxLotGeoJsonByBbl,
+  useFindTaxLotGeoJsonByBbl,
   useFindLandUses,
   useFindZoningDistrictClasses,
   useFindZoningDistrictClassesByZoningDistrictId,
@@ -30,7 +30,7 @@ import { MVTLayer } from "@deck.gl/geo-layers/typed";
 import { useStore } from "./store";
 import { DataFilterExtension } from "@deck.gl/extensions/typed";
 import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
-import centroid from '@turf/centroid';
+import centroid from "@turf/centroid";
 
 type ViewState = {
   latitude: number;
@@ -46,7 +46,7 @@ type ViewState = {
 function App() {
   const isMobile = useMediaQuery("(max-width: 767px)")[0];
   const [selectedBbl, setSelectedBbl] = useState<string | null>(null);
-  const { data: taxLot } = useGetTaxLotGeoJsonByBbl(
+  const { data: taxLot } = useFindTaxLotGeoJsonByBbl(
     selectedBbl === null ? "" : selectedBbl,
     {
       query: {
@@ -55,7 +55,7 @@ function App() {
     },
   );
   useEffect(() => {
-    if(taxLot !== undefined) {
+    if (taxLot !== undefined) {
       const minMax = centroid(taxLot);
       // This is needed because it won't appear highlighted if tax lot visibility is off
       if (!anyTaxLotsVisibility) {

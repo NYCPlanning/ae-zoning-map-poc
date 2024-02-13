@@ -1,6 +1,6 @@
 import { TaxLot } from "../gen";
 import { Flex, HStack, Text, VStack, Link } from "@nycplanning/streetscape";
-import { useGetZoningDistrictsByTaxLotBbl } from "../gen";
+import { useFindZoningDistrictsByTaxLotBbl } from "../gen";
 import { CloseableModal } from "./CloseableModal";
 import { useStore } from "../store";
 
@@ -10,7 +10,7 @@ interface TaxLotDetailsProps {
 
 export const TaxLotDetails = ({ taxLot }: TaxLotDetailsProps) => {
   const infoPane = useStore((state) => state.infoPane);
-  const { data } = useGetZoningDistrictsByTaxLotBbl(
+  const { data } = useFindZoningDistrictsByTaxLotBbl(
     taxLot === null ? "" : taxLot.bbl,
     {
       query: { enabled: taxLot !== null },

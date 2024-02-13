@@ -7,23 +7,24 @@ import type {
 import { useQuery } from "@tanstack/react-query";
 import client from "../../client.ts";
 import type {
-  GetTaxLotByBblQueryResponse,
-  GetTaxLotByBblPathParams,
-  GetTaxLotByBbl400,
-  GetTaxLotByBbl404,
-  GetTaxLotByBbl500,
-} from "../types/GetTaxLotByBbl";
+  FindTaxLotByBblQueryResponse,
+  FindTaxLotByBblPathParams,
+  FindTaxLotByBbl400,
+  FindTaxLotByBbl404,
+  FindTaxLotByBbl500,
+} from "../types/FindTaxLotByBbl";
 
-export const getTaxLotByBblQueryKey = (bbl: GetTaxLotByBblPathParams["bbl"]) =>
-  [{ url: `/tax-lots/${bbl}`, params: { bbl: bbl } }] as const;
-export function getTaxLotByBblQueryOptions<
-  TData = GetTaxLotByBblQueryResponse,
-  TError = GetTaxLotByBbl400 | GetTaxLotByBbl404 | GetTaxLotByBbl500,
+export const findTaxLotByBblQueryKey = (
+  bbl: FindTaxLotByBblPathParams["bbl"],
+) => [{ url: `/tax-lots/${bbl}`, params: { bbl: bbl } }] as const;
+export function findTaxLotByBblQueryOptions<
+  TData = FindTaxLotByBblQueryResponse,
+  TError = FindTaxLotByBbl400 | FindTaxLotByBbl404 | FindTaxLotByBbl500,
 >(
-  bbl: GetTaxLotByBblPathParams["bbl"],
+  bbl: FindTaxLotByBblPathParams["bbl"],
   options: Partial<Parameters<typeof client>[0]> = {},
 ): UseQueryOptions<TData, TError> {
-  const queryKey = getTaxLotByBblQueryKey(bbl);
+  const queryKey = findTaxLotByBblQueryKey(bbl);
 
   return {
     queryKey,
@@ -43,21 +44,21 @@ export function getTaxLotByBblQueryOptions<
  * @link /tax-lots/:bbl
  */
 
-export function useGetTaxLotByBbl<
-  TData = GetTaxLotByBblQueryResponse,
-  TError = GetTaxLotByBbl400 | GetTaxLotByBbl404 | GetTaxLotByBbl500,
+export function useFindTaxLotByBbl<
+  TData = FindTaxLotByBblQueryResponse,
+  TError = FindTaxLotByBbl400 | FindTaxLotByBbl404 | FindTaxLotByBbl500,
 >(
-  bbl: GetTaxLotByBblPathParams["bbl"],
+  bbl: FindTaxLotByBblPathParams["bbl"],
   options: {
     query?: UseQueryOptions<TData, TError>;
     client?: Partial<Parameters<typeof client<TData, TError>>[0]>;
   } = {},
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const { query: queryOptions, client: clientOptions = {} } = options ?? {};
-  const queryKey = queryOptions?.queryKey ?? getTaxLotByBblQueryKey(bbl);
+  const queryKey = queryOptions?.queryKey ?? findTaxLotByBblQueryKey(bbl);
 
   const query = useQuery<TData, TError>({
-    ...getTaxLotByBblQueryOptions<TData, TError>(bbl, clientOptions),
+    ...findTaxLotByBblQueryOptions<TData, TError>(bbl, clientOptions),
     ...queryOptions,
   }) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
