@@ -2,6 +2,7 @@ export * from "./useFindBoroughs";
 export * from "./useFindLandUses";
 export * from "./useFindTaxLotByBbl";
 export * from "./useFindTaxLotGeoJsonByBbl";
+export * from "./useFindTaxLots";
 export * from "./useFindZoningDistrictByZoningDistrictId";
 export * from "./useFindZoningDistrictClassByZoningDistrictClassId";
 export * from "./useFindZoningDistrictClassCategoryColors";
