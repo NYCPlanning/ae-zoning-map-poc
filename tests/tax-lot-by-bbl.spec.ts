@@ -31,9 +31,7 @@ test.describe("Using a mock API, can search for a Tax Lot by BBL and see the det
     await page.getByLabel("Block").fill("47");
     await page.getByLabel("Lot", { exact: true }).fill("7501");
     await page.getByRole("button", { name: "Search", exact: true }).click();
-    await expect(
-      page.locator("div").filter({ hasText: "120 BROADWAY" }).nth(2),
-    ).toBeVisible();
+    await expect(page.getByText("120 BROADWAY", { exact: true })).toBeVisible();
   });
 
   test("BBL shows correctly", async ({ page }) => {
@@ -66,10 +64,9 @@ test.describe("Using a mock API, can search for a Tax Lot by BBL and see the det
     await page.getByLabel("Block").fill("1787");
     await page.getByLabel("Lot", { exact: true }).fill("20");
     await page.getByRole("button", { name: "Search", exact: true }).click();
-    await expect(page.locator(".css-1yf3ulg")).toContainText(
-      "Tax Lot: BBL4017870020",
-    );
-    console.log("page.locator('.css-1yf3ulg')", page.locator(".css-1yf3ulg"));
+    await expect(
+      page.getByText("Tax Lot: BBL4017870020", { exact: true }),
+    ).toBeVisible();
   });
 
   test("Search for nonexistent BBL shows nothing", async ({ page }) => {
@@ -84,7 +81,7 @@ test.describe("Using a mock API, can search for a Tax Lot by BBL and see the det
     await page.getByLabel("Block").fill("X");
     await page.getByLabel("Lot", { exact: true }).fill("Y");
     await page.getByRole("button", { name: "Search", exact: true }).click();
-    await expect(page.locator(".css-1yf3ulg")).not.toHaveClass(["css-1yf3ulg"]);
+    await expect(page.getByText("Tax Lot:", { exact: true })).not.toBeVisible();
   });
 });
 
@@ -101,27 +98,24 @@ test.describe("Can search for a Tax Lot by BBL and see the details for a corresp
   });
 
   test("Tax lot details show correctly", async ({ page }) => {
-    await expect(page.locator("#tax-lot-details")).toBeVisible();
-    await expect(page.locator("#tax-lot-details")).toContainText(
-      "120 BROADWAY",
-    );
-    await expect(page.locator("#tax-lot-details")).toContainText(
-      "Tax Lot: BBL1000477501",
-    );
-    await expect(page.locator("#tax-lot-details")).toContainText(
-      "Manhattan (Borough 1)",
-    );
-    await expect(page.locator("#tax-lot-details")).toContainText("47");
-    await expect(page.locator("#tax-lot-details")).toContainText("7501");
-    await expect(page.locator("#tax-lot-details")).toContainText(
-      "Commercial & Office Buildings",
-    );
-    await expect(page.locator("#tax-lot-details")).toContainText("C5-5");
-    await expect(page.locator("#tax-lot-details")).toContainText(
-      "47,539 sq ft",
-    );
-    await expect(page.locator("#tax-lot-details")).toContainText("195.17 ft");
-    await expect(page.locator("#tax-lot-details")).toContainText("249.33 ft");
+    await expect(page.getByText("120 BROADWAY", { exact: true })).toBeVisible();
+    await expect(
+      page.getByText("Tax Lot: BBL1000477501", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Manhattan (Borough 1)", { exact: true }),
+    ).toBeVisible();
+    await expect(page.getByText("47", { exact: true })).toBeVisible();
+    await expect(page.getByText("7501", { exact: true })).toBeVisible();
+    await expect(
+      page.getByText(/Land Use:.*Commercial & Office Buildings/, {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(page.getByText("C5-5", { exact: true })).toBeVisible();
+    await expect(page.getByText("47,539 sq ft", { exact: true })).toBeVisible();
+    await expect(page.getByText("195.17 ft", { exact: true })).toBeVisible();
+    await expect(page.getByText("249.33 ft", { exact: true })).toBeVisible();
   });
 });
 
@@ -133,6 +127,5 @@ test("Can search for a Tax Lot by BBL - Search for nonexistent BBL shows nothing
   await page.getByLabel("Block").fill("X");
   await page.getByLabel("Lot", { exact: true }).fill("Y");
   await page.getByRole("button", { name: "Search", exact: true }).click();
-  await expect(page.locator(".css-1yf3ulg")).not.toHaveClass(["css-1yf3ulg"]);
-  await expect(page.locator("#tax-lot-details")).not.toBeVisible();
+  await expect(page.getByText("Tax Lot:", { exact: true })).not.toBeVisible();
 });

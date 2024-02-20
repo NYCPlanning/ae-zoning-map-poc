@@ -18,11 +18,7 @@ export const TaxLotDetails = ({ taxLot }: TaxLotDetailsProps) => {
   );
   return taxLot === null || infoPane !== "bbl" ? null : (
     <CloseableModal>
-      <VStack
-        alignItems={"flex-start"}
-        alignContent={"flex-start"}
-        id={"tax-lot-details"}
-      >
+      <VStack alignItems={"flex-start"} alignContent={"flex-start"}>
         <Text fontSize={"xl"} fontWeight={"bold"}>
           {taxLot.address}
         </Text>
