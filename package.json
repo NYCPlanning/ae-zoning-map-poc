@@ -21,6 +21,8 @@
     "@kubb/cli": "^1.14.9",
     "@kubb/core": "^1.14.9",
     "@kubb/swagger": "^1.14.9",
+    "@kubb/swagger-faker": "^2.6.5",
+    "@kubb/swagger-msw": "^2.6.5",
     "@kubb/swagger-tanstack-query": "^1.14.9",
     "@kubb/swagger-ts": "^1.14.9",
     "@nycplanning/streetscape": "^0.9.0",

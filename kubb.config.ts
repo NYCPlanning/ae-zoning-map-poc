@@ -2,6 +2,7 @@ import { defineConfig } from "@kubb/core";
 import createSwagger from "@kubb/swagger";
 import createSwaggerTanstackQuery from "@kubb/swagger-tanstack-query";
 import createSwaggerTS from "@kubb/swagger-ts";
+import createSwaggerMsw from "@kubb/swagger-msw";
 
 export default defineConfig({
   input: {
@@ -19,6 +20,12 @@ export default defineConfig({
     createSwaggerTanstackQuery({
       output: "./hooks",
       clientImportPath: "../../client.ts",
+    }),
+    createSwaggerMsw({
+      output: {
+        path: "./mocks",
+        exportAs: "mocks",
+      },
     }),
   ],
 });
