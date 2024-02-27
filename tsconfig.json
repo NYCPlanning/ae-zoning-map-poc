@@ -18,7 +18,10 @@
     "strict": true,
     "noUnusedLocals": false, // Setting to false for now because of unused imports in Kubb generated code
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Testing */
+    "esModuleInterop": true,
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

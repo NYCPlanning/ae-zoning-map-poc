@@ -24,7 +24,10 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["src/gen/**/*"],
+      files: ["src/gen/**/*", "tests/**/*"],
+      env: {
+        jest: true,
+      },
       rules: {
         "@typescript-eslint/no-unused-vars": 0,
       },
