@@ -1,13 +1,16 @@
-import Map, {
+import {
   NavigationControl,
   ScaleControl,
   AttributionControl,
+  useMap,
+  MapProvider,
+  Map,
 } from "react-map-gl/maplibre";
 import { useState, useEffect } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
 import DeckGL from "@deck.gl/react/typed";
-import { FlyToInterpolator, Layer } from "@deck.gl/core/typed";
+import { FlyToInterpolator } from "@deck.gl/core/typed";
 import { PathStyleExtension } from "@deck.gl/extensions/typed";
 import {
   useMediaQuery,
@@ -18,6 +21,7 @@ import {
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
 import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
+import { CustomComponent } from "./components/CustomComponent";
 import { TaxLotDetails } from "./components/TaxLotDetails";
 import { hexToRgba, processColors } from "./layers";
 import {
@@ -31,17 +35,6 @@ import { useStore } from "./store";
 import { DataFilterExtension } from "@deck.gl/extensions/typed";
 import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
 import centroid from "@turf/centroid";
-import { EditableGeoJsonLayer } from "@nebula.gl/layers";
-import {
-  DrawPolygonMode,
-  ViewMode,
-  MeasureDistanceMode,
-  DrawPointMode,
-  DrawLineStringMode,
-  Draw90DegreePolygonMode,
-  ModifyMode,
-  RotateMode,
-} from "@nebula.gl/edit-modes";
 
 type ViewState = {
   latitude: number;
@@ -126,87 +119,6 @@ function App() {
   const { data } = useFindZoningDistrictClasses();
   const colorKey =
     data === undefined ? {} : processColors(data.zoningDistrictClasses);
-
-  const ALL_MODES: any = [
-    {
-      category: "View",
-      modes: [
-        { label: "View", mode: ViewMode },
-        {
-          label: "Measure Distance",
-          mode: MeasureDistanceMode,
-        },
-      ],
-    },
-    {
-      category: "Draw",
-      modes: [
-        { label: "Draw Point", mode: DrawPointMode },
-        { label: "Draw LineString", mode: DrawLineStringMode },
-        { label: "Draw Polygon", mode: DrawPolygonMode },
-        { label: "Draw 90° Polygon", mode: Draw90DegreePolygonMode },
-      ],
-    },
-    {
-      category: "Alter",
-      modes: [
-        { label: "Modify", mode: ModifyMode },
-        // { label: 'Resize Circle', mode: ResizeCircleMode },
-        // { label: 'Elevation', mode: ElevationMode },
-        // { label: 'Translate', mode: new SnappableMode(new TranslateMode()) },
-        { label: "Rotate", mode: RotateMode },
-        // { label: 'Scale', mode: ScaleMode },
-        // { label: 'Duplicate', mode: DuplicateMode },
-        // { label: 'Extend LineString', mode: ExtendLineStringMode },
-        // { label: 'Extrude', mode: ExtrudeMode },
-        // { label: 'Split', mode: SplitPolygonMode },
-        // { label: 'Transform', mode: new SnappableMode(new TransformMode()) },
-      ],
-    },
-    {
-      // category: 'Composite',
-      // modes: [{ label: 'Draw LineString + Modify', mode: COMPOSITE_MODE }],
-    },
-  ];
-
-  const [mode, setMode] = useState(() => DrawPolygonMode);
-  const [selectedFeatureIndexes] = useState([]);
-  const [features, setFeatures] = useState({
-    type: "FeatureCollection",
-    features: [],
-  });
-  const [shapes, setShapes] = useState({
-    type: "FeatureCollection",
-    features: [
-      {
-        type: "Feature",
-        properties: {},
-        geometry: {
-          coordinates: [
-            [
-              [-74.01023669418923, 40.71468455208185],
-              [-74.01023669418923, 40.71027705429108],
-              [-74.0037764071362, 40.71027705429108],
-              [-74.0037764071362, 40.71468455208185],
-              [-74.01023669418923, 40.71468455208185],
-            ],
-          ],
-          type: "Polygon",
-        },
-      },
-    ],
-  });
-
-  const editableLayer = new (EditableGeoJsonLayer as any)({
-    id: "geojson",
-    data: shapes,
-    mode,
-    onEdit: ({ updatedData, editType, editContext }: any) => {
-      setShapes(updatedData);
-      console.log("onEdit", editType, editContext, updatedData);
-    },
-    selectedFeatureIndexes,
-  });
 
   const zoningDistrictsLayer = new MVTLayer({
     id: "zoningDistricts",
@@ -366,35 +278,35 @@ function App() {
             zoom: Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, newViewState.zoom)),
           });
         }}
-        layers={[
-          taxLotsLayer,
-          zoningDistrictsLayer,
-          editableLayer as unknown as Layer,
-        ]}
+        layers={[taxLotsLayer, zoningDistrictsLayer]}
       >
         {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
-        <Map
-          style={{ width: "100vw", height: "100vh" }}
-          mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
-          // disable the default attribution
-          attributionControl={false}
-        >
-          <AttributionControl compact={isMobile ? true : false} />
+        <MapProvider>
+          <Map
+            id="mymap"
+            style={{ width: "100vw", height: "100vh" }}
+            mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
+            // disable the default attribution
+            attributionControl={false}
+          >
+            <CustomComponent />
 
-          {isMobile ? null : (
-            <ScaleControl
-              position="bottom-left"
-              maxWidth={200}
-              unit="imperial"
-            />
-          )}
-        </Map>
+            <AttributionControl compact={isMobile ? true : false} />
 
-        <img
-          className="logo"
-          alt="NYC Planning"
-          src="https://raw.githubusercontent.com/NYCPlanning/dcp-logo/master/dcp_logo_772.png"
-        />
+            {isMobile ? null : (
+              <ScaleControl
+                position="bottom-left"
+                maxWidth={200}
+                unit="imperial"
+              />
+            )}
+          </Map>
+          <img
+            className="logo"
+            alt="NYC Planning"
+            src="https://raw.githubusercontent.com/NYCPlanning/dcp-logo/master/dcp_logo_772.png"
+          />
+        </MapProvider>
       </DeckGL>
       <ButtonGroup
         position="absolute"
