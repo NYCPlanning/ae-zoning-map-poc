@@ -28,11 +28,12 @@
     "@tanstack/react-query": "^4.36.1",
     "@turf/centroid": "^6.5.0",
     "axios": "^1.6.1",
-    "maplibre-gl": "^3.4.0",
+    "maplibre-gl": "^3.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.48.2",
     "react-map-gl": "^7.1.6",
+    "terra-draw": "^0.0.1-alpha.58",
     "zustand": "^4.4.7"
   },
   "devDependencies": {
