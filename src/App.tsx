@@ -16,7 +16,7 @@ import {
   ButtonGroup,
 } from "@nycplanning/streetscape";
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
-import LocationSearch from "./components/LocationSearch";
+import { LocationSearch } from "./components/LocationSearch/";
 import LayersFilters from "./components/LayersFilters";
 import { TaxLotDetails } from "./components/TaxLotDetails";
 import { hexToRgba, processColors } from "./layers";
