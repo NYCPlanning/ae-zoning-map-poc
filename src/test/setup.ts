@@ -4,6 +4,10 @@ import { handlers } from "../gen";
 
 const server = setupServer(...handlers);
 
+server.events.on("request:start", ({ request }) => {
+  console.log("MSW intercepted:", request.method, request.url);
+});
+
 beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
 
 afterAll(() => server.close());

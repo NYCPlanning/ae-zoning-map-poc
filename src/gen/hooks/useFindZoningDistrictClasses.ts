@@ -1,64 +1,56 @@
-import type {
-  QueryKey,
-  UseQueryResult,
-  UseQueryOptions,
-  QueryOptions,
-} from "@tanstack/react-query";
-import { useQuery } from "@tanstack/react-query";
 import client from "../../client.ts";
-import type {
-  FindZoningDistrictClassesQueryResponse,
-  FindZoningDistrictClasses400,
-  FindZoningDistrictClasses500,
-} from "../types/FindZoningDistrictClasses";
+import { useQuery } from "@tanstack/react-query";
+import type { FindZoningDistrictClassesQueryResponse, FindZoningDistrictClasses400, FindZoningDistrictClasses500 } from "../types/FindZoningDistrictClasses";
+import type { UseBaseQueryOptions, UseQueryResult, QueryKey, WithRequired } from "@tanstack/react-query";
 
-export const findZoningDistrictClassesQueryKey = () =>
-  [{ url: `/zoning-district-classes` }] as const;
-export function findZoningDistrictClassesQueryOptions<
-  TData = FindZoningDistrictClassesQueryResponse,
-  TError = FindZoningDistrictClasses400 | FindZoningDistrictClasses500,
->(
-  options: Partial<Parameters<typeof client>[0]> = {},
-): UseQueryOptions<TData, TError> {
-  const queryKey = findZoningDistrictClassesQueryKey();
-
-  return {
-    queryKey,
-    queryFn: () => {
-      return client<TData, TError>({
-        method: "get",
-        url: `/zoning-district-classes`,
-
-        ...options,
-      }).then((res) => res.data);
-    },
-  };
+type FindZoningDistrictClassesClient = typeof client<FindZoningDistrictClassesQueryResponse, FindZoningDistrictClasses400 | FindZoningDistrictClasses500, never>;
+type FindZoningDistrictClasses = {
+    data: FindZoningDistrictClassesQueryResponse;
+    error: FindZoningDistrictClasses400 | FindZoningDistrictClasses500;
+    request: never;
+    pathParams: never;
+    queryParams: never;
+    headerParams: never;
+    response: FindZoningDistrictClassesQueryResponse;
+    client: {
+        parameters: Partial<Parameters<FindZoningDistrictClassesClient>[0]>;
+        return: Awaited<ReturnType<FindZoningDistrictClassesClient>>;
+    };
+};
+export const findZoningDistrictClassesQueryKey = () => [{ url: "/zoning-district-classes" }] as const;
+export type FindZoningDistrictClassesQueryKey = ReturnType<typeof findZoningDistrictClassesQueryKey>;
+export function findZoningDistrictClassesQueryOptions<TData = FindZoningDistrictClasses["response"], TQueryData = FindZoningDistrictClasses["response"]>(options: FindZoningDistrictClasses["client"]["parameters"] = {}): WithRequired<UseBaseQueryOptions<FindZoningDistrictClasses["response"], FindZoningDistrictClasses["error"], TData, TQueryData>, "queryKey"> {
+    const queryKey = findZoningDistrictClassesQueryKey();
+    return {
+        queryKey,
+        queryFn: async () => {
+            const res = await client<FindZoningDistrictClasses["data"], FindZoningDistrictClasses["error"]>({
+                method: "get",
+                url: `/zoning-district-classes`,
+                ...options
+            });
+            return res.data;
+        },
+    };
 }
-
 /**
- * @summary Class schemas for all zoning districts
- * @link /zoning-district-classes
- */
-
-export function useFindZoningDistrictClasses<
-  TData = FindZoningDistrictClassesQueryResponse,
-  TError = FindZoningDistrictClasses400 | FindZoningDistrictClasses500,
->(
-  options: {
-    query?: UseQueryOptions<TData, TError>;
-    client?: Partial<Parameters<typeof client<TData, TError>>[0]>;
-  } = {},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-  const { query: queryOptions, client: clientOptions = {} } = options ?? {};
-  const queryKey =
-    queryOptions?.queryKey ?? findZoningDistrictClassesQueryKey();
-
-  const query = useQuery<TData, TError>({
-    ...findZoningDistrictClassesQueryOptions<TData, TError>(clientOptions),
-    ...queryOptions,
-  }) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
-
-  query.queryKey = queryKey as QueryKey;
-
-  return query;
+     * @summary Class schemas for all zoning districts
+     * @link /zoning-district-classes */
+export function useFindZoningDistrictClasses<TData = FindZoningDistrictClasses["response"], TQueryData = FindZoningDistrictClasses["response"], TQueryKey extends QueryKey = FindZoningDistrictClassesQueryKey>(options: {
+    query?: Partial<UseBaseQueryOptions<FindZoningDistrictClasses["response"], FindZoningDistrictClasses["error"], TData, TQueryData, TQueryKey>>;
+    client?: FindZoningDistrictClasses["client"]["parameters"];
+} = {}): UseQueryResult<TData, FindZoningDistrictClasses["error"]> & {
+    queryKey: TQueryKey;
+} {
+    const { query: queryOptions, client: clientOptions = {} } = options ?? {};
+    const queryKey = queryOptions?.queryKey ?? findZoningDistrictClassesQueryKey();
+    const query = useQuery<FindZoningDistrictClasses["data"], FindZoningDistrictClasses["error"], TData, any>({
+        ...findZoningDistrictClassesQueryOptions<TData, TQueryData>(clientOptions),
+        queryKey,
+        ...queryOptions
+    }) as UseQueryResult<TData, FindZoningDistrictClasses["error"]> & {
+        queryKey: TQueryKey;
+    };
+    query.queryKey = queryKey as TQueryKey;
+    return query;
 }

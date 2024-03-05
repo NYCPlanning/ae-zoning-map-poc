@@ -1,8 +1,29 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { LocationSearch } from ".";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Accordion } from "@nycplanning/streetscape";
+import { useFindBoroughs } from "../../gen";
 
-describe("Vitest has been configured properly", () => {
+const client = new QueryClient();
+
+const testComponent = (
+  <QueryClientProvider client={client}>
+    <Accordion>
+      <LocationSearch handleBblSearched={() => "fakebbl"} />
+    </Accordion>
+  </QueryClientProvider>
+);
+
+describe("LocationSearch", () => {
   it("should render", () => {
-    render(<p>Hello</p>);
-    expect(screen.getByText(/Hello/)).toBeInTheDocument()
-  })
+    render(testComponent);
+    expect(screen.getByText(/Location Search/)).toBeInTheDocument();
+  });
+
+  it("should display borough options on click", async () => {
+    render(testComponent);
+    fireEvent.click(screen.getByText(/Select/));
+    await screen.findByRole<HTMLOptionElement>("option");
+    expect(screen.getAllByRole<HTMLOptionElement>("option").length).toBe(5);
+  });
 });

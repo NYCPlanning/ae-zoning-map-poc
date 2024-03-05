@@ -108,7 +108,11 @@ export function LocationSearch({ handleBblSearched }: LocationSearchProps) {
                     <Select placeholder="-Select-" variant="base" {...field}>
                       {data !== undefined
                         ? data.boroughs.map((borough) => (
-                            <option key={borough.id} value={borough.id}>
+                            <option
+                              key={borough.id}
+                              value={borough.id}
+                              datatest-id={borough.id}
+                            >
                               {borough.title}
                             </option>
                           ))
