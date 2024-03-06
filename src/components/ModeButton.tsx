@@ -9,13 +9,18 @@ const ModeButton = ({
   currentMode: string;
   changeMode: (mode: string) => void;
 }) => {
+  const isCurrentMode = currentMode == mode ? true : false;
+
   return (
-      <Button mode={"select"} onClick={() => {
+    <Button
+      isActive={isCurrentMode}
+      mode={"select"}
+      onClick={() => {
         changeMode(mode);
-      }}>
-        { mode }
-        </Button>
-      
+      }}
+    >
+      {mode}
+    </Button>
   );
 };
 

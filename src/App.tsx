@@ -22,12 +22,8 @@ import { AddIcon, MinusIcon } from "@chakra-ui/icons";
 import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
 import InteractionMode from "./components/InteractionMode";
-import {CustomComponent} from "./components/CustomComponent";
 import { TaxLotDetails } from "./components/TaxLotDetails";
-import { 
-  hexToRgba, 
-  processColors,
- } from "./layers";
+import { hexToRgba, processColors } from "./layers";
 import {
   useFindTaxLotGeoJsonByBbl,
   useFindLandUses,
@@ -264,11 +260,9 @@ function App() {
 
   // terra-draw stuff
   const [mode, setMode] = useState<string>("static");
-  const mapRef = useRef<MapRef>();
-  // console.log(mapRef);
-  // const [map, setMap] = useState(mapRef.current);
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/35572#issuecomment-498242139
+  const mapRef = useRef<MapRef>(null);
   const map = mapRef.current;
-  // console.log(mapRef.current);
 
   const draw = useMemo(() => {
     if (map) {
@@ -277,30 +271,22 @@ function App() {
       return terraDraw;
     }
   }, [map]);
-  
+
   const changeMode = useCallback(
     (newMode: string) => {
-      console.log("changing mode from ", draw?.getMode(), " to ", newMode);
       if (draw) {
-        console.log("have draw");
-        // console.log(newMode);
         setMode(newMode);
         draw.setMode(newMode);
-        console.log(draw.getMode());
       }
-      console.log("don't have draw");
     },
-    [draw]
+    [draw],
   );
 
-  console.log("draw mode", draw?.getMode());
-  console.log("app mode", mode);
-  // console.log("map", map);
   useEffect(() => {
     if (draw) {
       draw.on("change", () => {
         const snapshot = draw.getSnapshot();
-        console.log(snapshot);
+
         // setFeatures(snapshot);
         // setSelected(snapshot.find((f) => f.properties.selected));
         // setLocalStorage(snapshot);
@@ -312,7 +298,6 @@ function App() {
       //   draw.addFeatures(parsed);
       // }
     }
-
   }, [draw]);
 
   return (
@@ -338,38 +323,32 @@ function App() {
             zoom: Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, newViewState.zoom)),
           });
         }}
-        layers={[
-          taxLotsLayer,
-          zoningDistrictsLayer,
-        ]}
+        layers={[taxLotsLayer, zoningDistrictsLayer]}
       >
         {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
         <MapProvider>
-        <Map
-          // id="mymap"
-          ref={mapRef}
-          style={{ width: "100vw", height: "100vh" }}
-          mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
-          // disable the default attribution
-          attributionControl={false}
-        >
-          {/* <CustomComponent /> */}
+          <Map
+            ref={mapRef}
+            style={{ width: "100vw", height: "100vh" }}
+            mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
+            // disable the default attribution
+            attributionControl={false}
+          >
+            <AttributionControl compact={isMobile ? true : false} />
 
-          <AttributionControl compact={isMobile ? true : false} />
-
-          {isMobile ? null : (
-            <ScaleControl
-              position="bottom-left"
-              maxWidth={200}
-              unit="imperial"
-            />
-          )}
-        </Map>
-        <img
-          className="logo"
-          alt="NYC Planning"
-          src="https://raw.githubusercontent.com/NYCPlanning/dcp-logo/master/dcp_logo_772.png"
-        />
+            {isMobile ? null : (
+              <ScaleControl
+                position="bottom-left"
+                maxWidth={200}
+                unit="imperial"
+              />
+            )}
+          </Map>
+          <img
+            className="logo"
+            alt="NYC Planning"
+            src="https://raw.githubusercontent.com/NYCPlanning/dcp-logo/master/dcp_logo_772.png"
+          />
         </MapProvider>
       </DeckGL>
       <ButtonGroup
@@ -423,7 +402,7 @@ function App() {
           }}
         />
       </ButtonGroup>
-      
+
       <Accordion
         id="map-selections"
         position="fixed"
@@ -433,10 +412,7 @@ function App() {
         width={"21.25rem"}
         defaultIndex={[0, 1]}
       >
-        <InteractionMode 
-          mode={mode}
-          changeMode={changeMode}
-        />
+        <InteractionMode mode={mode} changeMode={changeMode} />
         <LocationSearch
           handleBblSearched={(bbl) => {
             setSelectedBbl(bbl);
