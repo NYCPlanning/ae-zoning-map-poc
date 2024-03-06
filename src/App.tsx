@@ -1,12 +1,12 @@
-import {
+import Map, {
   NavigationControl,
   ScaleControl,
   AttributionControl,
   useMap,
   MapProvider,
-  Map
+  MapRef,
 } from "react-map-gl/maplibre";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
 import DeckGL from "@deck.gl/react/typed";
@@ -21,12 +21,12 @@ import {
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
 import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
+import InteractionMode from "./components/InteractionMode";
 import {CustomComponent} from "./components/CustomComponent";
 import { TaxLotDetails } from "./components/TaxLotDetails";
 import { 
   hexToRgba, 
   processColors,
-  getDraw,
  } from "./layers";
 import {
   useFindTaxLotGeoJsonByBbl,
@@ -39,19 +39,8 @@ import { useStore } from "./store";
 import { DataFilterExtension } from "@deck.gl/extensions/typed";
 import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
 import centroid from "@turf/centroid";
-import { EditableGeoJsonLayer } from "@nebula.gl/layers";
-import {
-  DrawPolygonMode,
-  ViewMode,
-  MeasureDistanceMode,
-  DrawPointMode,
-  DrawLineStringMode,
-  Draw90DegreePolygonMode,
-  ModifyMode,
-  RotateMode,
-} from "@nebula.gl/edit-modes";
-import { TerraDraw, TerraDrawMapLibreGLAdapter, TerraDrawRectangleMode } from "terra-draw";
-import { MapLibreGL as lib } from "maplibre-gl";
+import { setupDraw } from "./utils/setup-draw";
+import * as lib from "maplibre-gl";
 
 type ViewState = {
   latitude: number;
@@ -136,54 +125,6 @@ function App() {
   const { data } = useFindZoningDistrictClasses();
   const colorKey =
     data === undefined ? {} : processColors(data.zoningDistrictClasses);
-
-
-// Import MapLibreGL
-
-// Create MapLibre Map, targetting <div id="map">
-// const map = new MapLibreGL.Map({ container: "map" });
-// const map = new Map({
-//   style: {
-//     version: 8,
-//     sources: {
-//       "osm-tiles": {
-//         type: "raster",
-//         tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-//         tileSize: 256,
-//         attribution:
-//           '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-//       },
-//     },
-//     layers: [
-//       {
-//         id: "osm-tiles",
-//         type: "raster",
-//         source: "osm-tiles",
-//       },
-//     ],
-//   },
-//   center: [-73.6311, 41.103],
-//   zoom: Math.min(MAX_ZOOM, MIN_ZOOM),
-// });
-
-  // const mapContainer = useRef(null);
-  // const map = useRef(null);
-  // const lng = -73.6311;
-  // const lat = 41.103;
-  // useEffect(() => {
-  //   if (map.current) return; // stops map from intializing more than once
-  
-  //   map.current = new MapLibreGL.Map({
-  //     container: mapContainer.current || '',
-  //     style: `https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json`,
-  //     center: [lng, lat],
-  //     zoom: MIN_ZOOM
-  //   });
-  
-  // });
-
-  // console.log(getDraw());
-
 
   const zoningDistrictsLayer = new MVTLayer({
     id: "zoningDistricts",
@@ -321,6 +262,59 @@ function App() {
     pitch: 0,
   });
 
+  // terra-draw stuff
+  const [mode, setMode] = useState<string>("static");
+  const mapRef = useRef<MapRef>();
+  // console.log(mapRef);
+  // const [map, setMap] = useState(mapRef.current);
+  const map = mapRef.current;
+  // console.log(mapRef.current);
+
+  const draw = useMemo(() => {
+    if (map) {
+      const terraDraw = setupDraw(map.getMap());
+      terraDraw.start();
+      return terraDraw;
+    }
+  }, [map]);
+  
+  const changeMode = useCallback(
+    (newMode: string) => {
+      console.log("changing mode from ", draw?.getMode(), " to ", newMode);
+      if (draw) {
+        console.log("have draw");
+        // console.log(newMode);
+        setMode(newMode);
+        draw.setMode(newMode);
+        console.log(draw.getMode());
+      }
+      console.log("don't have draw");
+    },
+    [draw]
+  );
+
+  console.log("draw mode", draw?.getMode());
+  console.log("app mode", mode);
+  // console.log("map", map);
+  useEffect(() => {
+    if (draw) {
+      draw.on("change", () => {
+        const snapshot = draw.getSnapshot();
+        console.log(snapshot);
+        // setFeatures(snapshot);
+        // setSelected(snapshot.find((f) => f.properties.selected));
+        // setLocalStorage(snapshot);
+      });
+
+      // const snapshot = getLocalStorage()
+      // if (snapshot) {
+      //   const parsed = JSON.parse(snapshot);
+      //   draw.addFeatures(parsed);
+      // }
+    }
+
+  }, [draw]);
+
   return (
     <>
       <DeckGL
@@ -352,13 +346,14 @@ function App() {
         {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
         <MapProvider>
         <Map
-          id="mymap"
+          // id="mymap"
+          ref={mapRef}
           style={{ width: "100vw", height: "100vh" }}
           mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
           // disable the default attribution
           attributionControl={false}
         >
-          <CustomComponent />
+          {/* <CustomComponent /> */}
 
           <AttributionControl compact={isMobile ? true : false} />
 
@@ -428,6 +423,7 @@ function App() {
           }}
         />
       </ButtonGroup>
+      
       <Accordion
         id="map-selections"
         position="fixed"
@@ -437,6 +433,10 @@ function App() {
         width={"21.25rem"}
         defaultIndex={[0, 1]}
       >
+        <InteractionMode 
+          mode={mode}
+          changeMode={changeMode}
+        />
         <LocationSearch
           handleBblSearched={(bbl) => {
             setSelectedBbl(bbl);
