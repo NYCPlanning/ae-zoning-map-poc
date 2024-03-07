@@ -36,6 +36,8 @@ export function LocationSearch({ handleBblSearched }: LocationSearchProps) {
     },
   });
 
+  console.log(data);
+  
   const onSubmit = handleSubmit((formData) => {
     handleBblSearched(
       `${formData.borough}${formData.block.padStart(
@@ -109,6 +111,7 @@ export function LocationSearch({ handleBblSearched }: LocationSearchProps) {
                       {data !== undefined
                         ? data.boroughs.map((borough) => (
                             <option
+                              data-testid="option"
                               key={borough.id}
                               value={borough.id}
                               datatest-id={borough.id}
@@ -131,7 +134,7 @@ export function LocationSearch({ handleBblSearched }: LocationSearchProps) {
                     name="block"
                     control={control}
                     render={({ field }) => (
-                      <Input placeholder="Placeholder Text" {...field} />
+                      <Input placeholder="Placeholder Text" data {...field} />
                     )}
                   />
                   <FormErrorMessage>You must select a block.</FormErrorMessage>
