@@ -9,7 +9,7 @@ import Map, {
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
-import DeckGL from "@deck.gl/react/typed";
+import DeckGL, { DeckGLRef } from "@deck.gl/react/typed";
 import { FlyToInterpolator, Layer } from "@deck.gl/core/typed";
 import { PathStyleExtension } from "@deck.gl/extensions/typed";
 import {
@@ -23,6 +23,7 @@ import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
 import InteractionMode from "./components/InteractionMode";
 import { TaxLotDetails } from "./components/TaxLotDetails";
+import  Drawing  from "./components/Drawing";
 import { hexToRgba, processColors } from "./layers";
 import {
   useFindTaxLotGeoJsonByBbl,
@@ -37,6 +38,8 @@ import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
 import centroid from "@turf/centroid";
 import { setupDraw } from "./utils/setup-draw";
 import * as lib from "maplibre-gl";
+import {TerraDraw} from "terra-draw";
+import FeatureCollection from "maplibre-gl"
 
 type ViewState = {
   latitude: number;
@@ -260,33 +263,55 @@ function App() {
 
   // terra-draw stuff
   const [mode, setMode] = useState<string>("static");
+  const [terraDraw, setTerraDraw] = useState<TerraDraw | null>(null);
+  const [geoJson, setGeoJson] = useState<FeatureCollection[]>([]);
+
   // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/35572#issuecomment-498242139
   const mapRef = useRef<MapRef>(null);
-  const map = mapRef.current;
-
-  const draw = useMemo(() => {
-    if (map) {
-      const terraDraw = setupDraw(map.getMap());
-      terraDraw.start();
-      return terraDraw;
-    }
-  }, [map]);
-
-  const changeMode = useCallback(
-    (newMode: string) => {
-      if (draw) {
-        setMode(newMode);
-        draw.setMode(newMode);
-      }
-    },
-    [draw],
-  );
+  // const map = mapRef.current;
+  // console.debug("map", map);
 
   useEffect(() => {
-    if (draw) {
-      draw.on("change", () => {
-        const snapshot = draw.getSnapshot();
+    if (mapRef.current === null) {
+      return
+    }
+    console.debug("mapref.current", mapRef.current.getMap());
 
+    const draw = setupDraw(mapRef.current.getMap());
+    draw.start();
+    setTerraDraw(draw);
+
+    mapRef.current.getMap().on("click", (data: any) => {
+      console.debug("data", data);
+    })
+  }, [mapRef.current])
+
+  // const draw = useMemo(() => {
+  //   if (map) {
+  //     const terraDraw = setupDraw(map.getMap());
+  //     terraDraw.start();
+  //     return terraDraw;
+  //   }
+  // }, [map]);
+
+
+
+  const changeMode = 
+    (newMode: string) => {
+      if (terraDraw) {
+        setMode(newMode);
+        terraDraw.setMode(newMode);
+      }
+    };
+
+  console.log("terradraw mode", terraDraw?.getMode());
+
+  useEffect(() => {
+    if (terraDraw) {
+      terraDraw.on("change", () => {
+        console.log("changing");
+        const snapshot = terraDraw.getSnapshot();
+        console.debug("snapshot", snapshot);
         // setFeatures(snapshot);
         // setSelected(snapshot.find((f) => f.properties.selected));
         // setLocalStorage(snapshot);
@@ -298,13 +323,14 @@ function App() {
       //   draw.addFeatures(parsed);
       // }
     }
-  }, [draw]);
+  }, [terraDraw]);
+
+  const drawing = <Drawing />
 
   return (
     <>
       <DeckGL
-        id="deck"
-        controller={{
+         controller={{
           doubleClickZoom: false,
         }}
         viewState={viewState}
@@ -326,8 +352,8 @@ function App() {
         layers={[taxLotsLayer, zoningDistrictsLayer]}
       >
         {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
-        <MapProvider>
-          <Map
+        {/* <MapProvider> */}
+        <Map
             ref={mapRef}
             style={{ width: "100vw", height: "100vh" }}
             mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
@@ -343,13 +369,15 @@ function App() {
                 unit="imperial"
               />
             )}
+            {drawing}
           </Map>
+        {/* </MapProvider> */}
+          
           <img
             className="logo"
             alt="NYC Planning"
             src="https://raw.githubusercontent.com/NYCPlanning/dcp-logo/master/dcp_logo_772.png"
           />
-        </MapProvider>
       </DeckGL>
       <ButtonGroup
         position="absolute"
