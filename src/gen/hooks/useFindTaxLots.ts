@@ -23,7 +23,6 @@ export function findTaxLotsQueryOptions<
   options: Partial<Parameters<typeof client>[0]> = {},
 ): UseQueryOptions<TData, TError> {
   const queryKey = findTaxLotsQueryKey(params);
-
   return {
     queryKey,
     queryFn: () => {

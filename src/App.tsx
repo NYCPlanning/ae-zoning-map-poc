@@ -21,10 +21,12 @@ import LayersFilters from "./components/LayersFilters";
 import { TaxLotDetails } from "./components/TaxLotDetails";
 import { hexToRgba, processColors } from "./layers";
 import {
+  useFindTaxLots,
   useFindTaxLotGeoJsonByBbl,
   useFindLandUses,
   useFindZoningDistrictClasses,
   useFindZoningDistrictClassesByZoningDistrictId,
+  FindTaxLotsQueryParamsGeometry,
 } from "./gen";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
 import { useStore } from "./store";
@@ -41,7 +43,11 @@ import {
   Draw90DegreePolygonMode,
   ModifyMode,
   RotateMode,
+  GeoJsonEditMode,
 } from "@nebula.gl/edit-modes";
+import { SelectedTaxLots } from "./components/SelectedTaxLots";
+import InteractionMode from "./components/InteractionMode";
+import { View } from "@deck.gl/core";
 
 type ViewState = {
   latitude: number;
@@ -65,6 +71,7 @@ function App() {
       },
     },
   );
+
   useEffect(() => {
     if (taxLot !== undefined) {
       const minMax = centroid(taxLot);
@@ -169,33 +176,55 @@ function App() {
     },
   ];
 
-  const [mode, setMode] = useState(() => DrawPolygonMode);
+  const [mode, setMode] = useState<GeoJsonEditMode>();
+
+  const changeMode = 
+    (newMode: GeoJsonEditMode) => {
+        setMode(newMode);
+    };
   const [selectedFeatureIndexes] = useState([]);
   const [features, setFeatures] = useState({
     type: "FeatureCollection",
     features: [],
   });
   const [shapes, setShapes] = useState({
-    type: "FeatureCollection",
-    features: [
+    "type": "FeatureCollection",
+    "features": [
       {
-        type: "Feature",
-        properties: {},
-        geometry: {
-          coordinates: [
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "coordinates": [
             [
-              [-74.01023669418923, 40.71468455208185],
-              [-74.01023669418923, 40.71027705429108],
-              [-74.0037764071362, 40.71027705429108],
-              [-74.0037764071362, 40.71468455208185],
-              [-74.01023669418923, 40.71468455208185],
-            ],
+              
+                -74.01023669418923,
+                40.71468455208185
+            
+              
+            ]
           ],
-          type: "Polygon",
-        },
-      },
-    ],
+          "type": "Point"
+        }
+      }
+    ]
   });
+
+
+  const feature = shapes.features[1];
+  console.log(shapes);
+  const taxLotQueryParams = {
+    geometry: feature?.geometry.type as FindTaxLotsQueryParamsGeometry,
+    lons: feature?.geometry.coordinates[0]?.map(coord => coord[0]) as number[],
+    lats: feature?.geometry.coordinates[0]?.map(coord => coord[1]) as number[],
+    buffer: 10,
+  };
+  const { data: taxLots } = useFindTaxLots(
+    taxLotQueryParams, {
+      query: {
+        enabled: true
+      }
+    }
+  );
 
   const editableLayer = new (EditableGeoJsonLayer as any)({
     id: "geojson",
@@ -203,8 +232,9 @@ function App() {
     mode,
     onEdit: ({ updatedData, editType, editContext }: any) => {
       setShapes(updatedData);
-      console.log("onEdit", editType, editContext, updatedData);
+      // console.log("onEdit", editType, editContext, updatedData);
     },
+    
     selectedFeatureIndexes,
   });
 
@@ -456,6 +486,7 @@ function App() {
         width={"21.25rem"}
         defaultIndex={[0, 1]}
       >
+        <InteractionMode mode={mode} changeMode={changeMode}/>
         <LocationSearch
           handleBblSearched={(bbl) => {
             setSelectedBbl(bbl);
@@ -469,6 +500,11 @@ function App() {
         <ZoningDistrictDetails
           zoningDistrictClasses={
             new Set(zoningDistrictClasses?.zoningDistrictClasses)
+          }
+        />
+        <SelectedTaxLots 
+          taxLots={
+            taxLots === undefined ? null : taxLots.taxLots
           }
         />
       </Accordion>
