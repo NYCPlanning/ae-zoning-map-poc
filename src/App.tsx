@@ -27,10 +27,12 @@ import {
   useFindZoningDistrictClassesByZoningDistrictId,
 } from "./gen";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
+import { GeoJsonLayer } from "@deck.gl/layers/typed";
 import { useStore } from "./store";
 import { DataFilterExtension } from "@deck.gl/extensions/typed";
 import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
 import centroid from "@turf/centroid";
+import { DrawModeSelector } from "./components/DrawModeSelector";
 
 type ViewState = {
   latitude: number;
@@ -64,8 +66,8 @@ function App() {
       setInfoPane("bbl");
       setViewState({
         ...viewState,
-        longitude: minMax.geometry.coordinates[0],
-        latitude: minMax.geometry.coordinates[1],
+        longitude: minMax.geometry?.coordinates[0] || 0,
+        latitude: minMax.geometry?.coordinates[1] || 0,
         transitionDuration: 750,
         transitionInterpolator: new FlyToInterpolator(),
         zoom: 18,
@@ -80,6 +82,12 @@ function App() {
   const setSelectedZoningDistrictId = useStore(
     (state) => state.setSelectedZoningDistrictId,
   );
+  const {
+    shapeFeatureCollection,
+    penFeatureCollection,
+    clickOnMap,
+    hoverOnMap,
+  } = useStore();
   const { data: zoningDistrictClasses } =
     useFindZoningDistrictClassesByZoningDistrictId(
       selectedZoningDistrictId === null ? "" : selectedZoningDistrictId,
@@ -180,6 +188,19 @@ function App() {
     },
   });
 
+  const drawLayer = new GeoJsonLayer({
+    data: shapeFeatureCollection,
+    getPointColor: () => [100, 80, 255],
+    getPointRadius: () => 10,
+    getLineWidth: () => 2,
+    getFillColor: () => [120, 180, 180, 90],
+  });
+
+  const penLayer = new GeoJsonLayer({
+    data: penFeatureCollection,
+    getLineWidth: () => 10,
+  });
+
   const taxLotsLayer = new MVTLayer({
     id: "taxLots",
     // data: `${import.meta.env.VITE_ZONING_API_URL}/tax-lot/{z}/{x}/{y}.pbf`,
@@ -274,7 +295,13 @@ function App() {
             zoom: Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, newViewState.zoom)),
           });
         }}
-        layers={[taxLotsLayer, zoningDistrictsLayer]}
+        onClick={({ coordinate }) => {
+          if (coordinate) clickOnMap(coordinate);
+        }}
+        onHover={({ coordinate }) => {
+          if (coordinate) hoverOnMap(coordinate);
+        }}
+        layers={[taxLotsLayer, zoningDistrictsLayer, drawLayer, penLayer]}
       >
         {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
         <Map
@@ -300,6 +327,7 @@ function App() {
           src="https://raw.githubusercontent.com/NYCPlanning/dcp-logo/master/dcp_logo_772.png"
         />
       </DeckGL>
+      <DrawModeSelector />
       <ButtonGroup
         position="absolute"
         bottom={["unset", 28]}
