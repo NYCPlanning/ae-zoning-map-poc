@@ -14,6 +14,7 @@ export function DrawModeSelector() {
         <option value="select">Select</option>
         <option value="createPoint">Create Point</option>
         <option value="createLineString">Create LineString</option>
+        <option value="createRectangle">Create Rectangle</option>
       </Select>
     </Box>
   );

@@ -198,7 +198,8 @@ function App() {
 
   const penLayer = new GeoJsonLayer({
     data: penFeatureCollection,
-    getLineWidth: () => 10,
+    getLineWidth: () => 5,
+    getFillColor: () => [180, 120, 180, 80],
   });
 
   const taxLotsLayer = new MVTLayer({
