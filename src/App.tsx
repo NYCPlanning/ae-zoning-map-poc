@@ -33,6 +33,8 @@ import { DataFilterExtension } from "@deck.gl/extensions/typed";
 import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
 import centroid from "@turf/centroid";
 import { DrawModeSelector } from "./components/DrawModeSelector";
+import { Feature, Geometry } from "geojson";
+import { DrawFeaturePanel } from "./components/DrawFeaturePanel";
 
 type ViewState = {
   latitude: number;
@@ -83,10 +85,12 @@ function App() {
     (state) => state.setSelectedZoningDistrictId,
   );
   const {
+    mode,
     shapeFeatureCollection,
     penFeatureCollection,
     clickOnMap,
     hoverOnMap,
+    clickOnDrawLayer,
   } = useStore();
   const { data: zoningDistrictClasses } =
     useFindZoningDistrictClassesByZoningDistrictId(
@@ -163,7 +167,7 @@ function App() {
       [1, 1],
       [1, 1],
     ],
-    pickable: true,
+    pickable: mode === "select",
     onClick: (f: any) => {
       setSelectedZoningDistrictId(f.object.properties.id);
       setInfoPane("zoningDistrict");
@@ -190,10 +194,26 @@ function App() {
 
   const drawLayer = new GeoJsonLayer({
     data: shapeFeatureCollection,
+    pickable: mode === "select",
     getPointColor: () => [100, 80, 255],
     getPointRadius: () => 10,
     getLineWidth: () => 2,
     getFillColor: () => [120, 180, 180, 90],
+    getTextColor: [98, 98, 98, 255],
+    textFontFamily: "Helvetica Neue, Arial, sans-serif",
+    getTextSize: 8,
+    getText: (f: any) => {
+      console.debug("text feature", f);
+      return "text";
+    },
+    onClick: ({ devicePixel, object }) => {
+      console.debug("draw layer");
+      const id = object?.id;
+      if (devicePixel !== undefined && typeof id === "string") {
+        clickOnDrawLayer(id, devicePixel);
+        return;
+      }
+    },
   });
 
   const penLayer = new GeoJsonLayer({
@@ -228,7 +248,7 @@ function App() {
       return [2, 0];
     },
     visible: anyTaxLotsVisibility,
-    pickable: true,
+    pickable: mode === "select",
     minZoom: 15,
     maxZoom: 16,
     getFillColor: (f: any) => {
@@ -297,6 +317,7 @@ function App() {
           });
         }}
         onClick={({ coordinate }) => {
+          console.debug("click on map");
           if (coordinate) clickOnMap(coordinate);
         }}
         onHover={({ coordinate }) => {
@@ -329,6 +350,7 @@ function App() {
         />
       </DeckGL>
       <DrawModeSelector />
+      <DrawFeaturePanel />
       <ButtonGroup
         position="absolute"
         bottom={["unset", 28]}

@@ -20,6 +20,7 @@ import distance from "@turf/distance";
 import bbox from "@turf/bbox";
 import bboxPolygon from "@turf/bbox-polygon";
 import area from "@turf/area";
+import { v4 as uuidv4 } from "uuid";
 
 enableMapSet();
 
@@ -30,11 +31,15 @@ export type DrawMode =
   | "createRectangle";
 export type Store = {
   mode: DrawMode;
+  selectedDrawFeatureId: string | null;
+  drawFeaturePanelLocation: { left: number; bottom: number } | null;
   updateMode: (mode: DrawMode) => void;
   shapeFeatureCollection: FeatureCollection;
   penFeatureCollection: FeatureCollection;
   clickOnMap: (coordinate: Position) => void;
   hoverOnMap: (coordinate: Position) => void;
+  clickOnDrawLayer: (id: string, devicePixel: [number, number]) => void;
+  clearSelectedFeature: () => void;
   infoPane: "zoningDistrict" | "bbl" | null;
   setInfoPane: (info: "zoningDistrict" | "bbl" | null) => void;
   selectedZoningDistrictId: string | null;
@@ -60,9 +65,13 @@ export type Store = {
 export const useStore = create<Store>()(
   immer((set) => ({
     mode: "select",
+    selectedDrawFeatureId: null,
+    drawFeaturePanelLocation: null,
     updateMode: (mode: DrawMode) =>
       set((state) => {
         state.penFeatureCollection.features = [];
+        state.selectedDrawFeatureId = null;
+        state.drawFeaturePanelLocation = null;
         state.mode = mode;
       }),
     shapeFeatureCollection: featureCollection([]) as FeatureCollection,
@@ -72,6 +81,7 @@ export const useStore = create<Store>()(
         if (state.mode === "select") return;
         if (state.mode === "createPoint") {
           const pt = point(coordinate) as Feature<Point, null>;
+          pt.id = uuidv4();
           state.shapeFeatureCollection.features.push(pt);
           state.mode = "select";
         }
@@ -103,6 +113,8 @@ export const useStore = create<Store>()(
                 LineString,
                 null
               >;
+              ls.id = uuidv4();
+              console.debug("ls created", ls);
               state.shapeFeatureCollection.features.push(ls);
               state.penFeatureCollection.features = [];
               state.mode = "select";
@@ -119,6 +131,7 @@ export const useStore = create<Store>()(
                 LineString,
                 null
               >;
+              ls.id = uuidv4();
               state.shapeFeatureCollection.features.push(ls);
               state.penFeatureCollection.features = [];
               state.mode = "select";
@@ -144,6 +157,7 @@ export const useStore = create<Store>()(
             if (penShape?.geometry.type === "Polygon") {
               const penArea = area(penShape as Feature<Polygon, null>);
               if (penArea > 10) {
+                penShape.id = uuidv4();
                 state.shapeFeatureCollection.features.push(penShape);
               }
             }
@@ -196,6 +210,22 @@ export const useStore = create<Store>()(
             state.penFeatureCollection.features[1] = pen;
           }
         }
+      }),
+    clickOnDrawLayer: (id, devicePixel) =>
+      set((state) => {
+        console.debug("devicePixel", devicePixel);
+        console.debug("id", id);
+        state.selectedDrawFeatureId = id;
+        const [left, bottom] = devicePixel;
+        state.drawFeaturePanelLocation = {
+          left,
+          bottom,
+        };
+      }),
+    clearSelectedFeature: () =>
+      set((state) => {
+        state.selectedDrawFeatureId = null;
+        state.drawFeaturePanelLocation = null;
       }),
     infoPane: null,
     setInfoPane: (info: "zoningDistrict" | "bbl" | null) =>
