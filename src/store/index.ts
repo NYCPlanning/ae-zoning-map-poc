@@ -21,6 +21,8 @@ export type Store = {
     zoningDistrictCategoryIds: Array<string>,
     zoningDistrictClassIds: Array<string>,
   ) => void;
+  isDrawing: boolean;
+  toggleIsDrawing: () => void;
 };
 
 export const useStore = create<Store>()((set) => ({
@@ -87,6 +89,11 @@ export const useStore = create<Store>()((set) => ({
         zoningDistrictClassIds,
       ),
     })),
+  isDrawing: false,
+  toggleIsDrawing: () =>
+    set((state) => ({
+      isDrawing: !state.isDrawing
+    }))
 }));
 
 function toggleVisibility(list: Set<string>, id: string) {

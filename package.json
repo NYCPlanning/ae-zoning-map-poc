@@ -16,6 +16,7 @@
     "@chakra-ui/icons": "^2.1.1",
     "@deck.gl/extensions": "^8.9.33",
     "@deck.gl/geo-layers": "^8.9.32",
+    "@deck.gl/mapbox": "^8.9.35",
     "@deck.gl/react": "^8.9.31",
     "@kubb/cli": "^1.14.9",
     "@kubb/core": "^1.14.9",

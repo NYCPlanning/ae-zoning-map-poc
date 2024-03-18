@@ -6,14 +6,18 @@ import {
   Flex,
   Spacer,
   Text,
+  Button,
 } from "@nycplanning/streetscape";
 import ModeButton from "./ModeButton";
+import { useStore } from "../store";
+
 interface InteractionModeProps {
   mode: string;
   changeMode: (mode: string) => void;
 }
 
 function InteractionMode({ mode, changeMode }: InteractionModeProps) {
+  const toggleIsDrawing = useStore((state) => state.toggleIsDrawing);
   return (
     <AccordionItem mb={6} border="0">
       {({ isExpanded }: { isExpanded: boolean }) => (
@@ -68,6 +72,11 @@ function InteractionMode({ mode, changeMode }: InteractionModeProps) {
             borderRadius={"0 0 0.75rem 0.75rem"}
           >
             <div>
+              <Button
+                onClick ={toggleIsDrawing}
+              >
+                Draw
+              </Button>
               <ModeButton
                 mode={"select"}
                 currentMode={mode}
