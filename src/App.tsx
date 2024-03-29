@@ -1,17 +1,10 @@
 import Map, {
-  NavigationControl,
-  ScaleControl,
-  AttributionControl,
-  useMap,
-  MapProvider,
   MapRef,
   useControl,
 } from "react-map-gl/maplibre";
-import MapContext from "react-map-gl";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
-import DeckGL, { DeckGLRef } from "@deck.gl/react/typed";
 import {MapboxOverlay as DeckOverlay, MapboxOverlayProps} from "@deck.gl/mapbox/typed"
 import { FlyToInterpolator, Layer } from "@deck.gl/core/typed";
 import { PathStyleExtension } from "@deck.gl/extensions/typed";
@@ -26,8 +19,6 @@ import LocationSearch from "./components/LocationSearch";
 import LayersFilters from "./components/LayersFilters";
 import InteractionMode from "./components/InteractionMode";
 import { TaxLotDetails } from "./components/TaxLotDetails";
-import BaseMap from "./components/BaseMap";
-import  Drawing  from "./components/Drawing";
 import { hexToRgba, processColors } from "./layers";
 import {
   useFindTaxLotGeoJsonByBbl,
@@ -36,17 +27,12 @@ import {
   useFindZoningDistrictClassesByZoningDistrictId,
 } from "./gen";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
-import {GeoJsonLayer} from "@deck.gl/layers/typed";
 import { useStore } from "./store";
 import { DataFilterExtension } from "@deck.gl/extensions/typed";
 import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
 import centroid from "@turf/centroid";
 import { setupDraw } from "./utils/setup-draw";
-import { localStorageStore } from "./utils/store-local-storage";
-import * as lib from "maplibre-gl";
-import {GeoJSONStoreFeatures, TerraDraw, TerraDrawFreehandMode, TerraDrawMapLibreGLAdapter, TerraDrawPolygonMode} from "terra-draw";
 import FeatureCollection from "maplibre-gl"
-import { geojsonType } from "turf";
 
 type ViewState = {
   latitude: number;
@@ -127,9 +113,6 @@ function App() {
     (state) => state.visibleTaxLotsBoundaries,
   );
   const visibleLandUseColors = useStore((state) => state.visibleLandUseColors);
-
-  const isDrawing = useStore((state) => state.isDrawing);
-
 
   const { data } = useFindZoningDistrictClasses();
   const colorKey =
@@ -273,128 +256,17 @@ function App() {
 
   // terra-draw stuff
   const [mode, setMode] = useState<string>("polygon");
-  // const [terraDraw, setTerraDraw] = useState<TerraDraw | null>(null);
-  const [mapRefObj, setMapRefObj] = useState<MapRef>();
+  const [mapRefObj, setMapRefObj] = useState<MapRef | null>();
   const [geoJson, setGeoJson] = useState<FeatureCollection[]>([]);
-  const [selected, setSelected] = useState<GeoJSONStoreFeatures | undefined>();
-  const [features, setFeatures] = useState<GeoJSONStoreFeatures[]>([]);
-  
-  const editableGeoJsonLayer = new GeoJsonLayer({
-    id: "editableGeoJson",
-    minZoom: 9,
-    maxZoom: 10,
-    visible: true,
-    data: geoJson
-  })
 
-  const {
-    clearLocalStorage,
-    setLocalStorage,
-    getLocalStorage
-  } = localStorageStore();
-
-  // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/35572#issuecomment-498242139
-  // const mapRefObj = useRef<MapRef>(null);
-  // const mapRef = mapRefObj.current;
-  // console.log(mapRefObj);
-
-  const map = mapRefObj?.getMap();
-  // console.debug("map", map);
-  // console.log(mapRef);
-
-  // useEffect(() => {
-  //   if (mapRefObj === null || mapRefObj === undefined) {
-  //     return
-  //   }
-
-  //   console.log("maprefobj", mapRefObj);
-  //   console.log("map", mapRefObj.getMap());
-  //   const map = mapRefObj.getMap();
-  //   const draw = new TerraDraw({
-  //     adapter: new TerraDrawMapLibreGLAdapter({
-  //       map
-  //     }),
-  //     modes: [new TerraDrawPolygonMode()],
-      
-  //   });
-  //   draw.start();
-  //   // draw.setMode('polygon');
-  //   setTerraDraw(draw);
-    
-  // }, [mapRefObj]);
-
-
-  
-  // console.log("terradraw mode", terraDraw?.getMode());
-
-  // const onMapLoad = useCallback(() => {
-  //   map?.on('move', () => {
-  //     console.log('hi');
-  //   });
-  // }, [map]);
-
-  // useEffect(() => {
-  //   if (mapRef.current === null) {
-  //     return
-  //   }
-  //   // console.debug("mapref.current", mapRef.current.getMap());
-
-  //   const draw = setupDraw(mapRef.current.getMap());
-  //   draw.start();
-  //   setTerraDraw(draw);
-
-  //   mapRef.current.getMap().on("click", (data: any) => {
-  //     console.debug("data", data);
-  //   })
-  // }, [mapRef.current])
-
-  // terraDraw?.setMode("polygon");
-  // console.log(isDrawing);
   const terraDraw = useMemo(() => {
-    if (mapRefObj) {
+    if (mapRefObj !== null && mapRefObj !== undefined) {
       const map = mapRefObj.getMap();
       const terraDraw = setupDraw(map);
       terraDraw.start();
-      terraDraw.setMode('polygon');
-      console.log("in usememo");
-      // terraDraw?.addFeatures([
-      //   {
-      //     "type": "Feature",
-      //     "properties": {},
-      //     "geometry": {
-      //       "coordinates": [
-      //         [
-      //           [
-      //             -74.01023669418923,
-      //             40.71468455208185
-      //           ],
-      //           [
-      //             -74.01023669418923,
-      //             40.71027705429108
-      //           ],
-      //           [
-      //             -74.0037764071362,
-      //             40.71027705429108
-      //           ],
-      //           [
-      //             -74.0037764071362,
-      //             40.71468455208185
-      //           ],
-      //           [
-      //             -74.01023669418923,
-      //             40.71468455208185
-      //           ]
-      //         ]
-      //       ],
-      //       "type": "Polygon"
-      //     }
-      //   }
-      // ]);
       return terraDraw;
     }
   }, [mapRefObj]);
-
-  
 
   const changeMode = 
     (newMode: string) => {
@@ -407,43 +279,30 @@ function App() {
     };
 
   useEffect(() => {
-    if (terraDraw) {
+    if (terraDraw !== undefined) {
+      terraDraw.setMode(mode);
       console.log("in terra useeffect");
       terraDraw.on("change", () => {
         console.log("changing!!!!");
+        console.log(terraDraw.getMode());
+
         const snapshot = terraDraw.getSnapshot();
         setGeoJson(snapshot);
         console.debug("snapshot", snapshot);
-        // setFeatures(snapshot);
-        // setSelected(snapshot.find((f) => f.properties.selected));
-        // setLocalStorage(snapshot);
         
       });
-      // const snapshot = getLocalStorage()
-      // if (snapshot) {
-      //   const parsed = JSON.parse(snapshot);
-      //   terraDraw.addFeatures(parsed);
-      // } 
-
-      // const snapshot = getLocalStorage()
-      // if (snapshot) {
-      //   const parsed = JSON.parse(snapshot);
-      //   draw.addFeatures(parsed);
-      // }
     }
-  }, [terraDraw]);
+  }, [terraDraw, mode]);
 
-
-  // const drawing = <Drawing />
   const layers = [taxLotsLayer, zoningDistrictsLayer];
   function DeckGLOverlay(props: MapboxOverlayProps) {
     const overlay = useControl(() => new DeckOverlay(props));
     overlay.setProps(props);
     return null;
   }
+
   return (
     <>
-    
        <Map
             ref={(ref) => setMapRefObj(ref)}
             initialViewState={viewState}
@@ -452,64 +311,9 @@ function App() {
             // disable the default attribution
             attributionControl={false}
           >
-           
           <DeckGLOverlay layers={layers}  />
-
         </Map> 
 
-
-      {/* <DeckGL
-         controller={{
-          doubleClickZoom: false,
-        }}
-        viewState={viewState}
-        onViewStateChange={({ viewState: newViewState }) => {
-          setViewState({
-            longitude: Math.min(
-              -73.6311,
-              Math.max(-74.3308, newViewState.longitude),
-            ),
-            latitude: Math.min(
-              41.103,
-              Math.max(40.2989, newViewState.latitude),
-            ),
-            bearing: newViewState.bearing,
-            pitch: newViewState.pitch,
-            zoom: Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, newViewState.zoom)),
-          });
-        }}
-        ContextProvider={MapContext.Provider}
-        layers={[taxLotsLayer, zoningDistrictsLayer]}
-      >
-        {/* <BaseMap viewState={viewState}/> */}
-        {/* Initial View State must be passed to map, despite being passed into DeckGL, or else the map will not appear until after you interact with it */}
-        {/* <MapProvider> */}
-        {/* <Map
-            ref={(ref) => setMapRefObj(ref)}
-            // initialViewState={viewState}
-            style={{ width: "100vw", height: "100vh" }}
-            mapStyle="https://raw.githubusercontent.com/NYCPlanning/equity-tool/main/src/data/basemap.json"
-            // disable the default attribution
-            attributionControl={false}
-          >
-            <AttributionControl compact={isMobile ? true : false} />
-
-            {isMobile ? null : (
-              <ScaleControl
-                position="bottom-left"
-                maxWidth={200}
-                unit="imperial"
-              />
-            )}
-          </Map> */}
-        {/* </MapProvider> */}
-          
-          {/* <img
-            className="logo"
-            alt="NYC Planning"
-            src="https://raw.githubusercontent.com/NYCPlanning/dcp-logo/master/dcp_logo_772.png"
-          />
-      </DeckGL> */} 
       <ButtonGroup
         position="absolute"
         bottom={["unset", 28]}
