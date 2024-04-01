@@ -311,7 +311,7 @@ function App() {
             // disable the default attribution
             attributionControl={false}
           >
-          <DeckGLOverlay layers={layers}  />
+          <DeckGLOverlay layers={layers} interleaved={true} />
         </Map> 
 
       <ButtonGroup
