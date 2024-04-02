@@ -73,9 +73,9 @@ function InteractionMode({ mode, changeMode }: InteractionModeProps) {
           >
             <div>
               <Button
-                onClick ={toggleIsDrawing}
+                onClick={toggleIsDrawing}
               >
-                Draw
+                draw
               </Button>
               <ModeButton
                 mode={"select"}
@@ -89,16 +89,6 @@ function InteractionMode({ mode, changeMode }: InteractionModeProps) {
               />
               <ModeButton
                 mode={"polygon"}
-                currentMode={mode}
-                changeMode={changeMode}
-              />
-              <ModeButton
-                mode={"point"}
-                currentMode={mode}
-                changeMode={changeMode}
-              />
-              <ModeButton
-                mode={"circle"}
                 currentMode={mode}
                 changeMode={changeMode}
               />

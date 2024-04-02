@@ -25,6 +25,8 @@ import {
   useFindLandUses,
   useFindZoningDistrictClasses,
   useFindZoningDistrictClassesByZoningDistrictId,
+  FindTaxLotsQueryParamsGeometry,
+  useFindTaxLots,
 } from "./gen";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
 import { useStore } from "./store";
@@ -32,7 +34,9 @@ import { DataFilterExtension } from "@deck.gl/extensions/typed";
 import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
 import centroid from "@turf/centroid";
 import { setupDraw } from "./utils/setup-draw";
-import FeatureCollection from "maplibre-gl"
+import FeatureCollection, { GeoJSONFeature } from "maplibre-gl"
+import { geojsonType } from "turf";
+import { GeoJSONStoreFeatures } from "terra-draw";
 
 type ViewState = {
   latitude: number;
@@ -112,6 +116,10 @@ function App() {
   const visibleTaxLotsBoundaries = useStore(
     (state) => state.visibleTaxLotsBoundaries,
   );
+  const toggleIsDrawing = useStore(
+    (state) => state.toggleIsDrawing,
+  );
+  const isDrawing = useStore((state) => state.isDrawing);
   const visibleLandUseColors = useStore((state) => state.visibleLandUseColors);
 
   const { data } = useFindZoningDistrictClasses();
@@ -257,16 +265,18 @@ function App() {
   // terra-draw stuff
   const [mode, setMode] = useState<string>("polygon");
   const [mapRefObj, setMapRefObj] = useState<MapRef | null>();
-  const [geoJson, setGeoJson] = useState<FeatureCollection[]>([]);
+  const [geoJsonn, setGeoJson] = useState<FeatureCollection[]>([]);
 
   const terraDraw = useMemo(() => {
     if (mapRefObj !== null && mapRefObj !== undefined) {
       const map = mapRefObj.getMap();
       const terraDraw = setupDraw(map);
-      terraDraw.start();
+      
       return terraDraw;
     }
   }, [mapRefObj]);
+
+
 
   const changeMode = 
     (newMode: string) => {
@@ -277,23 +287,100 @@ function App() {
         console.log("new mode", terraDraw.getMode());
       }
     };
+    const [features, setFeatures] = useState<GeoJSONStoreFeatures[]>([]);
+    const [selectedPolygon, setSelectedPolygon] = useState<GeoJSONStoreFeatures | null>(null);
 
+
+    console.log("featres", features);
+    console.log("selected polygon", selectedPolygon);
   useEffect(() => {
     if (terraDraw !== undefined) {
-      terraDraw.setMode(mode);
-      console.log("in terra useeffect");
-      terraDraw.on("change", () => {
-        console.log("changing!!!!");
-        console.log(terraDraw.getMode());
-
-        const snapshot = terraDraw.getSnapshot();
-        setGeoJson(snapshot);
-        console.debug("snapshot", snapshot);
-        
-      });
+      terraDraw.start(); 
+      if (isDrawing === true) {
+        terraDraw.setMode(mode);
+        console.log("in terra useeffect");
+        // terraDraw.on("change", () => {
+        //   console.log("changing!!!!");
+        //   console.log(terraDraw.getMode());
+        //   const snapshot = terraDraw.getSnapshot();
+        //   setGeoJson(snapshot);
+        //   console.debug("snapshot", snapshot);
+        // });
+      }
+      else {
+        terraDraw.setMode('static');
+      }
+      
+      
     }
-  }, [terraDraw, mode]);
+  }, [ mode, isDrawing]);
 
+  terraDraw?.on("finish", (ids) => {
+    console.log("changing");
+    setFeatures(terraDraw.getSnapshot().filter((f) => f.geometry.type === "Polygon"));
+    
+  })
+
+    const currentPolygon = features.filter((feature) => feature.properties.selected);
+  
+    // setSelectedPolygon(currentPolygon[0]);
+    console.log(currentPolygon[0]);
+  
+  // terraDraw?.on("finish", (ids) => {
+    // const features = terraDraw?.getSnapshot();
+ 
+    // const current = features?.filter((feature) => feature.properties.selected);
+    // // setSelectedPolygon(current);
+    // console.log("currently selected", current);
+    // const pollygons = features?.filter((f) => f.geometry.type === 'Polygon');
+    // console.log("Features", pollygons); 
+    
+    // // const feature = current[0] ? current[0] : null;
+
+    console.log("selected polygon", currentPolygon);
+    const taxLotQueryParams = {
+      
+      geometry: currentPolygon[0]?.geometry.type as FindTaxLotsQueryParamsGeometry,
+      lons: currentPolygon[0]?.geometry.coordinates[0]?.map(coord => coord[0]) as number[],
+      lats: currentPolygon[0]?.geometry.coordinates[0]?.map(coord => coord[1]) as number[],
+      buffer: 10,
+    };
+    // console.log("taxlotquery params", taxLotQueryParams);
+    const { data: taxLots } = useFindTaxLots(
+      taxLotQueryParams, {
+        query: {
+          enabled: currentPolygon[0] !== null && currentPolygon[0] !== undefined
+        }
+      }
+    );
+    console.log("tax lots", taxLots);
+
+   
+
+  // });
+
+  
+  // useEffect(() => {
+  //   if (terraDraw !== undefined) {
+  //     // const features = terraDraw.getSnapshot();
+  //     // const current = features.filter((feature) => feature.properties.selected);
+  //     terraDraw.on("finish", (ids) => {
+  //       const features = terraDraw.getSnapshot();
+  //       const current = features.filter((feature) => feature.properties.selected);
+  //       console.log("currently selected", current);
+  //     })
+      
+  //     // terraDraw.on("select", (id) => {
+  //     //   const current = features.filter((feature) => feature.id === id);
+  //     //   
+
+  //     // })
+  //   }
+   
+  // }, [terraDraw]);
+
+  console.log("isDrawing", isDrawing);
+  // console.log("polygons", terraDraw?.getSnapshot());
   const layers = [taxLotsLayer, zoningDistrictsLayer];
   function DeckGLOverlay(props: MapboxOverlayProps) {
     const overlay = useControl(() => new DeckOverlay(props));
@@ -387,8 +474,8 @@ function App() {
           taxLot={taxLot === undefined ? null : taxLot.properties}
         />
         <ZoningDistrictDetails
-          zoningDistrictClasses={
-            new Set(zoningDistrictClasses?.zoningDistrictClasses)
+          zoningDistrictClasses={ isDrawing === false ? 
+            new Set(zoningDistrictClasses?.zoningDistrictClasses) : null
           }
         />
       </Accordion>
