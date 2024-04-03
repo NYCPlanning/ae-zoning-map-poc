@@ -13,6 +13,11 @@ import {
   Accordion,
   IconButton,
   ButtonGroup,
+  Box,
+  Flex,
+  Spacer,
+  VStack,
+  StackDivider,
 } from "@nycplanning/streetscape";
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
 import LocationSearch from "./components/LocationSearch";
@@ -35,8 +40,9 @@ import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
 import centroid from "@turf/centroid";
 import { setupDraw } from "./utils/setup-draw";
 import FeatureCollection, { GeoJSONFeature } from "maplibre-gl"
-import { geojsonType } from "turf";
 import { GeoJSONStoreFeatures } from "terra-draw";
+import { SelectedTaxLots } from "./components/SelectedTaxLots";
+import { SelectedShapeInfo } from "./components/SelectedShapeInfo";
 
 type ViewState = {
   latitude: number;
@@ -276,8 +282,6 @@ function App() {
     }
   }, [mapRefObj]);
 
-
-
   const changeMode = 
     (newMode: string) => {
       if (terraDraw) {
@@ -287,65 +291,36 @@ function App() {
         console.log("new mode", terraDraw.getMode());
       }
     };
-    const [features, setFeatures] = useState<GeoJSONStoreFeatures[]>([]);
-    const [selectedPolygon, setSelectedPolygon] = useState<GeoJSONStoreFeatures | null>(null);
+  const [features, setFeatures] = useState<GeoJSONStoreFeatures[]>([]);
+  const [selectedPolygon, setSelectedPolygon] = useState<GeoJSONStoreFeatures | null>(null);
 
-
-    console.log("featres", features);
-    console.log("selected polygon", selectedPolygon);
   useEffect(() => {
     if (terraDraw !== undefined) {
       terraDraw.start(); 
       if (isDrawing === true) {
-        terraDraw.setMode(mode);
-        console.log("in terra useeffect");
-        // terraDraw.on("change", () => {
-        //   console.log("changing!!!!");
-        //   console.log(terraDraw.getMode());
-        //   const snapshot = terraDraw.getSnapshot();
-        //   setGeoJson(snapshot);
-        //   console.debug("snapshot", snapshot);
-        // });
+        terraDraw.setMode(mode);       
       }
       else {
         terraDraw.setMode('static');
       }
-      
-      
     }
   }, [ mode, isDrawing]);
 
-  terraDraw?.on("finish", (ids) => {
-    console.log("changing");
-    setFeatures(terraDraw.getSnapshot().filter((f) => f.geometry.type === "Polygon"));
-    
+  terraDraw?.on("finish", () => {
+    setFeatures(terraDraw.getSnapshot());
   })
 
-    const currentPolygon = features.filter((feature) => feature.properties.selected);
-  
-    // setSelectedPolygon(currentPolygon[0]);
+  const currentPolygon = features.filter((feature) => feature.properties.selected && (feature.geometry.type == "Polygon" || feature.geometry.type === "LineString"));
+    console.log(features);
     console.log(currentPolygon[0]);
-  
-  // terraDraw?.on("finish", (ids) => {
-    // const features = terraDraw?.getSnapshot();
- 
-    // const current = features?.filter((feature) => feature.properties.selected);
-    // // setSelectedPolygon(current);
-    // console.log("currently selected", current);
-    // const pollygons = features?.filter((f) => f.geometry.type === 'Polygon');
-    // console.log("Features", pollygons); 
-    
-    // // const feature = current[0] ? current[0] : null;
-
-    console.log("selected polygon", currentPolygon);
     const taxLotQueryParams = {
       
       geometry: currentPolygon[0]?.geometry.type as FindTaxLotsQueryParamsGeometry,
-      lons: currentPolygon[0]?.geometry.coordinates[0]?.map(coord => coord[0]) as number[],
-      lats: currentPolygon[0]?.geometry.coordinates[0]?.map(coord => coord[1]) as number[],
-      buffer: 10,
+      lons: currentPolygon[0]?.geometry.coordinates[0].map(coord => coord[0]) as number[],
+      lats: currentPolygon[0]?.geometry.coordinates[0].map(coord => coord[1]) as number[],
+      buffer: 1,
     };
-    // console.log("taxlotquery params", taxLotQueryParams);
+
     const { data: taxLots } = useFindTaxLots(
       taxLotQueryParams, {
         query: {
@@ -353,34 +328,7 @@ function App() {
         }
       }
     );
-    console.log("tax lots", taxLots);
 
-   
-
-  // });
-
-  
-  // useEffect(() => {
-  //   if (terraDraw !== undefined) {
-  //     // const features = terraDraw.getSnapshot();
-  //     // const current = features.filter((feature) => feature.properties.selected);
-  //     terraDraw.on("finish", (ids) => {
-  //       const features = terraDraw.getSnapshot();
-  //       const current = features.filter((feature) => feature.properties.selected);
-  //       console.log("currently selected", current);
-  //     })
-      
-  //     // terraDraw.on("select", (id) => {
-  //     //   const current = features.filter((feature) => feature.id === id);
-  //     //   
-
-  //     // })
-  //   }
-   
-  // }, [terraDraw]);
-
-  console.log("isDrawing", isDrawing);
-  // console.log("polygons", terraDraw?.getSnapshot());
   const layers = [taxLotsLayer, zoningDistrictsLayer];
   function DeckGLOverlay(props: MapboxOverlayProps) {
     const overlay = useControl(() => new DeckOverlay(props));
@@ -469,7 +417,6 @@ function App() {
           }}
         />
         <LayersFilters />
-
         <TaxLotDetails
           taxLot={taxLot === undefined ? null : taxLot.properties}
         />
@@ -479,6 +426,24 @@ function App() {
           }
         />
       </Accordion>
+      <VStack
+          spacing={4}
+          align='stretch'
+        >
+          <Box>
+          <SelectedTaxLots 
+            taxLots={
+              taxLots === undefined ? null : taxLots.taxLots
+            }
+          />
+          </Box>
+          <Box>
+          <SelectedShapeInfo
+            polygon={currentPolygon[0] === null ? null : currentPolygon}
+          />
+          </Box>
+          
+        </VStack> 
     </>
   );
 }

@@ -5,7 +5,7 @@ import { ZoningDistrictDetailsInfo } from "./ZoningDistrictDetailsInfo";
 import { useStore } from "../store";
 
 interface ZoningDistrictClassesDetailsProps {
-  zoningDistrictClasses: Set<ZoningDistrictClass | null>;
+  zoningDistrictClasses: Set<ZoningDistrictClass | null> | null;
 }
 
 export const ZoningDistrictDetails = ({
