@@ -1,8 +1,6 @@
-import { Accordion, AccordionItem, AccordionPanel, Box, Button } from "@nycplanning/streetscape"
+import { Box } from "@nycplanning/streetscape"
 import area from "@turf/area";
-// import {area, lineDistance} from "@turf/turf"
 import length from "@turf/length";
-// import length from "@turf/length";
 
 import { GeoJSONStoreFeatures } from "terra-draw"
 import { CloseableModal } from "./CloseableModal";

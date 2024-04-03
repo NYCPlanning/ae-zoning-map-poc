@@ -316,8 +316,8 @@ function App() {
     const taxLotQueryParams = {
       
       geometry: currentPolygon[0]?.geometry.type as FindTaxLotsQueryParamsGeometry,
-      lons: currentPolygon[0]?.geometry.coordinates[0].map(coord => coord[0]) as number[],
-      lats: currentPolygon[0]?.geometry.coordinates[0].map(coord => coord[1]) as number[],
+      lons: currentPolygon[0]?.geometry.coordinates[0].map((coord: number[]) => coord[0]) as number[],
+      lats: currentPolygon[0]?.geometry.coordinates[0].map((coord: number[]) => coord[1]),
       buffer: 1,
     };
 
@@ -426,24 +426,26 @@ function App() {
           }
         />
       </Accordion>
-      <VStack
+      {!anyTaxLotsVisibility && !anyZoningDistrictsVisibility && <VStack
           spacing={4}
           align='stretch'
         >
           <Box>
-          <SelectedTaxLots 
+          {taxLots && <SelectedTaxLots 
             taxLots={
               taxLots === undefined ? null : taxLots.taxLots
             }
-          />
+          />}
+          
           </Box>
-          <Box>
+          { currentPolygon[0] && <Box>
           <SelectedShapeInfo
             polygon={currentPolygon[0] === null ? null : currentPolygon}
           />
-          </Box>
+          </Box> }
           
-        </VStack> 
+        </VStack> }
+      
     </>
   );
 }
