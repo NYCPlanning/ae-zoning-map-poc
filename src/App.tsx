@@ -2,7 +2,7 @@ import Map, {
   MapRef,
   useControl,
 } from "react-map-gl/maplibre";
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
 import {MapboxOverlay as DeckOverlay, MapboxOverlayProps} from "@deck.gl/mapbox/typed"
@@ -14,10 +14,7 @@ import {
   IconButton,
   ButtonGroup,
   Box,
-  Flex,
-  Spacer,
   VStack,
-  StackDivider,
 } from "@nycplanning/streetscape";
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
 import LocationSearch from "./components/LocationSearch";
@@ -39,7 +36,7 @@ import { DataFilterExtension } from "@deck.gl/extensions/typed";
 import { ZoningDistrictDetails } from "./components/ZoningDistrictDetails";
 import centroid from "@turf/centroid";
 import { setupDraw } from "./utils/setup-draw";
-import FeatureCollection, { GeoJSONFeature } from "maplibre-gl"
+import FeatureCollection from "maplibre-gl"
 import { GeoJSONStoreFeatures } from "terra-draw";
 import { SelectedTaxLots } from "./components/SelectedTaxLots";
 import { SelectedShapeInfo } from "./components/SelectedShapeInfo";
@@ -312,12 +309,9 @@ function App() {
 
   terraDraw?.on("select", (id) => {
     const currentPolygon = features.filter((f) => f.id === id);
-    
-    // features.filter((feature) => feature.properties.selected && (feature.geometry.type == "Polygon" || feature.geometry.type === "LineString"));
     setSelectedPolygon(currentPolygon[0]); 
   })
 
-  // const currentPolygon = features.filter((feature) => feature.properties.selected && (feature.geometry.type == "Polygon" || feature.geometry.type === "LineString"));
     console.log(features);
     console.log(selectedPolygon);
     const taxLotQueryParams = {
@@ -437,19 +431,23 @@ function App() {
           spacing={4}
           align='stretch'
         >
-          <Box>
-          {taxLots && <SelectedTaxLots 
-            taxLots={
-              taxLots === undefined ? null : taxLots.taxLots
-            }
-          />}
+          { taxLots && 
+            <Box>
+              <SelectedTaxLots 
+                taxLots={
+                  taxLots === undefined ? null : taxLots.taxLots
+                }
+              />
+            </Box>
+          }
           
-          </Box>
-          { selectedPolygon && <Box>
-          <SelectedShapeInfo
-            polygon={selectedPolygon === null ? null : selectedPolygon}
-          />
-          </Box> }
+          { selectedPolygon && 
+          <Box>
+            <SelectedShapeInfo
+              polygon={selectedPolygon === null ? null : selectedPolygon}
+            />
+          </Box> 
+          }
           
         </VStack> }
       
