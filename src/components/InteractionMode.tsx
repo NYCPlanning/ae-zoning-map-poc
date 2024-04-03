@@ -18,6 +18,7 @@ interface InteractionModeProps {
 
 function InteractionMode({ mode, changeMode }: InteractionModeProps) {
   const toggleIsDrawing = useStore((state) => state.toggleIsDrawing);
+  const isDrawing = useStore((state) => state.isDrawing);
   return (
     <AccordionItem mb={6} border="0">
       {({ isExpanded }: { isExpanded: boolean }) => (
@@ -74,6 +75,7 @@ function InteractionMode({ mode, changeMode }: InteractionModeProps) {
             <div>
               <Button
                 onClick={toggleIsDrawing}
+                isActive={isDrawing}
               >
                 draw
               </Button>
