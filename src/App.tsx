@@ -310,21 +310,28 @@ function App() {
     setFeatures(terraDraw.getSnapshot());
   })
 
-  const currentPolygon = features.filter((feature) => feature.properties.selected && (feature.geometry.type == "Polygon" || feature.geometry.type === "LineString"));
+  terraDraw?.on("select", (id) => {
+    const currentPolygon = features.filter((f) => f.id === id);
+    
+    // features.filter((feature) => feature.properties.selected && (feature.geometry.type == "Polygon" || feature.geometry.type === "LineString"));
+    setSelectedPolygon(currentPolygon[0]); 
+  })
+
+  // const currentPolygon = features.filter((feature) => feature.properties.selected && (feature.geometry.type == "Polygon" || feature.geometry.type === "LineString"));
     console.log(features);
-    console.log(currentPolygon[0]);
+    console.log(selectedPolygon);
     const taxLotQueryParams = {
       
-      geometry: currentPolygon[0]?.geometry.type as FindTaxLotsQueryParamsGeometry,
-      lons: currentPolygon[0]?.geometry.coordinates[0].map((coord: number[]) => coord[0]) as number[],
-      lats: currentPolygon[0]?.geometry.coordinates[0].map((coord: number[]) => coord[1]),
+      geometry: selectedPolygon?.geometry.type as FindTaxLotsQueryParamsGeometry,
+      lons: selectedPolygon?.geometry.coordinates[0].map((coord: number[]) => coord[0]) as number[],
+      lats: selectedPolygon?.geometry.coordinates[0].map((coord: number[]) => coord[1]),
       buffer: 1,
     };
 
     const { data: taxLots } = useFindTaxLots(
       taxLotQueryParams, {
         query: {
-          enabled: currentPolygon[0] !== null && currentPolygon[0] !== undefined
+          enabled: selectedPolygon !== null && selectedPolygon !== undefined
         }
       }
     );
@@ -438,9 +445,9 @@ function App() {
           />}
           
           </Box>
-          { currentPolygon[0] && <Box>
+          { selectedPolygon && <Box>
           <SelectedShapeInfo
-            polygon={currentPolygon[0] === null ? null : currentPolygon}
+            polygon={selectedPolygon === null ? null : selectedPolygon}
           />
           </Box> }
           

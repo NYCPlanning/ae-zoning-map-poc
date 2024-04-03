@@ -6,24 +6,25 @@ import { GeoJSONStoreFeatures } from "terra-draw"
 import { CloseableModal } from "./CloseableModal";
 
 interface SelectedShapeInfoProps {
-    polygon: GeoJSONStoreFeatures[] | null;
+    polygon: GeoJSONStoreFeatures | null;
 }
 
 export const SelectedShapeInfo = ({polygon}: SelectedShapeInfoProps) => {
     const shape = polygon;
-    const geometryType = shape ? shape[0]?.geometry.type : "N/A";
-    const shapeArea = geometryType === "Polygon" && shape ? area(shape[0]).toFixed(2)
+    const geometryType = shape ? shape?.geometry.type : "N/A";
+    const shapeArea = geometryType === "Polygon" && shape ? area(shape).toFixed(2)
     : "N/A";
-    const shapeLength = geometryType === "LineString" && shape ? length(shape[0]).toFixed(2)
+    const shapeLengthFeet = geometryType === "LineString" && shape ? length(shape, {units: 'feet'}).toFixed(2)
     : "N/A";
-    console.log("shaparea", shapeArea);
-    console.log("shapelength", shapeLength);
+    const shapeLengthMeters = geometryType === "LineString" && shape ? length(shape, {units: 'meters'}).toFixed(2)
+    : "N/A"; 
     return (
         <>
         <CloseableModal>
                 <Box>
                     <div>area: {shapeArea}</div>
-                    <div>length: {shapeLength}</div>
+                    <div>length: {shapeLengthFeet} ft</div>
+                    <div>length: {shapeLengthMeters} m</div>
                 </Box>
             </CloseableModal>
         </>
